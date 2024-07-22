@@ -7,7 +7,10 @@ WORKDIR /usr/src/app
 COPY ./srcs ./
 COPY ./tools ./
 
-ENV DJANGO_SETTINGS_MODULE config.settings.deployment
+# ENV DJANGO_SETTINGS_MODULE config.settings.deployment
+
+ENV DJANGO_SETTINGS_MODULE config.settings.development
+
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
