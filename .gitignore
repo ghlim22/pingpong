@@ -8,6 +8,8 @@ db.sqlite3
 
 .env
 
+mediafiles/
+
 # mac
 .DS_Store
 

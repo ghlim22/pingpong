@@ -1,15 +1,66 @@
 name: pingpong
 
 services:
-  django:
-    build:  ./django
+  app:
+    build: ./django
     container_name: django
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./.env
     networks:
-      - intra
-    ports:
-      - '8000:8000'
+      - back-tier
     restart: on-failure
+    volumes:
+      - static-files:/usr/src/app/static-files
+      - media-files:/usr/src/app/media-files
+
+  database:
+    build: ./postgres
+    container_name: postgres
+    env_file:
+      - ./.env
+    networks:
+      - back-tier
+    shm_size: 128mb
+    restart: on-failure
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  server:
+    build: ./nginx
+    container_name: nginx
+    depends_on:
+      - app
+      - db
+    networks:
+      - back-tier
+    ports:
+      - '80:80'
+    restart: on-failure
+    volumes:
+      - static-files:/usr/share/nginx/html/static
+      - media-files:/usr/share/nginx/html/media
+
+#  portainer:
+#    image: portainer/portainer-ce:latest
+#    container_name: portainer
+#    networks:
+#      - intra
+#    ports:
+#      - '9443:9443'
+#    restart: on-failure
+#    volumes:
+#      - portainer-data:/data
+#      - /var/run/docker.sock:/var/run/docker.sock
+
 
 networks:
-  intra:
-    driver: bridge
+  back-tier: {}
+
+
+volumes:
+  db-data: {}
+  static-files: {}
+  media-files: {}
