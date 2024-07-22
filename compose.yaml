@@ -2,7 +2,7 @@ name: pingpong
 
 services:
   app-server:
-    build: ./app-server
+    build: ./apps/app-server
     container_name: app-server
     depends_on:
       db:
@@ -17,7 +17,7 @@ services:
       - media-files:/usr/src/app/media-files
 
   database:
-    build: ./database
+    build: ./apps/database
     container_name: database
     env_file:
       - ./.env
@@ -29,7 +29,7 @@ services:
       - db-data:/var/lib/postgresql/data
 
   web-server:
-    build: ./web-server
+    build: ./apps/web-server
     container_name: web-server
     depends_on:
       - app
