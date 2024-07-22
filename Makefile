@@ -22,13 +22,11 @@ clean:
 	@docker rmi $$(docker images -q)
 
 dev-config:
-	python3 -m venv ./venv;
-	. ./venv/bin/activate; \
-	pip3 install --upgrade pip;\
-	pip3 install -r ./requirements.dev --no-cache-dir;\
-	pre-commit install;
+	python3 -m venv ./venv
+	./venv/bin/pip3 install --upgrade pip
+	./venv/bin/pip3 install -r ./requirements.dev --no-cache-dir
+	./venv/bin/pre-commit install
 
 dev-run:
-	make dev-config; \
-	. ./venv/bin/activate;\
-	/venv/bin/python3 ./django/project/manage.py runserver --settings=config.settings.development
+	make dev-config
+	./venv/bin/python3 ./apps/app-server/srcs/manage.py runserver --settings=config.settings.development
