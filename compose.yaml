@@ -1,9 +1,9 @@
 name: pingpong
 
 services:
-  app-server:
-    build: ./apps/app-server
-    container_name: app-server
+  backend:
+    build: ./apps/backend
+    container_name: backend
     depends_on:
       db:
         condition: service_healthy
@@ -16,9 +16,9 @@ services:
       - static-files:/usr/src/app/static-files
       - media-files:/usr/src/app/media-files
 
-  database:
-    build: ./apps/database
-    container_name: database
+  postgres:
+    build: ./apps/postgres
+    container_name: postgres
     env_file:
       - ./.env
     networks:
@@ -26,22 +26,22 @@ services:
     shm_size: 128mb
     restart: on-failure
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
 
-  web-server:
-    build: ./apps/web-server
-    container_name: web-server
+  nginx:
+    build: ./apps/nginx
+    container_name: nginx
     depends_on:
-      - app
-      - db
+      - backend
+      - postgres
     networks:
       - back-tier
     ports:
       - '80:80'
     restart: on-failure
     volumes:
-      - static-files:/usr/share/nginx/html/static
-      - media-files:/usr/share/nginx/html/media
+      - static:/usr/share/nginx/html/static
+      - media:/usr/share/nginx/html/media
 
 #  portainer:
 #    image: portainer/portainer-ce:latest
@@ -61,6 +61,6 @@ networks:
 
 
 volumes:
-  db-data: {}
-  static-files: {}
-  media-files: {}
+  db: {}
+  static: {}
+  media: {}
