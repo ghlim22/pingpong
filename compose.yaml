@@ -1,9 +1,9 @@
 name: pingpong
 
 services:
-  app:
-    build: ./django
-    container_name: django
+  app-server:
+    build: ./app-server
+    container_name: app-server
     depends_on:
       db:
         condition: service_healthy
@@ -17,8 +17,8 @@ services:
       - media-files:/usr/src/app/media-files
 
   database:
-    build: ./postgres
-    container_name: postgres
+    build: ./database
+    container_name: database
     env_file:
       - ./.env
     networks:
@@ -28,9 +28,9 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
-  server:
-    build: ./nginx
-    container_name: nginx
+  web-server:
+    build: ./web-server
+    container_name: web-server
     depends_on:
       - app
       - db
