@@ -1,4 +1,4 @@
 # Pingpong
 
 ## System structure
-![pingpong-structure drawio (3)](https://github.com/user-attachments/assets/176331e9-4fd4-41a7-8ca3-400515e49125)
+![pingpong-structure2 drawio(1)](https://github.com/user-attachments/assets/c0741bc0-d4b5-4788-b413-4e9501fe6ee2)
