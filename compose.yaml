@@ -5,7 +5,7 @@ services:
     build: ./apps/backend
     container_name: backend
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
     env_file:
       - ./.env
@@ -13,8 +13,8 @@ services:
       - back-tier
     restart: on-failure
     volumes:
-      - static-files:/usr/src/app/static-files
-      - media-files:/usr/src/app/media-files
+      - static:/usr/src/app/static-files
+      - media:/usr/src/app/media-files
 
   postgres:
     build: ./apps/postgres
@@ -32,8 +32,10 @@ services:
     build: ./apps/nginx
     container_name: nginx
     depends_on:
-      - backend
-      - postgres
+      backend:
+        condition: service_started
+      postgres:
+        condition: service_healthy
     networks:
       - back-tier
     ports:
