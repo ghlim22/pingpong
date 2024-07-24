@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.9.0
+
 FROM python:3
 
 EXPOSE 8000
