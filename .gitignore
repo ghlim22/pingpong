@@ -6,7 +6,10 @@ pyvenv.cfg
 # django
 db.sqlite3
 
+# credentials
 .env
+*.pem
+*.key
 
 mediafiles/
 

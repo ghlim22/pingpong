@@ -39,7 +39,7 @@ services:
     networks:
       - back-tier
     ports:
-      - '80:80'
+      - '443:443'
     restart: on-failure
     volumes:
       - static:/usr/share/nginx/html/static

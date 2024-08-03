@@ -2,7 +2,7 @@
 
 FROM python:3
 
-EXPOSE 8000
+EXPOSE 443
 
 WORKDIR /usr/src/app
 
