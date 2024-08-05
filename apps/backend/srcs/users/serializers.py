@@ -41,7 +41,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         return user
 
 
-class SingInSerializer(serializers.Serializer):
+class SignInSerializer(serializers.Serializer):
     email = serializers.CharField(required=True)
     password = serializers.CharField(write_only=True, required=True)
 
