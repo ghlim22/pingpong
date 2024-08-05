@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
@@ -38,3 +39,15 @@ class SignUpSerializer(serializers.ModelSerializer):
         )
         token = Token.objects.create(user=user)
         return user
+
+
+class SingInSerializer(serializers.Serializer):
+    email = serializers.CharField(required=True)
+    password = serializers.CharField(write_only=True, required=True)
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user:
+            token = Token.objects.get(user=user)
+            return token
+        raise serializers.ValidationError({"error": "Unable to sign in with provided credentials."})
