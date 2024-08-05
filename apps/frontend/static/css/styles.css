@@ -1,0 +1,376 @@
+@import "reset.css";
+
+.rubik-scribble-regular {
+	font-family: "Rubik Scribble", system-ui;
+	font-weight: 400;
+	font-style: normal;
+}
+
+.pangolin-regular {
+	font-family: "Pangolin", cursive;
+	font-weight: 400;
+	font-style: normal;
+}
+
+.kirang-haerang-regular {
+	font-family: "Kirang Haerang", system-ui;
+	font-weight: 400;
+	font-style: normal;
+  }
+
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	font-family: "Pangolin", "Kirang Haerang", cursive;
+}
+
+#app {
+	display: flex;
+	flex-direction: row;
+}
+
+#left-side {
+	width: 20vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+#left-side * {
+	margin-left: 15px;
+}
+
+#left-side > :first-child {
+	margin-top: 15px;
+}
+
+#left-side > :last-child {
+	margin-bottom: 15px;
+}
+
+#center {
+	width: 60vw;
+	height: 100vh;
+	/*background-color: rgb(170, 170, 170);*/
+	display: flex;
+	flex-direction: column;
+}
+
+#right-side {
+	width: 20vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-end;
+}
+
+#right-side * {
+	margin-right: 15px;
+}
+
+#right-side > :first-child {
+	margin-top: 15px;
+}
+
+#right-side > :last-child {
+	margin-bottom: 15px;
+}
+
+#top {
+	width: inherit;
+	height: 12vh;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 36px;
+	color: #7777FF;
+}
+
+#main {
+	height: 76vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+#bottom {
+	width: inherit;
+	height: 12vh;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	font-size: 48px;
+	color: blue;
+}
+
+#above {
+	display: none;
+	width: 100vw;
+	height: 100vh;
+}
+
+#above.above-on {
+	display: flex;
+	position: absolute;
+	z-index: 999;
+	background-color: #FFFFFF;
+}
+
+.match-1vs1 {
+	width: 50vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.035);
+	font-size: 48px;
+	color: #9999FF;
+}
+
+.match-1vs1 .waiting {
+	background-color: #ccccff;
+}
+
+.match-1vs1 span {
+	padding-top: 20px;
+}
+
+.logo-big {
+	font-size: 128px;
+	font-family: "Rubik Scribble", system-ui;
+	font-weight: 600;
+	color: blue;
+}
+
+.m-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	margin-top: 10px;
+	cursor: pointer;
+	width: 265px;
+	height: 98px;
+}
+
+.m-button img {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: -1;
+}
+
+.m-button span {
+	/*position: absolute;*/
+	/*top: 35px;*/
+	/*z-index: -1;*/
+	color: #444AFF;
+	font-size: 48px;
+	text-align: center;
+}
+
+.m-button:hover span {
+	color: #EEEEFF;
+	/*transition: ease-in-out 0.1s;*/
+}
+
+.m-button#multi img{
+	transform: rotate(180deg);
+}
+
+.m-button#tournament span{
+	font-size: 40px;
+}
+
+.text-xlarge-48 {
+	font-size: 48px;
+	color: blue;
+}
+
+.t-button {
+	font-size: 48px;
+	color: #9999FF;
+	cursor: pointer;
+}
+
+.t-button:hover {
+	color: #7777FF;
+}
+
+.type-info {
+	border: none;
+	border-bottom: 1.5px solid #9999FF;
+	font-size: 48px;
+	text-align: center;
+	width: 30%;
+	padding-top: 25px;
+	caret-color: #9999FF;
+}
+
+.type-info::placeholder {
+	font-size: 36px;
+	color: #9999FF;
+	text-align: center;
+}
+
+.type-nickname {
+	border: none;
+	border-bottom: 2px solid #9999FF;
+	font-size: 48px;
+	text-align: center;
+	width: 50%;
+	padding-top: 50px;
+	caret-color: #9999FF;
+}
+
+.type-nickname::placeholder {
+	font-size: 36px;
+	color: #9999FF;
+	text-align: center;
+}
+
+#setNick {
+	cursor: pointer;
+	padding-top: 25px;
+}
+
+.image-profile-large {
+	width: 250px;
+	height: 250px;
+	margin-top: 25px;
+	border-radius: 70%;
+	overflow: hidden;
+}
+
+.image-profile-small {
+	width: 64px;
+	height: 64px;
+	/*margin-top: 25px;*/
+	border-radius: 70%;
+	overflow: hidden;
+}
+
+.image-profile-middle {
+	width: 180px;
+	height: 180px;
+	/*margin-top: 25px;*/
+	border-radius: 70%;
+	overflow: hidden;
+}
+
+.image-profile-large img,
+.image-profile-middle img,
+.image-profile-small img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+#setImage {
+	display: flex;
+	justify-content: space-between;
+	width: 250px;
+}
+
+#chooseFile {
+	visibility: hidden;
+}
+
+.p-button-current {
+	border-radius: 50px;
+	border: 4px solid #ccccff;
+}
+
+.p-button-user {
+	border-radius: 50px;
+	background-color: #EEEEFF;
+	color: #7777FF;
+}
+
+.p-button-chat {
+	width: 280px;
+	height: 80px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	border-radius: 50px;
+	border: 4px solid #ccccff;
+	font-size: 36px;
+}
+
+.p-button-chat img{
+	margin-left: 20px;
+}
+
+.p-button-chat span{
+	margin-left: 50px;
+}
+
+#left-side.ingame,
+#right-side.ingame {
+	align-content: center;
+	justify-content: center;
+}
+
+#left-side.ingame *,
+#right-side.ingame * {
+	margin: 0;
+}
+
+#left-side.ingame div,
+#right-side.ingame div {
+	width: 20vw;
+	height: 76vh;
+	background-color: #ccccff;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+#right-side.ingame div img {
+	padding: 20px;
+	cursor: pointer;
+}
+
+#main.ingame {
+	background-color: #9999FF;
+}
+
+.user-profile-1p,
+.user-profile-2p {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.user-profile-1p span,
+.user-profile-2p span {
+	padding: 10px;
+}
+
+.result-1vs1 {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	font-size: 64px;
+	color: blue;
+}
+
+.result-1vs1 span:nth-of-type(2) {
+	font-size: 48px;
+	color: black;
+	padding: 20px;
+}

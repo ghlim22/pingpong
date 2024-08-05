@@ -12,9 +12,9 @@ services:
     networks:
       - back-tier
     restart: on-failure
-    volumes:
-      - static:/usr/src/app/static-files
-      - media:/usr/src/app/media-files
+#    volumes:
+#      - static:/usr/src/app/static-files
+#      - media:/usr/src/app/media-files
 
   postgres:
     build: ./apps/postgres
@@ -42,8 +42,8 @@ services:
       - '443:443'
     restart: on-failure
     volumes:
-      - static:/usr/share/nginx/html/static
-      - media:/usr/share/nginx/html/media
+      - ./apps/frontend/static:/usr/share/nginx/html/static
+      - ./apps/frontend/media:/usr/share/nginx/html/media
 
 #  portainer:
 #    image: portainer/portainer-ce:latest
@@ -64,5 +64,3 @@ networks:
 
 volumes:
   db: {}
-  static: {}
-  media: {}
