@@ -12,9 +12,9 @@ services:
     networks:
       - back-tier
     restart: on-failure
-#    volumes:
-#      - static:/usr/src/app/static-files
-#      - media:/usr/src/app/media-files
+    volumes:
+#      - static:/usr/src/app/staticfiles
+#      - media:/usr/src/app/mediafiles
 
   postgres:
     build: ./apps/postgres
