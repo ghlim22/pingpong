@@ -1,9 +1,9 @@
-import { loginPage, homePage, pong1VS1Page } from '../index.js';
+import { loginPage, homePage, pong1VS1Page, basePath } from '../index.js';
 
 const routes = {
-	'/login': 					loginPage,
-	'/': 						homePage,
-	'/1vs1': 					pong1VS1Page,
+	[basePath + 'login']: 		loginPage,
+	[basePath]: 				homePage,
+	[basePath + '1vs1']: 		pong1VS1Page,
 	//'/profile/edit-profile': 	profileEditPage,
 	//'/chat': 					chatPage,
 	//'/multi': 					pongMultiPage,
@@ -25,8 +25,7 @@ export function parseUrl(url) {
 				if (routeParts[i][j].startsWith(':')) {
 					const paramName = routeParts[i][j].substring(1);
 					params[paramName] = pathParts[j];
-				}
-				else if (routeParts[i][j] !== pathParts[j]) {
+				} else if (routeParts[i][j] !== pathParts[j]) {
 					isMatch = false;
 					break;
 				}
@@ -41,12 +40,33 @@ export function parseUrl(url) {
 
 export function navigate(parsed) {
 	const currentPath = window.location.pathname;
+
+console.log(basePath);
+console.log(parsed.route);
+console.log(routes[parsed.route]);
+
 	const page = routes[parsed.route] || notFoundPage;
-	if (currentPath != parsed.path) {
+	if (currentPath !== parsed.path) {
 		window.history.pushState({}, parsed.path, window.location.origin + parsed.path);
 	}
 	if (parsed.isParams)
 		page(parsed.params);
 	else
 		page();
+}
+
+function notFoundPage() {
+	const above = document.getElementById('above');
+	const left = document.getElementById('left-side');
+	const right = document.getElementById('right-side');
+	const top = document.getElementById('top');
+	const main = document.getElementById('main');
+	const bottom = document.getElementById('bottom');
+
+	above.innerHTML = "";
+	left.innerHTML = "";
+	right.innerHTML = "";
+	top.innerHTML = "";
+	main.innerHTML = "<h1>404: not found</h1>";
+	bottom.innerHTML = "";
 }

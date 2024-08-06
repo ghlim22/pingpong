@@ -3,7 +3,7 @@ import { appState, TUserInfo } from '../index.js';
 'use strict';
 
 async function fetchTFold() {
-    const templateHTML = await fetch('/components/tFold.html');
+    const templateHTML = await fetch('./components/tFold.html');
     const textHTMLTemplate = await templateHTML.text();
     return new DOMParser().parseFromString(textHTMLTemplate, 'text/html').querySelector('template');
 }

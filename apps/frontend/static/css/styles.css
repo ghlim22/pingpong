@@ -207,12 +207,24 @@ body {
 	color: #7777FF;
 }
 
+#form-join {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 50vw;
+	align-items: center;
+}
+
+#form-join button {
+	background: none;
+}
+
 .type-info {
 	border: none;
 	border-bottom: 1.5px solid #9999FF;
-	font-size: 48px;
+	font-size: 40px;
 	text-align: center;
-	width: 30%;
+	/*width: 50%;*/
 	padding-top: 25px;
 	caret-color: #9999FF;
 }

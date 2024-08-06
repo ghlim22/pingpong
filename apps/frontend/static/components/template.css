@@ -1,4 +1,4 @@
-@import "/css/styles.css";
+@import "../css/styles.css";
 
 .t-user-info__container {
 	width: 280px;

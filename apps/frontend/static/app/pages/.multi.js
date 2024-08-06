@@ -1,4 +1,4 @@
-import { appState, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, basePath } from '../../index.js';
 const matchHTML = `
 <div class="match-multi">
 	<div class="image-profile-middle">
@@ -131,7 +131,7 @@ function handleQuitGame() {
 	main.classList.remove('ingame');
 	top.innerHTML = "";
 	bottom.innerHTML = "";
-	navigate(parseUrl('/'))
+	navigate(parseUrl(basePath))
 }
 
 function gameResultPage() {

@@ -4,7 +4,7 @@ import { TUserInfo } from '../index.js';
 'use strict';
 
 async function fetchTInvite() {
-    const templateHTML = await fetch('/components/tInvite.html');
+    const templateHTML = await fetch('./components/tInvite.html');
     const textHTMLTemplate = await templateHTML.text();
     return new DOMParser().parseFromString(textHTMLTemplate, 'text/html').querySelector('template');
 }
