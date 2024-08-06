@@ -5,7 +5,7 @@ LABEL authors="lim"
 
 EXPOSE 443
 
-COPY tools/default.conf ./etc/nginx/conf.d/.
+#COPY tools/default.conf ./etc/nginx/conf.d/.
 
 RUN <<EOF
 mkdir /etc/nginx/ssl

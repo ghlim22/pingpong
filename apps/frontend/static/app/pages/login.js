@@ -59,7 +59,7 @@ function handleJoin() {
 	document.getElementById('join').addEventListener('submit', submitJoin);
 }
 
-export async function submitJoin(event) {
+export function submitJoin(event) {
 	if (!(event.target.matches('[data-link]'))) {
 		return ;
 	}
@@ -92,7 +92,7 @@ export async function submitJoin(event) {
 //	console.log((data));
 //	console.log(JSON.stringify(data));
 
-	fetch('api/users/signup', {
+	fetch('api/users/signup/', {
 		method: 'POST',
 		headers: {
 		'Content-Type': 'application/json'
