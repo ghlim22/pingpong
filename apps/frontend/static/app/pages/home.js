@@ -1,17 +1,17 @@
-import { appState, TUserInfo, TInvite, TFold, navigate, parseUrl, pong1VS1Page } from '../../index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, pong1VS1Page } from '../../index.js';
 const mainHTML = `
 <span class="logo-big">PONG</span>
 <div class="m-button" id="1vs1">
 	<span>1vs1</span>
-	<img src="assets/cloud-origin.svg">
+	<img src="./assets/cloud-origin.svg">
 </div>
 <div class="m-button" id="multi">
 	<span>multi</span>
-	<img src="assets/cloud-origin.svg">
+	<img src="./assets/cloud-origin.svg">
 </div>
 <div class="m-button" id="tournament">
 	<span>tournament</span>
-	<img src="assets/cloud-origin.svg">
+	<img src="./assets/cloud-origin.svg">
 </div>
 `;
 
@@ -23,7 +23,7 @@ const leftSideHTML = `
 
 const rightSideHTML = `
 <div class="p-button-chat">
-	<img src="assets/s-button-message.svg">
+	<img src="./assets/s-button-message.svg">
 	<span>chat</span>
 </div>
 <t-fold class="friend"></t-fold>
@@ -31,7 +31,7 @@ const rightSideHTML = `
 
 export function homePage() {
 	if (!appState.isLoggedIn) {
-		navigate(parseUrl('/login'));
+		navigate(parseUrl(basePath + 'login'));
 		return;
 	}
 	document.getElementById('main').innerHTML = mainHTML;
@@ -45,5 +45,5 @@ export function homePage() {
 }
 
 function handle1vs1() {
-	navigate(parseUrl('/1vs1'))
+	navigate(parseUrl(basePath + '1vs1'))
 }

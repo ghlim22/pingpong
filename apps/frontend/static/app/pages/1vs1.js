@@ -1,8 +1,8 @@
-import { appState, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
 const matchHTML = `
 <div class="match-1vs1">
 	<div class="image-profile-middle">
-		<img src="assets/default-picture.png">
+		<img src="apps/frontend/static/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 </div>
@@ -20,7 +20,7 @@ const leftSideHTML = `
 
 const rightSideHTML = `
 <div>
-	<img src="assets/g-button-quit.svg">
+	<img src="apps/frontend/static/assets/g-button-quit.svg">
 </div>
 `;
 
@@ -28,12 +28,12 @@ const topHTML = `
 <div class="user-profile-1p">
 	<span>nickname</span>
 	<div class="image-profile-small">
-		<img src="assets/default-picture.png">
+		<img src="apps/frontend/static/assets/default-picture.png">
 	</div>
 </div>
 <div class="user-profile-2p">
 	<div class="image-profile-small">
-		<img src="assets/default-picture.png">
+		<img src="apps/frontend/static/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 </div>
@@ -48,7 +48,7 @@ const resultHTML = `
 <div class="result-1vs1">
 	<span>WINNER</span>
 	<div class="image-profile-large">
-		<img src="assets/default-picture.png">
+		<img src="apps/frontend/static/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 	<span>0 : 0</span>
@@ -110,7 +110,7 @@ function handleQuitGame() {
 	main.classList.remove('ingame');
 	top.innerHTML = "";
 	bottom.innerHTML = "";
-	navigate(parseUrl('/'))
+	navigate(parseUrl(basePath))
 }
 
 function gameResultPage() {

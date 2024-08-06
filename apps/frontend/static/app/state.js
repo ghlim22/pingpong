@@ -6,3 +6,5 @@ export let appState = {
 	connect:	8,
 	friend:		4,
 };
+
+export const basePath = window.location.pathname;
