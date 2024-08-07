@@ -41,16 +41,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         if data["password"] != data["confirm_password"]:
             raise serializers.ValidationError({"confirm_password": "Password didn't match"})
         del data["confirm_password"]
-        # if len(data["password"]) < 8:
-        #     raise serializers.ValidationError({"password": "Password must be at least 8 characters"})
-        # try:
-        #     validate_password(data["password"])
-        # except ValidationError:
-        #     raise serializers.ValidationError({"password": "Invalid password"})
         return data
-
-    # def validate_password(self, password):
-    #     return password
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
