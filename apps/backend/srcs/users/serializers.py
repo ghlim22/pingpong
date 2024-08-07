@@ -7,6 +7,7 @@ from rest_framework.validators import UniqueValidator
 
 # Create your tests here.
 from .models import CustomUser
+from .validators import NicknameValidator
 
 
 class SignUpSerializer(serializers.ModelSerializer):
@@ -25,7 +26,7 @@ class SignUpSerializer(serializers.ModelSerializer):
     )
     nickname = serializers.CharField(
         required=True,
-        validators=[UniqueValidator(queryset=CustomUser.objects.all())],
+        validators=[UniqueValidator(queryset=CustomUser.objects.all()), NicknameValidator()],
     )
     picture = serializers.ImageField(
         write_only=True,
