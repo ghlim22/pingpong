@@ -9,7 +9,7 @@ from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
     """
-    Email and password are required. Other fields are optional.
+    Email, password, and nickname are required. Other fields are optional.
     """
 
     username = None

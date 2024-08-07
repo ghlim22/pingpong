@@ -19,5 +19,5 @@ class SignInView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        token = serializer.validated_data  # Return value of serializer.validate()
-        return Response({"token": token.key}, status=status.HTTP_200_OK)
+        data = serializer.validated_data  # Return value of serializer.validate()
+        return Response(data, status=status.HTTP_200_OK)

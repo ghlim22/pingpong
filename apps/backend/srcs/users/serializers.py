@@ -60,7 +60,7 @@ class SignInSerializer(serializers.Serializer):
 
     def validate(self, data):
         user = authenticate(**data)
-        if user:
+        if user is not None:
             token = Token.objects.get(user=user)
-            return token
+            return {"email": user.email, "nickname": user.nickname, "token": token.key}
         raise serializers.ValidationError({"error": "Unable to sign in with provided credentials."})
