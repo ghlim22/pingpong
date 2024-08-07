@@ -5,6 +5,7 @@ pyvenv.cfg
 
 # django
 db.sqlite3
+general.log
 
 # credentials
 .env
