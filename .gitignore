@@ -1,0 +1,21 @@
+# python
+venv/
+__pycache__/
+pyvenv.cfg
+
+# django
+db.sqlite3
+general.log
+
+# credentials
+.env
+*.pem
+*.key
+
+mediafiles/
+
+# mac
+.DS_Store
+
+# jetbrains
+.idea/
