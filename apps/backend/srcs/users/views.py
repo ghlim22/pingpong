@@ -9,6 +9,9 @@ from .serializers import UserSignInSerializer, UserSignUpSerializer
 
 
 class UserSignUpAPIView(generics.CreateAPIView):
+    permission_classes = [
+        permissions.AllowAny,
+    ]
     queryset = CustomUser.objects.all()
     serializer_class = UserSignUpSerializer
 
