@@ -52,7 +52,7 @@ class UserSignUpSerializer(serializers.ModelSerializer):
             nickname=validated_data["nickname"],
             picture=validated_data["picture"],
         )
-        Token.objects.create(user=user)  # Generate a DRF default token for given user.
+        # Token.objects.create(user=user)  # Generate a DRF default token for given user.
         return user
 
 
