@@ -13,6 +13,7 @@ from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
     """
+    User model with email as identifier.
     Email, password, and nickname are required. Other fields are optional.
     """
 

@@ -67,7 +67,7 @@ class UserSignInSerializer(serializers.Serializer):
         if not user.is_active:
             raise serializers.ValidationError({"error": "User account is disabled."})
         if user.is_superuser:
-            raise serializers.ValidationError({"error": "Superuser account is disabled."})
+            raise serializers.ValidationError({"error": "Sign in with superuser account is disabled."})
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
         token = Token.objects.get(user=user)
