@@ -1,6 +1,10 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import gettext as _
+from rest_framework.authtoken.models import Token
 
 from .managers import CustomUserManager
 
@@ -13,9 +17,9 @@ class CustomUser(AbstractUser):
     """
 
     username = None
-    email = models.EmailField(_("Email Address"), unique=True, help_text=_("Required."))
     first_name = None
     last_name = None
+    email = models.EmailField(_("Email Address"), unique=True, help_text=_("Required."))
     nickname = models.CharField(_("Nickname"), unique=True, max_length=8, help_text=_("Required."))
     picture = models.ImageField(
         _("Picture"), default="users/profile-default.png", upload_to="users/", help_text=_("Optional.")
@@ -30,3 +34,12 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    @staticmethod
+    @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+    def create_default_auth_token(sender, instance=None, created=False, **kwargs):
+        """
+        Generate a default authentication token for each newly created user.
+        """
+        if created:
+            Token.objects.create(user=instance)
