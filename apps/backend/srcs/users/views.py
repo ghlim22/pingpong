@@ -3,18 +3,18 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from .models import CustomUser
-from .serializers import SignInSerializer, SignUpSerializer
+from .serializers import UserSignInSerializer, UserSignUpSerializer
 
 # Create your views here.
 
 
-class SignUpView(generics.CreateAPIView):
+class UserSignUpAPIView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
-    serializer_class = SignUpSerializer
+    serializer_class = UserSignUpSerializer
 
 
-class SignInView(generics.GenericAPIView):
-    serializer_class = SignInSerializer
+class UserSignInAPIView(generics.GenericAPIView):
+    serializer_class = UserSignInSerializer
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)

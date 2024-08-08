@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
@@ -10,7 +11,7 @@ from .models import CustomUser
 from .validators import NicknameValidator
 
 
-class SignUpSerializer(serializers.ModelSerializer):
+class UserSignUpSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
         validators=[UniqueValidator(queryset=CustomUser.objects.all())],
@@ -55,13 +56,19 @@ class SignUpSerializer(serializers.ModelSerializer):
         return user
 
 
-class SignInSerializer(serializers.Serializer):
+class UserSignInSerializer(serializers.Serializer):
     email = serializers.CharField(required=True)
     password = serializers.CharField(write_only=True, required=True)
 
     def validate(self, data):
         user = authenticate(**data)
-        if user is not None:
-            token = Token.objects.get(user=user)
-            return {"email": user.email, "nickname": user.nickname, "token": token.key}
-        raise serializers.ValidationError({"error": "Unable to sign in with provided credentials."})
+        if user is None:
+            raise serializers.ValidationError({"error": "Unable to sign in with provided credentials."})
+        if not user.is_active:
+            raise serializers.ValidationError({"error": "User account is disabled."})
+        if user.is_superuser:
+            raise serializers.ValidationError({"error": "Superuser account is disabled."})
+        user.last_login = timezone.now()
+        user.save(update_fields=["last_login"])
+        token = Token.objects.get(user=user)
+        return {"email": user.email, "nickname": user.nickname, "token": token.key}
