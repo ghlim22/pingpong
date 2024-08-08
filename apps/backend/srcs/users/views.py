@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import generics, status
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
 from .models import CustomUser
@@ -14,6 +14,9 @@ class UserSignUpAPIView(generics.CreateAPIView):
 
 
 class UserSignInAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.AllowAny,
+    ]
     serializer_class = UserSignInSerializer
 
     def post(self, request):
