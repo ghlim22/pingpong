@@ -71,4 +71,4 @@ class UserSignInSerializer(serializers.Serializer):
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
         token = Token.objects.get(user=user)
-        return {"email": user.email, "nickname": user.nickname, "token": token.key}
+        return {"email": user.email, "nickname": user.nickname, "picture": user.picture.url, "token": token.key}
