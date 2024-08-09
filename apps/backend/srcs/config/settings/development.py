@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "drf_api_logger",
-    "drf_yasg",
+    "drf_spectacular",
     "users",
 ]
 
@@ -149,7 +149,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
-    ]
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 LOGGING = {
@@ -175,4 +176,12 @@ LOGGING = {
             "style": "{",
         }
     },
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "FT_TRANSCENDENCE SERVER API",
+    "DESCRIPTION": "A ping pong game",
+    "VERSION": "0.0.1",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
 }

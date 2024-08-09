@@ -1,9 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
 from django.utils import timezone
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
@@ -37,7 +34,7 @@ class UserSignUpSerializer(serializers.ModelSerializer):
         max_length=8,
     )
     picture = serializers.ImageField(
-        required=False,
+        required=True,
         write_only=True,
     )
 
