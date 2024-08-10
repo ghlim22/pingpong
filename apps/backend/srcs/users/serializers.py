@@ -74,19 +74,77 @@ class UserSignInSerializer(serializers.Serializer):
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
         token = Token.objects.get(user=user)
-        return {"email": user.email, "nickname": user.nickname, "picture": user.picture.url, "token": token.key}
+        return {
+            "pk": user.pk,
+            "email": user.email,
+            "nickname": user.nickname,
+            "picture": user.picture.url,
+            "token": token.key,
+        }
 
 
-class UserProfileUpdateSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+        validators=[
+            UniqueValidator(queryset=CustomUser.objects.all()),
+        ],
+        min_length=3,
+    )
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        validators=[
+            validate_password,
+        ],
+        min_length=8,
+    )
+    confirm_password = serializers.CharField(
+        write_only=True,
+        required=True,
+        min_length=8,
+    )
     nickname = serializers.CharField(
-        validators=(
-            UniqueValidator(queryset=CustomUser.objects.all(queryset=CustomUser.objects.all())),
+        required=True,
+        validators=[
+            UniqueValidator(queryset=CustomUser.objects.all()),
             NicknameValidator(),
-        ),
+        ],
         min_length=2,
         max_length=8,
+    )
+    picture = serializers.ImageField(
+        required=True,
     )
 
     class Meta:
         model = CustomUser
-        fields = ("nickname", "picture")
+        fields = [
+            "pk",
+            "email",
+            "password",
+            "confirm_password",
+            "nickname",
+            "picture",
+        ]
+        read_only_fields = [
+            "pk",
+        ]
+
+    def validate(self, data):
+        if data["password"] != data["confirm_password"]:
+            raise serializers.ValidationError({"confirm_password": "Password didn't match"})
+        del data["confirm_password"]
+        return data
+
+    def create(self, validated_data):
+        return CustomUser.objects.create_user(**validated_data)
+
+    def update(self, instance: CustomUser, validated_data):
+        password = validated_data.pop("password", None)
+        if password is not None:
+            instance.set_password(password)
+        for (key, value) in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance

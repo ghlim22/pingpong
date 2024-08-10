@@ -16,10 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework import routers
 
-from .views import UserSignInAPIView, UserSignUpAPIView
+from .views import (
+    UserAPIViewSet,
+    UserCreateAPIView,
+    UserCurrentAPIView,
+    UserSignInAPIView,
+)
+
+router = routers.SimpleRouter()
+router.register("", UserAPIViewSet)
 
 urlpatterns = [
-    path("signup/", UserSignUpAPIView.as_view()),
+    path("signup/", UserCreateAPIView.as_view()),
     path("signin/", UserSignInAPIView.as_view()),
+    path("current/", UserCurrentAPIView.as_view()),
 ]
+
+urlpatterns += router.urls
