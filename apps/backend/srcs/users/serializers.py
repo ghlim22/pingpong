@@ -75,3 +75,18 @@ class UserSignInSerializer(serializers.Serializer):
         user.save(update_fields=["last_login"])
         token = Token.objects.get(user=user)
         return {"email": user.email, "nickname": user.nickname, "picture": user.picture.url, "token": token.key}
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    nickname = serializers.CharField(
+        validators=(
+            UniqueValidator(queryset=CustomUser.objects.all(queryset=CustomUser.objects.all())),
+            NicknameValidator(),
+        ),
+        min_length=2,
+        max_length=8,
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ("nickname", "picture")

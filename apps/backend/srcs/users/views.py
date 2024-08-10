@@ -7,19 +7,21 @@ from rest_framework import generics, permissions, serializers, status
 from rest_framework.response import Response
 
 from .models import CustomUser
-from .serializers import UserSignInSerializer, UserSignUpSerializer
+from .serializers import (
+    UserProfileUpdateSerializer,
+    UserSignInSerializer,
+    UserSignUpSerializer,
+)
 
 # Create your views here.
 
 
-class UserSignUpAPIView(generics.CreateAPIView):
+class UserCreateAPIView(generics.CreateAPIView):
     """
     Create a new user
     """
 
-    permission_classes = [
-        permissions.AllowAny,
-    ]
+    permission_classes = [permissions.AllowAny]
     queryset = CustomUser.objects.all()
     serializer_class = UserSignUpSerializer
 
@@ -50,3 +52,9 @@ class UserSignInAPIView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data  # Return value of serializer.validate()
         return Response(data, status=status.HTTP_200_OK)
+
+
+class UserProfileUpdateAPIView(generics.UpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserProfileUpdateSerializer
+    queryset = CustomUser.objects.all()
