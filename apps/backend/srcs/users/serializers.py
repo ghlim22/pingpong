@@ -132,8 +132,14 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
+        data.setdefault("password", None)
+        data.setdefault("confirm_password", None)
+        if data["password"] is None:
+            return data
+        if data["confirm_password"] is None:
+            raise serializers.ValidationError({"confirm_password": "This field is required."})
         if data["password"] != data["confirm_password"]:
-            raise serializers.ValidationError({"confirm_password": "Password didn't match"})
+            raise serializers.ValidationError({"confirm_password": "Password didn't match."})
         del data["confirm_password"]
         return data
 

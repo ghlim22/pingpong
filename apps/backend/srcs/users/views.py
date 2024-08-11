@@ -34,12 +34,26 @@ class UserAPIViewSet(viewsets.ModelViewSet):
     create(), retrieve(), list(), update(), partial_update(), delete().
     """
 
+    permission_classes = [
+        permissions.AllowAny,
+    ]
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     # lookup_field = "nickname"
 
+    # def perform_destroy(self, instance):
+    #     setattr(instance, "is_active", False)
+
 
 class UserCurrentAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Performs an action for requesting user himself.
+    Possible actions: Retrieve(GET), Update(PUT), Partial Update(PATCH), and Delete(DELETE).
+    """
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
@@ -53,6 +67,15 @@ class UserCurrentAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = request.user
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        for (key, value) in validated_data.items():
+            if not hasattr(instance, key):
+                raise serializers.ValidationError({key: "User does not have this field."})
+            # Check if the new value is different from the existing value except password.
+            if getattr(instance, key) == value:
+                raise serializers.ValidationError({key: "The new value must be different from the existing value."})
+
         self.perform_update(serializer)
 
         if getattr(instance, "_prefetched_objects_cache", None):
