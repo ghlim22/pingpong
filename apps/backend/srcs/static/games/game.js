@@ -122,7 +122,7 @@ export default function OnlineGame(sock, game_type) {
           if (keyState.up && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({ type: "keyboard", data: "up" }));
           }
-        }, 100); // 100ms마다 반복
+        }, 50); // 100ms마다 반복
       }
     } else if (e.key === "ArrowDown") {
       if (!keyState.down) {
@@ -135,7 +135,7 @@ export default function OnlineGame(sock, game_type) {
           if (keyState.down && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({ type: "keyboard", data: "down" }));
           }
-        }, 100); // 100ms마다 반복
+        }, 50); // 100ms마다 반복
       }
     } else if (e.key === "ArrowLeft") {
       if (!keyState.left) {
@@ -148,7 +148,7 @@ export default function OnlineGame(sock, game_type) {
           if (keyState.left && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({ type: "keyboard", data: "left" }));
           }
-        }, 100); // 100ms마다 반복
+        }, 50); // 100ms마다 반복
       }
     } else if (e.key === "ArrowRight") {
       if (!keyState.right) {
@@ -161,7 +161,7 @@ export default function OnlineGame(sock, game_type) {
           if (keyState.right && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({ type: "keyboard", data: "right" }));
           }
-        }, 100); // 100ms마다 반복
+        }, 50); // 100ms마다 반복
       }
     }
   };

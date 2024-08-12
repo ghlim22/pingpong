@@ -1,18 +1,10 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
+const topHTML = `
+<span class="logo-small">PONG</span>
+`;
+
 const mainHTML = `
-<span class="logo-big">PONG</span>
-<div class="m-button" id="1vs1">
-	<span>1vs1</span>
-	<img src="./assets/cloud-origin.svg">
-</div>
-<div class="m-button" id="multi">
-	<span>multi</span>
-	<img src="./assets/cloud-origin.svg">
-</div>
-<div class="m-button" id="tournament">
-	<span>tournament</span>
-	<img src="./assets/cloud-origin.svg">
-</div>
+<span class="text-xlarge-48">tournament</span>
 `;
 
 const leftSideHTML = `
@@ -29,27 +21,21 @@ const rightSideHTML = `
 <t-fold class="friend"></t-fold>
 `;
 
-export function homePage() {
+export function tournamentPage() {
 	if (!appState.isLoggedIn) {
 		navigate(parseUrl(basePath + 'login'));
 		return;
 	}
-	document.getElementById('top').innerHTML = "";
 	document.getElementById('bottom').innerHTML = "";
+	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('main').innerHTML = mainHTML;
 	document.getElementById('left-side').innerHTML = leftSideHTML;
 	document.getElementById('right-side').innerHTML = rightSideHTML;
 
-	document.getElementById('1vs1').addEventListener('click', () => {
-		navigate(parseUrl(basePath + '1vs1'))
-	});
-	document.getElementById('multi').addEventListener('click', () => {
-		navigate(parseUrl(basePath + 'multi'))
-	});
-	document.getElementById('tournament').addEventListener('click', () => {
-		navigate(parseUrl(basePath + 'tournament'))
-	});
 	document.querySelector('.p-button-chat').addEventListener('click', () => {
 		navigate(parseUrl(basePath + 'chat'))
 	});
+	document.querySelector('.logo-small').addEventListener('click', () => {
+		navigate(parseUrl(basePath));
+	})
 }

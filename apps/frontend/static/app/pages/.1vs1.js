@@ -2,13 +2,13 @@ import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } fro
 const matchHTML = `
 <div class="match-1vs1">
 	<div class="image-profile-middle">
-		<img src="apps/frontend/static/assets/default-picture.png">
+		<img src="./assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 </div>
 <div class="match-1vs1">
 	<div class="image-profile-middle waiting">
-		<img src="">
+		<img src="./assets/default-picture.png">
 	</div>
 	<span>Wait Please</span>
 </div>
@@ -20,7 +20,7 @@ const leftSideHTML = `
 
 const rightSideHTML = `
 <div>
-	<img src="apps/frontend/static/assets/g-button-quit.svg">
+	<img src="./assets/g-button-quit.svg">
 </div>
 `;
 
@@ -28,12 +28,12 @@ const topHTML = `
 <div class="user-profile-1p">
 	<span>nickname</span>
 	<div class="image-profile-small">
-		<img src="apps/frontend/static/assets/default-picture.png">
+		<img src="./assets/default-picture.png">
 	</div>
 </div>
 <div class="user-profile-2p">
 	<div class="image-profile-small">
-		<img src="apps/frontend/static/assets/default-picture.png">
+		<img src="./assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 </div>
@@ -48,7 +48,7 @@ const resultHTML = `
 <div class="result-1vs1">
 	<span>WINNER</span>
 	<div class="image-profile-large">
-		<img src="apps/frontend/static/assets/default-picture.png">
+		<img src="./assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 	<span>0 : 0</span>
@@ -91,7 +91,7 @@ function game1vs1Page() {
 
 	document.querySelector('#right-side.ingame div img').addEventListener('click', handleQuitGame);
 
-	timerId = setTimeout(gameResultPage, 3000);
+	//timerId = setTimeout(gameResultPage, 3000);
 }
 
 function handleQuitGame() {

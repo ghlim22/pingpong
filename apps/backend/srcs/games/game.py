@@ -20,22 +20,22 @@ class Bar:
         self.y = y
 
     def _up(self):
-        self.y = self.y - self.height / 10
+        self.y = self.y - self.height / 8
         if self.y < 0:
             self.y = 0
 
     def _down(self):
-        self.y = self.y + self.height / 10
+        self.y = self.y + self.height / 8
         if self.y > 3 * self.height:
             self.y = 3 * self.height
 
     def _left(self):
-        self.x = self.x - self.width / 10
+        self.x = self.x - self.width / 8
         if self.x < 0:
             self.x = 0
 
     def _right(self):
-        self.x = self.x + self.width / 10
+        self.x = self.x + self.width / 8
         if self.x > 3 * self.width:
             self.x = 3 * self.width
 

@@ -103,10 +103,18 @@ export function pongMultiPage() {
 	if (appState.picture !== null)
 		img.src = appState.picture;
 	nickname.innerHTML = appState.nickname;
-	setTimeout(gamemultiPage, 1000);
+	setTimeout(gameMultiPage, 1000);
+	// jikang2:	임시로 0.5초 뒤에 gameMultiPage() 가 실행되도록 설정해둠.
+	//			위 구문 주석처리하고,
+	//			이 부분에서 gameMultiPage(*MATCH*());
+	//			*MATCH* = multiOperation.js의 match하는 함수,
+	//			ex)	현재 유저의 토큰을 받아서 Multi 대기큐에 넣은 후,
+	//				match 되면 data {현재유저 포지션, 팀원 nick, 팀원 img, 적1 nick, 적1 img, 적2 nick, 적2 img} 반환
+
+	//gameMultiPage(*MATCH*());
 }
 
-function gamemultiPage() {
+function gameMultiPage() {
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -130,7 +138,14 @@ function gamemultiPage() {
 
 	document.querySelector('#right-side.ingame div img').addEventListener('click', handleQuitGame);
 
-	timerId = setTimeout(gameResultPage, 3000);
+	//timerId = setTimeout(gameResultPage, 3000);
+	// jikang2:	임시로 3초 뒤에 gameResultPage() 가 실행되도록 설정해둠.
+	//			위 구문 주석처리하고,
+	//			이 부분에서 gameResultPage(*GAME*());
+	//			이 부분에서 multiOperation.js의 game 함수 실행,
+	//			ex)	game 종료 시 gamelog 를 db에 넣은 후, gameResultPage(승자정보{nick, img});
+
+	//			game 종료 조건 ...
 }
 
 function handleQuitGame() {
@@ -148,7 +163,6 @@ function gameResultPage() {
 	above.classList.add('above-on');
 	if (appState.picture !== null)
 		img.src = appState.picture;
-	console.log(appState);
 	nickname.innerHTML = appState.nickname;
-	//setTimeout(handleQuitGame, 2500);
+	setTimeout(handleQuitGame, 2500);
 }

@@ -1,16 +1,16 @@
-import { loginPage, homePage, pong1VS1Page, basePath } from '../index.js';
+import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, chatPage, basePath } from '../index.js';
 
 const routes = {
-	[basePath + 'login']: 		loginPage,
-	[basePath]: 				homePage,
-	[basePath + '1vs1']: 		pong1VS1Page,
-	//'/profile/edit-profile': 	profileEditPage,
-	//'/chat': 					chatPage,
-	//'/multi': 					pongMultiPage,
-	//'/tournament': 				tournamentPage,
-	//'/profile/:nick': 			profileUserPage,
-	//'/chat/:nick': 				chatUserPage,
-	//'/tournament/:num': 		tournamentRoomPage,
+	[basePath + 'login']:		loginPage,
+	[basePath]:					homePage,
+	[basePath + '1vs1']:			pong1VS1Page,
+	[basePath + 'multi']:			pongMultiPage,
+	[basePath + 'tournament']:		tournamentPage,
+	[basePath + 'chat']:			chatPage,
+	//'/profile/edit-profile':		profileEditPage,
+	//'/profile/:nick':				profileUserPage,
+	//'/chat/:nick':					chatUserPage,
+	//'/tournament/:num':			tournamentRoomPage,
 };
 
 export function parseUrl(url) {
@@ -40,19 +40,18 @@ export function parseUrl(url) {
 
 export function navigate(parsed) {
 	const currentPath = window.location.pathname;
-
-console.log(basePath);
-console.log(parsed.route);
-console.log(routes[parsed.route]);
-
 	const page = routes[parsed.route] || notFoundPage;
 	if (currentPath !== parsed.path) {
 		window.history.pushState({}, parsed.path, window.location.origin + parsed.path);
 	}
-	if (parsed.isParams)
+	if (parsed.isParams) {
+		setClaslistDefault();
 		page(parsed.params);
-	else
+	}
+	else {
+		setClaslistDefault();
 		page();
+	}
 }
 
 function notFoundPage() {
@@ -69,4 +68,19 @@ function notFoundPage() {
 	top.innerHTML = "";
 	main.innerHTML = "<h1>404: not found</h1>";
 	bottom.innerHTML = "";
+}
+
+function setClaslistDefault() {
+	document.getElementById('above').classList.remove('above-on');
+	document.getElementById('left-side').classList.remove('ingame');
+	document.getElementById('right-side').classList.remove('ingame');
+	document.getElementById('top').classList.remove('ingame');
+	document.getElementById('main').classList.remove('ingame');
+	document.getElementById('bottom').classList.remove('ingame');
+	document.getElementById('center').classList.remove('multi');
+	document.getElementById('left-side').classList.remove('multi');
+	document.getElementById('right-side').classList.remove('multi');
+	document.getElementById('top').classList.remove('multi');
+	document.getElementById('main').classList.remove('multi');
+	document.getElementById('bottom').classList.remove('multi');
 }

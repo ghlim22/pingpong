@@ -1,6 +1,6 @@
 //Object appState
 
-import { appState } from './app/state.js';
+import { appState, loginUser } from './app/state.js';
 import { basePath } from './app/state.js';
 
 //class TUserInfo
@@ -10,12 +10,17 @@ import { TFold } from './components/tFold.js';
 
 //function
 import { navigate, parseUrl } from './app/router.js';
-import { loginPage, submitJoin } from './app/pages/login.js';
+import { loginPage } from './app/pages/loginRender.js';
+import { handleSubmit, submitJoin, submitLogin } from './app/pages/loginOperation.js';
 import { homePage } from './app/pages/home.js';
-import { pong1VS1Page } from './app/pages/1vs1.js';
+import { pong1VS1Page } from './app/pages/1vs1Render.js';
+import { pongMultiPage } from './app/pages/multiRender.js';
+import { tournamentPage } from './app/pages/tournament.js';
+import { chatPage } from './app/pages/chat.js';
 
 export {
     appState,
+    loginUser,
     basePath,
     TUserInfo,
     TInvite,
@@ -24,13 +29,18 @@ export {
     parseUrl,
     loginPage,
 	submitJoin,
+	submitLogin,
     homePage,
     pong1VS1Page,
+    pongMultiPage,
+    tournamentPage,
+    chatPage,
 };
 
 
 window.onpopstate = () => {
-	navigate(parseUrl(basePath));
+	//navigate(parseUrl(basePath));
+	navigate(parseUrl(window.location.pathname));
 };
 
 if (document.readyState !== 'loading') {
@@ -41,11 +51,12 @@ if (document.readyState !== 'loading') {
 	});
 }
 
-document.body.addEventListener('submit', submitJoin);
-//	 e => {
-//	if (e.target.matches('[data-link]')) {
-//		e.preventDefault();
-//		console.log("YYYY");
-//		submitJoin(e);
-//	}
-//});
+document.body.addEventListener('submit', handleSubmit);
+
+document.querySelector('.logo-large').addEventListener('click', () => {
+	navigate(parseUrl(basePath));
+});
+
+document.querySelector('.logo-small').addEventListener('click', () => {
+	navigate(parseUrl(basePath));
+});
