@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "drf_api_logger",
     "drf_spectacular",
+    "channels",
+    "games",
     "users",
 ]
 
@@ -84,6 +86,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+
+ASGI_APPLICATION = "config.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -129,7 +133,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static-django/"
+# STATIC_URL = "static-django/"
+STATIC_URL = "static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
@@ -137,7 +142,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-MEDIA_URL = "media-django/"
+MEDIA_URL = "media/"
+# MEDIA_URL = "media-django/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 
@@ -151,6 +157,15 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
 }
 
 LOGGING = {
