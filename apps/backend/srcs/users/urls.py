@@ -22,6 +22,7 @@ from .views import (
     UserAPIViewSet,
     UserCreateAPIView,
     UserCurrentAPIView,
+    UserCurrentFollowAPIView,
     UserSignInAPIView,
 )
 
@@ -32,6 +33,7 @@ urlpatterns = [
     path("signup/", UserCreateAPIView.as_view()),
     path("signin/", UserSignInAPIView.as_view()),
     path("current/", UserCurrentAPIView.as_view()),
+    path("current/follow/<int:pk>/", UserCurrentFollowAPIView.as_view()),
 ]
 
 urlpatterns += router.urls

@@ -126,9 +126,12 @@ class UserSerializer(serializers.ModelSerializer):
             "confirm_password",
             "nickname",
             "picture",
+            "followings",
+            "followers",
         ]
         read_only_fields = [
             "pk",
+            "followings",
         ]
 
     def validate(self, data):
@@ -154,3 +157,14 @@ class UserSerializer(serializers.ModelSerializer):
             setattr(instance, key, value)
         instance.save()
         return instance
+
+
+class UserFollowingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            "followings",
+        ]
+        read_only_fields = [
+            "followings",
+        ]

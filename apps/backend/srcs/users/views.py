@@ -91,6 +91,30 @@ class UserCurrentAPIView(generics.RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class UserCurrentFollowAPIView(generics.GenericAPIView):
+    """
+    GET: returns a list of requesting user's following.
+    POST: follow a user with given id.
+    """
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    queryset = CustomUser.objects.all()
+
+    def follow(self, request, **kwargs):
+        instance: CustomUser = request.user
+        target: CustomUser = self.get_object()
+        if target in instance.followings.all():
+            instance.followings.remove(target)
+        else:
+            instance.followings.add(target)
+        return Response(status=status.HTTP_200_OK)
+
+    def post(self, request, **kwargs):
+        return self.follow(request, kwargs)
+
+
 class UserSignInAPIView(generics.GenericAPIView):
     """
     Login a user
