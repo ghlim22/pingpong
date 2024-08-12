@@ -15,8 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls import static
+from django.conf.urls.static import static
 from django.contrib import admin
+from django.shortcuts import render
 from django.urls import include, path
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -24,11 +25,17 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
+
+def index(request):
+    return render(request, template_name="index.html")
+
+
 urlpatterns = [
+    path("", index, name="index"),
     path("admin/", admin.site.urls),
     path("games/", include("games.urls")),
     path("api/users/", include("users.urls")),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
     urlpatterns += [
