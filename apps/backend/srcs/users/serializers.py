@@ -126,12 +126,12 @@ class UserSerializer(serializers.ModelSerializer):
             "confirm_password",
             "nickname",
             "picture",
-            "followings",
-            "followers",
+            # "followings",
+            # "followers",
         ]
         read_only_fields = [
             "pk",
-            "followings",
+            # "followings",
         ]
 
     def validate(self, data):
