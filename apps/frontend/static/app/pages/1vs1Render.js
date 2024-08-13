@@ -15,7 +15,9 @@ const matchHTML = `
 `;
 
 const mainHTML = `
-
+<div class="in-game">
+	<canvas id="gameCanvas"></canvas>
+</div>
 `;
 
 const leftSideHTML = `
@@ -76,6 +78,8 @@ export function pong1VS1Page() {
 		img.src = appState.picture;
 	nickname.innerHTML = appState.nickname;
 	
+	let data = game_queue("2P");
+	game1vs1Page(game_queue("2P"));
 	// setTimeout(game1vs1Page, 500);
 	// jikang2:	임시로 0.5초 뒤에 game1vs1Page() 가 실행되도록 설정해둠.
 	//			위 구문 주석처리하고,
@@ -83,7 +87,6 @@ export function pong1VS1Page() {
 	//			*MATCH* = 1vs1Operation.js의 match하는 함수,
 	//			ex)	현재 유저의 토큰을 받아서 1vs1 대기큐에 넣은 후,
 	//				match 되면 data {현재유저 포지션, 상대유저 nick, 상대유저 img} 반환
-	game1vs1Page(game_queue("2P"));
 }
 
 function game1vs1Page(data) {
