@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "drf_api_logger",
     "drf_spectacular",
+    "channels",
     "corsheaders",
+    "games",
     "users",
 ]
 
