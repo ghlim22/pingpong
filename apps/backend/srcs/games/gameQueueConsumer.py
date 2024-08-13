@@ -14,7 +14,7 @@ class RankGameRoomConsumer(AsyncWebsocketConsumer):
         self.game_type = self.scope["url_route"]["kwargs"]["type"]
         self.room_group_name = "game_queue"
         logger.info("hihi")
-        self.redis = redis.from_url("redis://localhost")
+        self.redis = redis.from_url("redis://redis")
         self.game_id = str(uuid.uuid4())  # 고유한 game_id 생성
 
         # 방 그룹에 추가

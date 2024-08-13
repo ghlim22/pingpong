@@ -1,7 +1,7 @@
 import OnlineGame from "./game.js";
 
 function init() {
-  let ws = null;
+  let wss = null;
 
   const button2P = document.getElementById('2P');
   const button4P = document.getElementById('4P');
@@ -12,11 +12,11 @@ function init() {
   button2P.addEventListener('click', () => {
     console.log('2P');
     type = '2P';
-    ws = new WebSocket(`ws://localhost:8000/wss/games/rankgames/${type}/`);
-    ws.onmessage = (event) => {
+    wss = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/`);
+    wss.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      const sock = new WebSocket(`ws://localhost:8000/ws/games/start/${data.game_id}/${type}/`);
-      ws.close();
+      const sock = new WebSocket(`wss://localhost/wss/games/start/${data.game_id}/${type}/`);
+      wss.close();
       OnlineGame(sock, type);
       button2P.style.display = 'none';
       button4P.style.display = 'none';
@@ -28,12 +28,12 @@ function init() {
   button4P.addEventListener('click', () => {
     console.log('4P');
     type = '4P';
-    ws = new WebSocket(`ws://localhost:8000/ws/rankgames/${type}/`);
+    wss = new WebSocket(`wss/rankgames/${type}/`);
 
-    ws.onmessage = (event) => {
+    wss.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      const sock = new WebSocket(`ws://localhost:8000/ws/games/start/${data.game_id}/${type}/`);
-      ws.close();
+      const sock = new WebSocket(`wss/games/start/${data.game_id}/${type}/`);
+      wss.close();
       OnlineGame(sock, type);
       button2P.style.display = 'none';
       button4P.style.display = 'none';
@@ -44,12 +44,12 @@ function init() {
   buttonTournament.addEventListener('click', () => {
     console.log('토너먼트');
     type = 'tournament';
-    ws = new WebSocket(`ws://localhost:8000/ws/rankgames/${type}/`);
+    wss = new WebSocket(`wss/rankgames/${type}/`);
 
-    ws.onmessage = (event) => {
+    wss.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      const sock = new WebSocket(`ws://localhost:8000/ws/games/start/${data.game_id}/${type}/`);
-      ws.close();
+      const sock = new WebSocket(`wss/games/start/${data.game_id}/${type}/`);
+      wss.close();
       OnlineGame(sock, type);
       button2P.style.display = 'none';
       button4P.style.display = 'none';

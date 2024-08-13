@@ -18,23 +18,18 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.shortcuts import render
-from django.urls import include, path
+from django.urls import include, path, re_path
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
 
-
-def index(request):
-    return render(request, template_name="index.html")
-
-
 urlpatterns = [
-    path("", index, name="index"),
-    path("admin/", admin.site.urls),
-    path("games/", include("games.urls")),
+    path("api/admin/", admin.site.urls),
+    path("api/games/", include("games.urls")),
     path("api/users/", include("users.urls")),
+    path("wss/games/", include("games.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

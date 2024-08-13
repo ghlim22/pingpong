@@ -12,7 +12,7 @@ function init() {
   button2P.addEventListener('click', () => {
     console.log('2P');
     type = '2P';
-    ws = new WebSocket(`ws://localhost:8000/ws/rankgames/${type}/`);
+    ws = new WebSocket(`ws://localhost:8000/wss/games/rankgames/${type}/`);
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       const sock = new WebSocket(`ws://localhost:8000/ws/games/start/${data.game_id}/${type}/`);
