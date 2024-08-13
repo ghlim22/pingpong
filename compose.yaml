@@ -52,6 +52,13 @@ services:
       - back-tier
     restart: on-failure
 
+#  daphne:
+#    build: ./apps/daphne
+#    container_name: daphne
+#    networks:
+#      - back-tier
+#    restart: on-failure
+
 #  portainer:
 #    image: portainer/portainer-ce:latest
 #    container_name: portainer

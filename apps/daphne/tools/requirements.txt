@@ -15,14 +15,12 @@ django-cors-headers==4.4.0
 djangorestframework==3.15.2
 drf-api-logger==1.1.16
 drf-spectacular==0.27.2
-gunicorn==22.0.0
 hyperlink==21.0.0
 idna==3.7
 incremental==24.7.2
 msgpack==1.0.8
 numpy==2.0.1
 pillow==10.4.0
-psycopg2-binary==2.9.9
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
 pycparser==2.22
@@ -35,5 +33,4 @@ tomli==2.0.1
 Twisted==24.3.0
 txaio==23.1.1
 typing_extensions==4.12.2
-uvicorn[standard]
 zope.interface==6.4.post2
