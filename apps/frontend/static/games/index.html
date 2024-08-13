@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    {% load static %}
     <meta charset="utf-8"/>
     <title>Chat Rooms</title>
     <style>
+        .game-mode {
+            position: relative;
+            height: 90vh;
+            width: 98vw;
+        }
+
         .in-game {
             position: relative;
             height: 90vh;
@@ -33,7 +38,7 @@
         <div class="in-game">
             <canvas id="gameCanvas"></canvas>
         </div>
-        <script type="module" src="static/games/main.js"></script>
+        <script type="module" src="./main.js"></script>
     </div>
 </body>
 </html>
