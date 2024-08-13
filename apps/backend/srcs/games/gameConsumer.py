@@ -23,7 +23,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.type = self.scope["url_route"]["kwargs"]["type"]
         self.game_group = f"game_{self.game_id}"
         self.my_match = 1
-        self.redis = redis.from_url("redis://localhost")
+        self.redis = redis.from_url("redis://redis")
         max = 2 if self.type == "2P" else 4
 
         await self.channel_layer.group_add(self.game_group, self.channel_name)
