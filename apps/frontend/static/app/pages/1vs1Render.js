@@ -1,4 +1,5 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
+import { game_queue, play_game } from './1vs1Operation.js'
 const matchHTML = `
 <div class="match-1vs1">
 	<div class="image-profile-middle">
@@ -77,9 +78,15 @@ export function pong1VS1Page() {
 	if (appState.picture !== null)
 		img.src = appState.picture;
 	nickname.innerHTML = appState.nickname;
-	
-	let data = game_queue("2P");
-	game1vs1Page(game_queue("2P"));
+	game_queue('2P')
+    .then((data) => {
+      console.log('Received data:', data);
+
+      game1vs1Page(data);
+    })
+    .catch((error) => {
+      console.error('Error fetching game queue:', error);
+    });
 	// setTimeout(game1vs1Page, 500);
 	// jikang2:	임시로 0.5초 뒤에 game1vs1Page() 가 실행되도록 설정해둠.
 	//			위 구문 주석처리하고,
@@ -109,8 +116,15 @@ function game1vs1Page(data) {
 	bottom.innerHTML = bottomHTML;
 
 	//document.querySelector('#right-side.ingame div img').addEventListener('click', handleQuitGame);
+	play_game(data, '2P')
+    .then((data) => {
+      console.log('Received data:', data);
 
-	gameResultPage(play_game(data, "2P"));
+      gameResultPage(data);
+    })
+    .catch((error) => {
+      console.error('Error fetching game queue:', error);
+    });
 	// timerId = setTimeout(gameResultPage, 3000);
 	// jikang2:	임시로 3초 뒤에 gameResultPage() 가 실행되도록 설정해둠.
 	//			위 구문 주석처리하고,

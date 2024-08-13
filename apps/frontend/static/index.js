@@ -52,11 +52,3 @@ if (document.readyState !== 'loading') {
 }
 
 document.body.addEventListener('submit', handleSubmit);
-
-document.querySelector('.logo-large').addEventListener('click', () => {
-	navigate(parseUrl(basePath));
-});
-
-document.querySelector('.logo-small').addEventListener('click', () => {
-	navigate(parseUrl(basePath));
-});
