@@ -11,13 +11,20 @@ import os
 
 import games.routing
 from channels.auth import AuthMiddlewareStack
+from channels.security.websocket import AllowedHostsOriginValidator
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development")
 
-application = get_asgi_application()
-
-application = ProtocolTypeRouter(
-    {"https": get_asgi_application(), "websocket": AuthMiddlewareStack(URLRouter(games.routing.websocket_urlpatterns))}
-)
+application = ProtocolTypeRouter({
+    "http": get_asgi_application(),
+    "websocket": 
+        AllowedHostsOriginValidator(
+            AuthMiddlewareStack(
+                URLRouter(
+                    games.routing.websocket_urlpatterns
+                )
+            )
+        ),
+})
