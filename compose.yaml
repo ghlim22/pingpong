@@ -45,6 +45,13 @@ services:
       - ./apps/frontend/static:/usr/share/nginx/html/static
       - ./apps/frontend/media:/usr/share/nginx/html/media
 
+  redis:
+    build: ./apps/redis
+    container_name: redis
+    networks:
+      - back-tier
+    restart: on-failure
+
 #  portainer:
 #    image: portainer/portainer-ce:latest
 #    container_name: portainer
