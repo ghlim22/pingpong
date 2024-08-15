@@ -1,4 +1,5 @@
 import { appState, TUserInfo, TInvite, TFold, navigate, parseUrl, basePath } from '../../index.js';
+import { game_queue, play_game } from './1vs1Operation.js'
 const matchHTML = `
 <div class="match-multi">
 	<div class="image-profile-middle">
@@ -64,6 +65,12 @@ const rightSideHTML = `
 </div>
 `;
 
+const mainHTML = `
+<div class="in-game">
+	<canvas id="gameCanvas"></canvas>
+</div>
+`;
+
 const topHTML = `
 `;
 
@@ -103,7 +110,16 @@ export function pongMultiPage() {
 	if (appState.picture !== null)
 		img.src = appState.picture;
 	nickname.innerHTML = appState.nickname;
-	setTimeout(gameMultiPage, 1000);
+	game_queue('4P')
+    .then((data) => {
+      console.log('Received data:', data);
+
+      gameMultiPage(data);
+    })
+    .catch((error) => {
+      console.error('Error fetching game queue:', error);
+    });
+	// setTimeout(gameMultiPage, 1000);
 	// jikang2:	임시로 0.5초 뒤에 gameMultiPage() 가 실행되도록 설정해둠.
 	//			위 구문 주석처리하고,
 	//			이 부분에서 gameMultiPage(*MATCH*());
@@ -114,7 +130,7 @@ export function pongMultiPage() {
 	//gameMultiPage(*MATCH*());
 }
 
-function gameMultiPage() {
+function gameMultiPage(data) {
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -132,12 +148,20 @@ function gameMultiPage() {
 	center.classList.add('multi');
 	left.innerHTML = leftSideHTML;
 	right.innerHTML = rightSideHTML;
-	main.innerHTML = "";
+	main.innerHTML = mainHTML;
 	top.innerHTML = topHTML;
 	bottom.innerHTML = bottomHTML;
 
 	document.querySelector('#right-side.ingame div img').addEventListener('click', handleQuitGame);
+	play_game(data, '4P')
+    .then((data) => {
+      console.log('Received data:', data);
 
+      gameResultPage(data);
+    })
+    .catch((error) => {
+      console.error('Error fetching game queue:', error);
+    });
 	//timerId = setTimeout(gameResultPage, 3000);
 	// jikang2:	임시로 3초 뒤에 gameResultPage() 가 실행되도록 설정해둠.
 	//			위 구문 주석처리하고,
