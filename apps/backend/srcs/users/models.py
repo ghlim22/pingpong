@@ -25,7 +25,7 @@ class CustomUser(AbstractUser):
     picture = models.ImageField(
         _("Picture"), upload_to="users/profile/", default="users/profile-default.png", help_text=_("Required.")
     )
-    # followings = models.ManyToManyField(to="self", related_name="followers", blank=True, symmetrical=False)
+    followings = models.ManyToManyField(to="self", related_name="followers", blank=True, symmetrical=False)
 
     # 2FA Fields
     # otp_auth_url = models.CharField(_("OTP Auth URL"), max_length=255, blank=True, default="", help_text=_("Optional."))

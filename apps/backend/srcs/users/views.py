@@ -4,13 +4,18 @@ from drf_spectacular.utils import (
     inline_serializer,
 )
 from rest_framework import generics, permissions, serializers, status, viewsets
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.generics import get_object_or_404
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from .models import CustomUser
 from .serializers import (
+    UserFollowSerializer,
     UserSerializer,
     UserSignInSerializer,
     UserSignUpSerializer,
+    UserSimpleSerializer,
 )
 
 # Create your views here.
@@ -91,28 +96,32 @@ class UserCurrentAPIView(generics.RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserCurrentFollowAPIView(generics.GenericAPIView):
+@extend_schema(responses=UserFollowSerializer)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def getFollowList(request: Request) -> Response:
     """
-    GET: returns a list of requesting user's following.
-    POST: follow a user with given id.
+    Return requesting user's following and followers' list.
     """
+    serializer = UserFollowSerializer(instance=request.user)
+    return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-    queryset = CustomUser.objects.all()
 
-    def follow(self, request, **kwargs):
-        instance: CustomUser = request.user
-        target: CustomUser = self.get_object()
-        if target in instance.followings.all():
-            instance.followings.remove(target)
-        else:
-            instance.followings.add(target)
-        return Response(status=status.HTTP_200_OK)
-
-    def post(self, request, **kwargs):
-        return self.follow(request, kwargs)
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def follow(request, pk):
+    """
+    Follow or unfollow a user with given pk.
+    """
+    instance = request.user
+    obj = get_object_or_404(CustomUser.objects.all(), pk=pk)
+    if instance.pk == obj.pk:
+        return Response(data={"error": "You cannot make this request of yourself."}, status=status.HTTP_400_BAD_REQUEST)
+    if obj in instance.followings.all():
+        instance.followings.remove(obj)
+    else:
+        instance.followings.add(obj)
+    return Response(status=status.HTTP_200_OK)
 
 
 class UserSignInAPIView(generics.GenericAPIView):

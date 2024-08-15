@@ -22,8 +22,9 @@ from .views import (
     UserAPIViewSet,
     UserCreateAPIView,
     UserCurrentAPIView,
-    UserCurrentFollowAPIView,
     UserSignInAPIView,
+    follow,
+    getFollowList,
 )
 
 router = routers.SimpleRouter()
@@ -32,8 +33,9 @@ router.register("", UserAPIViewSet)
 urlpatterns = [
     path("signup/", UserCreateAPIView.as_view()),
     path("signin/", UserSignInAPIView.as_view()),
+    path("current/follow/<int:pk>/", follow),
+    path("current/follow/", getFollowList),
     path("current/", UserCurrentAPIView.as_view()),
-    path("current/follow/<int:pk>/", UserCurrentFollowAPIView.as_view()),
 ]
 
 urlpatterns += router.urls

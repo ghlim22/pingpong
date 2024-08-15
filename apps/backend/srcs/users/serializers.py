@@ -83,6 +83,33 @@ class UserSignInSerializer(serializers.Serializer):
         }
 
 
+class UserSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            "pk",
+            "picture",
+            "nickname",
+        ]
+        read_only_fields = [
+            "pk",
+            "picture",
+            "nickname",
+        ]
+
+
+class UserFollowSerializer(serializers.ModelSerializer):
+    followings = UserSimpleSerializer(many=True, read_only=True)
+    followers = UserSimpleSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            "followings",
+            "followers",
+        ]
+
+
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
@@ -116,6 +143,7 @@ class UserSerializer(serializers.ModelSerializer):
     picture = serializers.ImageField(
         required=True,
     )
+    followings = UserSimpleSerializer(many=True, read_only=True)
 
     class Meta:
         model = CustomUser
@@ -126,12 +154,11 @@ class UserSerializer(serializers.ModelSerializer):
             "confirm_password",
             "nickname",
             "picture",
-            # "followings",
+            "followings",
             # "followers",
         ]
         read_only_fields = [
             "pk",
-            # "followings",
         ]
 
     def validate(self, data):
@@ -157,14 +184,3 @@ class UserSerializer(serializers.ModelSerializer):
             setattr(instance, key, value)
         instance.save()
         return instance
-
-
-class UserFollowingsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = [
-            "followings",
-        ]
-        read_only_fields = [
-            "followings",
-        ]
