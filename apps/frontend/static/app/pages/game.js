@@ -5,6 +5,8 @@
  */
 export default function OnlineGame(sock, game_type) {
   const $container = document.querySelector('.in-game');
+  const $leftScore = document.querySelector('#leftScore');
+  const $rightScore = document.querySelector('#rightScore');
   const ws = sock;
   let keyState = { up: false, down: false, left: false, right: false };
   let left, right, up, down, ball, canvas, ctx;
@@ -24,6 +26,8 @@ export default function OnlineGame(sock, game_type) {
       if (data.type === "two_player") {
         canvas.width = document.body.clientWidth;
         canvas.height = document.body.clientHeight;
+        gameCanvas.style.width = `60vw`;
+        gameCanvas.style.height = `76vh`;
         left.height = canvas.height / 4;
         left.width = canvas.width / 80;
         const gameData = data.data;
@@ -31,6 +35,8 @@ export default function OnlineGame(sock, game_type) {
         left.y = gameData.left.y * canvas.height;
         right.x = gameData.right.x * canvas.width;
         right.y = gameData.right.y * canvas.height;
+		left.score = gameData.left.score;
+		right.score = gameData.right.score;
         ball.x = gameData.ball.x * canvas.width;
         ball.y = gameData.ball.y * canvas.height;
         ball.radius = right.width * (2 / 3);
@@ -83,11 +89,11 @@ export default function OnlineGame(sock, game_type) {
       canvas.height = Math.min(document.body.clientWidth, document.body.clientHeight);
       if (game_type === '4P') {
         canvas.width = canvas.height;
-        up = { x: canvas.width / 2, y: 0, width: 300, height: 10 };
-        down = { x: canvas.width / 2, y: canvas.height - 10, width: 300, height: 10 };
+        up = { x: canvas.width / 2, y: 0, width: 300, height: 10, score: 0};
+        down = { x: canvas.width / 2, y: canvas.height - 10, width: 300, height: 10, score: 0};
       }
-      left = { x: 0, y: canvas.height / 2, width: 10, height: 300 };
-      right = { x: canvas.width - 10, y: canvas.height / 2, width: 10, height: 300 };
+      left = { x: 0, y: canvas.height / 2, width: 10, height: 300, score: 0};
+      right = { x: canvas.width - 10, y: canvas.height / 2, width: 10, height: 300, score: 0};
       ball = { x: canvas.width / 2, y: canvas.height / 2, radius: 10 };
     };
 
@@ -204,15 +210,17 @@ export default function OnlineGame(sock, game_type) {
       ctx.fillRect(left.x, left.y, left.width, left.height);
 
       ctx.fillStyle = "#000000";
-      ctx.fillRect(right.x, right.y, right.width, right.height);
+      ctx.fillRect(right.x, right.y, left.width, left.height);
 
       ctx.beginPath();
       ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
       ctx.fillStyle = "#000000";
       ctx.fill();
-      ctx.strokeStyle = 'black';
-      ctx.lineWidth = 5;
-      ctx.strokeRect(0, 0, canvas.width, canvas.height);
+	  $leftScore.innerText = left.score;
+	  $rightScore.innerText = right.score;
+    //  ctx.strokeStyle = 'black';
+    //  ctx.lineWidth = 5;
+    //  ctx.strokeRect(0, 0, canvas.width, canvas.height);
     }
 
     function draw_four(left, right, up, down, ball) {
@@ -254,10 +262,10 @@ export default function OnlineGame(sock, game_type) {
     }
 
     function endGame(data, ws) {
-      if (ws) {
+		if (ws) {
+		resolve(data); // 게임 종료 후 Promise를 완료 상태로 설정
         ws.close();
       }
-      resolve(data); // 게임 종료 후 Promise를 완료 상태로 설정
     }
   });
 }

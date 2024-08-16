@@ -51,8 +51,8 @@ const topHTML = `
 `;
 
 const bottomHTML = `
-<span>0</span>
-<span>0</span>
+<span id='leftScore'>0</span>
+<span id='rightScore'>0</span>
 `;
 
 const resultHTML = `

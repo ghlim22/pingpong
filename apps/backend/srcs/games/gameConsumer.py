@@ -146,8 +146,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif match.is_right_win():
             match.plus_score("right_win")
             match.ball.reset(match.map)
-        # if match.left.score == 5 or match.right.score == 5:
-        #     match.finished = True
+        if match.left.score == 5 or match.right.score == 5:
+             match.finished = True
         match.ball.move()
 
     async def _send_state(self, match, group_name):
@@ -190,8 +190,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif match.is_down_win():
             match.plus_score("down_win")
             match.ball.reset(match.map)
-        # if match.left.score + match.up.score == 5 or match.right.score + match.down.score == 5:
-        #     match.finished = True
+        if match.left.score + match.up.score == 5 or match.right.score + match.down.score == 5:
+             match.finished = True
         match.ball.move()
 
     async def _send_state_four(self, match, group_name):
