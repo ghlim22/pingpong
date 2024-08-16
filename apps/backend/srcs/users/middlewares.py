@@ -16,7 +16,7 @@ def get_user(token: str):
     return user
 
 
-class TokenAuthMiddleWare:
+class TokenAuthMiddleware:
     def __init__(self, app):
         self.app = app
 
