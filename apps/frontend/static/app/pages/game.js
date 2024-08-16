@@ -25,9 +25,7 @@ export default function OnlineGame(sock, game_type) {
         canvas.width = document.body.clientWidth;
         canvas.height = document.body.clientHeight;
         left.height = canvas.height / 4;
-        right.height = canvas.height / 4;
         left.width = canvas.width / 80;
-        right.width = canvas.width / 80;
         const gameData = data.data;
         left.x = gameData.left.x * canvas.width;
         left.y = gameData.left.y * canvas.height;
@@ -41,14 +39,14 @@ export default function OnlineGame(sock, game_type) {
         console.log('Parsed data:', data);
         canvas.width = Math.min(document.body.clientWidth, document.body.clientHeight);
         canvas.height = Math.min(document.body.clientWidth, document.body.clientHeight);
-        gameCanvas.style.width = `${canvas.width}px`;
-        gameCanvas.style.height = `${canvas.width}px`;
+        //gameCanvas.style.width = `${canvas.width}px`;
+        //gameCanvas.style.height = `${canvas.width}px`;
+        gameCanvas.style.width = `76vh`;
+        gameCanvas.style.height = `76vh`;
         left.height = canvas.height / 4;
-        right.height = canvas.height / 4;
+        left.width = canvas.width / 80;
         up.width = canvas.width / 4;
-        down.width = canvas.width / 4;
         up.height = canvas.height / 80;
-        down.height = canvas.height / 80;
         const gameData = data.data;
         left.x = gameData.left.x * canvas.width;
         left.y = gameData.left.y * canvas.height;
@@ -224,21 +222,21 @@ export default function OnlineGame(sock, game_type) {
       ctx.fillRect(left.x, left.y, left.width, left.height);
 
       ctx.fillStyle = "#000000";
-      ctx.fillRect(right.x, right.y, right.width, right.height);
+      ctx.fillRect(right.x, right.y, left.width, left.height);
 
       ctx.fillStyle = "#000000";
       ctx.fillRect(up.x, up.y, up.width, up.height);
 
       ctx.fillStyle = "#000000";
-      ctx.fillRect(down.x, down.y, down.width, down.height);
+      ctx.fillRect(down.x, down.y, up.width, up.height);
 
       ctx.beginPath();
       ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
       ctx.fillStyle = "#000000";
       ctx.fill();
-      ctx.strokeStyle = 'black';
-      ctx.lineWidth = 5;
-      ctx.strokeRect(0, 0, canvas.width, canvas.height);
+    //  ctx.strokeStyle = 'black';
+    //  ctx.lineWidth = 5;
+    //  ctx.strokeRect(0, 0, canvas.width, canvas.height);
     }
 
     init();
