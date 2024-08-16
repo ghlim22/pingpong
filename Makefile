@@ -29,6 +29,6 @@ dev-config:
 
 dev-run:
 	make dev-config
-	./venv/bin/python3 ./apps/app-server/srcs/manage.py makemigrations --settings=config.settings.development
-	./venv/bin/python3 ./apps/app-server/srcs/manage.py migrate --settings=config.settings.development
-	./venv/bin/python3 ./apps/app-server/srcs/manage.py runserver --settings=config.settings.development
+	./venv/bin/python3 ./apps/backend/srcs/manage.py makemigrations --settings=config.settings.development
+	./venv/bin/python3 ./apps/backend/srcs/manage.py migrate --settings=config.settings.development
+	./venv/bin/python3 ./apps/backend/srcs/manage.py runserver --settings=config.settings.development

@@ -1,0 +1,127 @@
+@import "../css/styles.css";
+
+.t-user-info__container {
+	width: 17.5rem;
+	height: 5rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.t-user-info__container div {
+	margin-left: 0.3125rem;
+}
+
+.t-user-info__container div.connected {
+    border: 0.25rem solid blue;
+}
+
+.t-user-info__container > div:nth-of-type(2) {
+	width: 11.5rem;
+	height: 5rem;
+	display: flex;
+	font-size: 2.25rem;
+	justify-content: center;
+	align-items: center;
+}
+
+.t-invite__container {
+	display: none;
+	flex-direction: column;
+	align-items: center;
+    border: 0.25rem solid;
+	border-radius: 3.125rem;
+	font-size: 2.25rem;
+}
+
+.receive-invitation {
+	display: flex;
+}
+
+.t-invite__container t-user-info {
+	color: #7777FF;
+}
+
+.t-invite__container div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 17.5rem;
+	height: 5rem;
+}
+
+.t-invite__container div button{
+	width: 5rem;
+	color: #7777FF;
+	background-color: rgba(0, 0, 0, 0);
+	cursor: pointer;
+}
+
+.t-invite__container div button:hover{
+	color: blue;
+}
+
+.t-fold__container {
+	width: 17.5rem;
+	height: 23.75rem;
+	display: flex;
+	flex-direction: column;
+	font-size: 2.25rem;
+	color: #4444FF;
+	justify-content : flex-end;
+}
+
+.t-fold__container * {
+	margin-top: 1rem;
+}
+
+.t-fold__id {
+	display: flex;
+	justify-content: space-around;
+}
+
+.t-fold__id img {
+	cursor: pointer;
+	width: 2.4rem;
+	height: 2.4rem;
+}
+
+.t-fold__users {
+	display: flex;
+	flex-direction: column;
+	border-top: 0.1875rem solid #9999FF;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.t-fold__users::-webkit-scrollbar {
+    width: 0;
+}
+
+.t-fold__users:hover::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+.t-fold__users::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+}
+
+.t-fold__users::-webkit-scrollbar-thumb {
+	background-color: rgba(119, 119, 255, 0.2);
+}
+
+.fold .t-fold__id .t-fold__id__button {
+	transform: rotate(180deg);
+}
+
+.fold .t-fold__users {
+	display: none;
+}
+
+.fold .t-fold__id {
+	margin-bottom: 0.625rem;
+}
+
+.t-fold__id.friend {
+	flex-direction: row-reverse;
+}

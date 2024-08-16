@@ -13,8 +13,8 @@ services:
       - back-tier
     restart: on-failure
     volumes:
-      - static:/usr/src/app/static-files
-      - media:/usr/src/app/media-files
+      - ./apps/frontend/static/django:/usr/src/app/staticfiles
+      - ./apps/frontend/media/django:/usr/src/app/mediafiles
 
   postgres:
     build: ./apps/postgres
@@ -42,8 +42,22 @@ services:
       - '443:443'
     restart: on-failure
     volumes:
-      - static:/usr/share/nginx/html/static
-      - media:/usr/share/nginx/html/media
+      - ./apps/frontend/static:/usr/share/nginx/html/static
+      - ./apps/frontend/media:/usr/share/nginx/html/media
+
+  redis:
+    build: ./apps/redis
+    container_name: redis
+    networks:
+      - back-tier
+    restart: on-failure
+
+#  daphne:
+#    build: ./apps/daphne
+#    container_name: daphne
+#    networks:
+#      - back-tier
+#    restart: on-failure
 
 #  portainer:
 #    image: portainer/portainer-ce:latest
@@ -64,5 +78,3 @@ networks:
 
 volumes:
   db: {}
-  static: {}
-  media: {}
