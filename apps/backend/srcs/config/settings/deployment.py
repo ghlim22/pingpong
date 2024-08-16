@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "channels",
     "corsheaders",
+    "customAuth",
     "games",
     "users",
 ]
