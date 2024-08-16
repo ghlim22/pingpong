@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authtoken.models import Token
 
 
-@database_sync_to_async
+@database_sync_to_async  # Retrieving the data from the database asynchronously.
 def get_user(token: str):
     try:
         user = Token.objects.get(key=token).user
@@ -23,7 +23,7 @@ class TokenAuthMiddleWare:
     async def __call__(self, scope, receive, send):
         query_string = scope["query_string"]
         query_params = query_string.decode()
-        query_dict = parse_qs(query_params)
+        query_dict = parse_qs(query_params)  # Parse the query params from string to dict.
         token = query_dict["token"][0]
         user = await get_user(token)
         scope["user"] = user
