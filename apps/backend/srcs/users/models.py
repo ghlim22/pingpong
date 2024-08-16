@@ -49,11 +49,11 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
-    @staticmethod
-    @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-    def create_default_auth_token(sender, instance=None, created=False, **kwargs):
-        """
-        Generate a default authentication token for each newly created user.
-        """
-        if created:
-            Token.objects.create(user=instance)
+    # @staticmethod
+    # @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+    # def create_default_auth_token(sender, instance=None, created=False, **kwargs):
+    #     """
+    #     Generate a default authentication token for each newly created user.
+    #     """
+    #     if created:
+    #         Token.objects.create(user=instance)
