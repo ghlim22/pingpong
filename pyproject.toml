@@ -4,7 +4,10 @@ target-version = ["py311"]
 
 [tool.isort]
 py_version = 37
-skip = ["__init__.py"]
+skip = [
+    "__init__.py",
+    "middlewares.py",
+]
 multi_line_output = 3
 include_trailing_comma = true
 

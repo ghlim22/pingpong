@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "drf_api_logger",
     "drf_spectacular",
     "channels",
+    "custom_auth",
     "games",
     "users",
 ]
