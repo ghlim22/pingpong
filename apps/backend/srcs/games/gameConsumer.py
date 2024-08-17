@@ -15,10 +15,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         pass
 
     async def connect(self):
-        self.player1 = False
-        self.player2 = False
-        self.player3 = False
-        self.player4 = False
+        self.position = None
         self.game_id = self.scope["url_route"]["kwargs"]["game_id"]
         self.type = self.scope["url_route"]["kwargs"]["type"]
         self.game_group = f"game_{self.game_id}"
@@ -28,29 +25,50 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_add(self.game_group, self.channel_name)
         await self.accept()
+
+        user = self.scope["user"]
         group_size = await self._increment_and_get_group_size(self.game_group)
 
         if group_size == max:
-            self.player1 = True
+            self.position = 'left'
+        elif group_size == 1:
+            self.position = 'right'
+        elif group_size == 2:
+            self.position = 'up'
+        elif group_size == 3:
+            self.position = 'down'
+
+        if user.is_authenticated:
+            await self.save_user_info(user)
+
+        if self.position == 'left':
+            user_info_dict = await self.redis.hgetall("game_users")
+            user_info_list = [
+                json.loads(user_info_dict[channel_name])
+                for channel_name in user_info_dict
+            ]
             await self.channel_layer.group_send(
                 self.game_group,
                 {
                     "type": "game_start",
                     "game_type": self.type,
+                    "user_info": user_info_list,
                 },
             )
-        elif group_size == 1:
-            self.player2 = True
-        elif group_size == 2:
-            self.player3 = True
-        elif group_size == 3:
-            self.player4 = True
-        logger.info(self.player1)
+        logger.info(self.position)
+
+    async def save_user_info(self, user):
+        user_info = {
+            "nickname": user.nickname,
+            "picture": user.picture.url,
+            "position": self.position
+        }
+        await self.redis.hset("game_users", self.channel_name, json.dumps(user_info))
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         type = data.get("type")
-        if type == "start" and self.player1:
+        if type == "start" and self.position == 'left':
             asyncio.create_task(self._game_start(data.get("data", {})))
         elif type == "keyboard":
             asyncio.create_task(self._accept_key(data.get("data", {})))
@@ -58,6 +76,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         logger.info("User disconnected")
         await self._decrement_group_size(self.game_group)
+        await self.redis.hdel("game_users", self.channel_name)
         await self.channel_layer.group_discard(self.game_group, self.channel_name)
         group_size = await self._get_group_size(self.game_group)
         logger.info(f"Group size after disconnection: {group_size}")
@@ -100,26 +119,13 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self._update_game(match)
             await self._send_state(match)
             await asyncio.sleep(0.05)
-        await self._game_end()
+        await self._game_end(match)
         
     async def _accept_key(self, message_data):
-        position = None
-
-        match True:
-            case self.player1:
-                position = "left"
-            case self.player2:
-                position = "right"
-            case self.player3:
-                position = "up"
-            case self.player4:
-                position = "down"
-            case _:
-                position = "undefined"  # 모든 플레이어가 False일 때 기본값
-        if position == "left" or position == "right":
-            await self._move_bar_row(message_data, position)
-        if position == "up" or position == "down":
-            await self._move_bar_col(message_data, position)
+        if self.position == "left" or self.position == "right":
+            await self._move_bar_row(message_data, self.position)
+        if self.position == "up" or self.position == "down":
+            await self._move_bar_col(message_data, self.position)
 
     async def _move_bar_row(self, key, position):
         match = await self._get_object()
@@ -171,11 +177,16 @@ class GameConsumer(AsyncWebsocketConsumer):
         logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "two_player", "data": data})
 
-    async def _game_end(self):
+    async def _game_end(self, match):
+        if match.left.score == 5:
+            nickname = match.left.nickname
+            picture = match.left.picture
+        else:
+            nickname = match.right.nickname
+            picture = match.right.picture
         data = {
-            "winner": {
-                "x": 'x'
-            },
+            "nickname": nickname,
+            "picture": picture,
         }
         logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "game_end", "data": data})
@@ -185,7 +196,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self._update_game_four(match)
             await self._send_state_four(match)
             await asyncio.sleep(0.04)
-        await self._game_end()
+        await self._game_end(match)
 
     async def _update_game_four(self, match):
         if match.is_left_win():
@@ -237,7 +248,8 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def _init_object(self, message_data):
         map_width = message_data["map_width"]
         map_height = message_data["map_height"]
-        setattr(self.Games, f"{self.game_group}", PingPongGame(map_width, map_height))
+        users = message_data["users"]
+        setattr(self.Games, f"{self.game_group}", PingPongGame(map_width, map_height, users))
         return True
 
     async def _get_object(self):

@@ -69,7 +69,7 @@ export default function OnlineGame(sock, game_type) {
       } else if (data.type === "game_end") {
         endGame(data, ws);
       } else if (data.type === "game_start") {
-        startGame(ws);
+        startGame(ws, data);
       }
     };
 
@@ -249,13 +249,28 @@ export default function OnlineGame(sock, game_type) {
 
     init();
 
-    function startGame(ws) {
+    function startGame(ws, info) {
+      const left_img = document.querySelector('.user-profile-1p .image-profile-small img');
+      const right_img = document.querySelector('.user-profile-2p .image-profile-small img');
+      const left_nick = document.querySelector('.user-profile-1p span');
+      const right_nick = document.querySelector('.user-profile-2p span');
+      for (const element of info.user_info){
+        if (element.position == 'left'){
+          left_img.src = element.picture;
+          left_nick.innerHTML = element.nickname;
+        }
+        else{
+          right_img.src = element.picture;
+          right_nick.innerHTML = element.nickname;
+        }
+      }
       ws.send(
         JSON.stringify({
           type: "start",
           data: {
             map_width: canvas.width,
             map_height: canvas.height,
+            users: info.user_info,
           },
         }),
       );
@@ -263,7 +278,7 @@ export default function OnlineGame(sock, game_type) {
 
     function endGame(data, ws) {
 		if (ws) {
-		    resolve(data); // 게임 종료 후 Promise를 완료 상태로 설정
+		    resolve(data.data); // 게임 종료 후 Promise를 완료 상태로 설정
         ws.close();
       }
     }

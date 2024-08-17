@@ -7,9 +7,9 @@ export function game_queue(type, token) {
     
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        ws.close();
-        console.log('on message');
-        resolve(data);
+        ws.close(); 
+        console.log('on message', data.data);
+        resolve(data.data);
     };
     
     ws.onerror = (error) => {
@@ -19,9 +19,9 @@ export function game_queue(type, token) {
   });
 }
 
-export function play_game(data, type, token) {
+export function play_game(info, type, token) {
   return new Promise((resolve, reject) => {
-    const ws = new WebSocket(`wss://localhost/wss/games/start/${data.game_id}/${type}/?token=${token}`);
+    const ws = new WebSocket(`wss://localhost/wss/games/start/${info.game_id}/${type}/?token=${token}`);
     OnlineGame(ws, type)
     .then((data) => {
       console.log('Received data:', data);
