@@ -1,9 +1,9 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
 import OnlineGame from "./game.js";
 
-export function game_queue(type) {
+export function game_queue(type, token) {
   return new Promise((resolve, reject) => {
-    let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/`);
+    let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
     
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
@@ -19,9 +19,9 @@ export function game_queue(type) {
   });
 }
 
-export function play_game(data, type) {
+export function play_game(data, type, token) {
   return new Promise((resolve, reject) => {
-    const ws = new WebSocket(`wss://localhost/wss/games/start/${data.game_id}/${type}/`);
+    const ws = new WebSocket(`wss://localhost/wss/games/start/${data.game_id}/${type}/?token=${token}`);
     OnlineGame(ws, type)
     .then((data) => {
       console.log('Received data:', data);

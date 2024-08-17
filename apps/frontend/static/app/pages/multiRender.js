@@ -110,7 +110,7 @@ export function pongMultiPage() {
 	if (appState.picture !== null)
 		img.src = appState.picture;
 	nickname.innerHTML = appState.nickname;
-	game_queue('4P')
+	game_queue('4P', appState.token)
     .then((data) => {
       console.log('Received data:', data);
 
@@ -153,7 +153,7 @@ function gameMultiPage(data) {
 	bottom.innerHTML = bottomHTML;
 
 	document.querySelector('#right-side.ingame div img').addEventListener('click', handleQuitGame);
-	play_game(data, '4P')
+	play_game(data, '4P', appState.token)
     .then((data) => {
       console.log('Received data:', data);
 

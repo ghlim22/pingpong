@@ -85,9 +85,9 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def _game_start(self, message_data):
         match = await self._make_game_object(message_data)
         if self.type == "2P":
-            await self._play_game(match, self.game_group)
+            await self._play_game(match)
         elif self.type == "4P":
-            await self._play_game_four(match, self.game_group)
+            await self._play_game_four(match)
 
     async def _make_game_object(self, message_data):
         await self._init_object(message_data)
@@ -95,12 +95,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         await asyncio.sleep(1)
         return match
 
-    async def _play_game(self, match, group_name):
+    async def _play_game(self, match):
         while not match.finished:
             await self._update_game(match)
-            await self._send_state(match, group_name)
+            await self._send_state(match)
             await asyncio.sleep(0.05)
-
+        await self._game_end()
+        
     async def _accept_key(self, message_data):
         position = None
 
@@ -146,13 +147,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif match.is_right_win():
             match.plus_score("right_win")
             match.ball.reset(match.map)
-        # if match.left.score == 5 or match.right.score == 5:
-        #     match.finished = True
+        if match.left.score == 5 or match.right.score == 5:
+            match.finished = True
         match.ball.move()
 
-    async def _send_state(self, match, group_name):
+    async def _send_state(self, match):
         data = {
-            "type": "two_player",
             "ball": {
                 "x": match.ball.x / match.map.width,
                 "y": match.ball.y / match.map.height,
@@ -171,11 +171,21 @@ class GameConsumer(AsyncWebsocketConsumer):
         logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "two_player", "data": data})
 
-    async def _play_game_four(self, match, group_name):
+    async def _game_end(self):
+        data = {
+            "winner": {
+                "x": 'x'
+            },
+        }
+        logger.info(f"Sending in-game message: {data}")
+        await self.channel_layer.group_send(self.game_group, {"type": "game_end", "data": data})
+
+    async def _play_game_four(self, match):
         while not match.finished:
             await self._update_game_four(match)
-            await self._send_state_four(match, group_name)
+            await self._send_state_four(match)
             await asyncio.sleep(0.04)
+        await self._game_end()
 
     async def _update_game_four(self, match):
         if match.is_left_win():
@@ -190,13 +200,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif match.is_down_win():
             match.plus_score("down_win")
             match.ball.reset(match.map)
-        # if match.left.score + match.up.score == 5 or match.right.score + match.down.score == 5:
-        #     match.finished = True
+        if match.left.score + match.up.score == 5 or match.right.score + match.down.score == 5:
+            match.finished = True
         match.ball.move()
 
-    async def _send_state_four(self, match, group_name):
+    async def _send_state_four(self, match):
         data = {
-            "type": "four_player",
             "ball": {
                 "x": match.ball.x / match.map.width,
                 "y": match.ball.y / match.map.height,

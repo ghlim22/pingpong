@@ -81,7 +81,6 @@ export function pong1VS1Page() {
 	game_queue('2P')
     .then((data) => {
       console.log('Received data:', data);
-
       game1vs1Page(data);
     })
     .catch((error) => {
@@ -119,7 +118,6 @@ function game1vs1Page(data) {
 	play_game(data, '2P')
     .then((data) => {
       console.log('Received data:', data);
-
       gameResultPage(data);
     })
     .catch((error) => {
