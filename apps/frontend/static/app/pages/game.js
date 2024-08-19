@@ -263,7 +263,7 @@ export default function OnlineGame(sock, game_type) {
 
     function endGame(data, ws) {
 		if (ws) {
-		resolve(data); // 게임 종료 후 Promise를 완료 상태로 설정
+		    resolve(data); // 게임 종료 후 Promise를 완료 상태로 설정
         ws.close();
       }
     }

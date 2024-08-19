@@ -119,7 +119,6 @@ function game1vs1Page(data) {
 	play_game(data, '2P')
     .then((data) => {
       console.log('Received data:', data);
-
       gameResultPage(data);
     })
     .catch((error) => {
