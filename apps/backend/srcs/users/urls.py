@@ -23,7 +23,9 @@ from .views import (
     UserCreateAPIView,
     UserCurrentAPIView,
     UserSignInAPIView,
+    block,
     follow,
+    get_block_list,
     getFollowList,
 )
 
@@ -35,6 +37,8 @@ urlpatterns = [
     path("signin/", UserSignInAPIView.as_view()),
     path("current/follow/<int:pk>/", follow),
     path("current/follow/", getFollowList),
+    path("current/block/<int:pk>/", block),
+    path("current/block/", get_block_list),
     path("current/", UserCurrentAPIView.as_view()),
 ]
 

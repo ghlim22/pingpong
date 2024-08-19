@@ -107,6 +107,9 @@ class UserSerializer(serializers.ModelSerializer):
         required=True,
     )
     followings = UserSimpleSerializer(many=True, read_only=True)
+    followers = UserSimpleSerializer(many=True, read_only=True)
+    blocks = UserSimpleSerializer(many=True, read_only=True)
+    blocked = UserSimpleSerializer(many=True, read_only=True)
 
     class Meta:
         model = CustomUser
@@ -118,7 +121,9 @@ class UserSerializer(serializers.ModelSerializer):
             "nickname",
             "picture",
             "followings",
-            # "followers",
+            "followers",
+            "blocks",
+            "blocked",
         ]
         read_only_fields = [
             "pk",
