@@ -110,6 +110,18 @@ class UserFollowSerializer(serializers.ModelSerializer):
         ]
 
 
+class UserBlockSerializer(serializers.ModelSerializer):
+    blocks = UserSimpleSerializer(many=True, read_only=True)
+    blocked = UserSimpleSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            "blocks",
+            "blocked",
+        ]
+
+
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,

@@ -11,11 +11,10 @@ from rest_framework.response import Response
 
 from .models import CustomUser
 from .serializers import (
+    UserBlockSerializer,
     UserFollowSerializer,
     UserSerializer,
     UserSignInSerializer,
-    UserSignUpSerializer,
-    UserSimpleSerializer,
 )
 
 # Create your views here.
@@ -114,13 +113,41 @@ def follow(request, pk):
     Follow or unfollow a user with given pk.
     """
     instance = request.user
-    obj = get_object_or_404(CustomUser.objects.all(), pk=pk)
+    obj = get_object_or_404(queryset=CustomUser.objects.all(), pk=pk)
     if instance.pk == obj.pk:
         return Response(data={"error": "You cannot make this request of yourself."}, status=status.HTTP_400_BAD_REQUEST)
     if obj in instance.followings.all():
         instance.followings.remove(obj)
     else:
         instance.followings.add(obj)
+    return Response(status=status.HTTP_200_OK)
+
+
+@extend_schema(responses=UserBlockSerializer)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def get_block_list(request):
+    """
+    Return request user's block and blocked list.
+    """
+    serializer = UserBlockSerializer(instance=request.user)
+    return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def block(request, pk):
+    """
+    Block or unblock a user with given pk.
+    """
+    instance = request.user
+    obj = get_object_or_404(queryset=CustomUser.objects.all(), pk=pk)
+    if instance.pk == obj.pk:
+        return Response(data={"error": "You cannot make this request of yourself."}, status=status.HTTP_400_BAD_REQUEST)
+    if obj in instance.blocks.all():
+        instance.blocks.remove(obj)
+    else:
+        instance.blocks.add(obj)
     return Response(status=status.HTTP_200_OK)
 
 
