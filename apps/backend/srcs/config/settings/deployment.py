@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "channels",
     "corsheaders",
     "custom_auth",
+    "chat",
     "games",
     "users",
 ]

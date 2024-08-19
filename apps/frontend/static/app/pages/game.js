@@ -251,14 +251,17 @@ export default function OnlineGame(sock, game_type) {
 
     function startGame(ws, info) {
       const left_img = document.querySelector('.user-profile-1p .image-profile-small img');
-      const right_img = document.querySelector('.user-profile-4p .image-profile-small img');
-      const up_img = document.querySelector('.user-profile-3p .image-profile-small img');
-      const down_img = document.querySelector('.user-profile-2p .image-profile-small img');
-
+      const right_img = document.querySelector('.user-profile-2p .image-profile-small img');
       const left_nick = document.querySelector('.user-profile-1p span');
-      const right_nick = document.querySelector('.user-profile-4p span');
-      const up_nick = document.querySelector('.user-profile-3p span');
-      const down_nick = document.querySelector('.user-profile-2p span');
+      const right_nick = document.querySelector('.user-profile-2p span');
+      
+      if (game_type == "4P")
+      {
+        const up_img = document.querySelector('.user-profile-3p .image-profile-small img');
+        const down_img = document.querySelector('.user-profile-4p .image-profile-small img');
+        const up_nick = document.querySelector('.user-profile-3p span');
+        const down_nick = document.querySelector('.user-profile-4p span');
+      }
 
       for (const element of info.user_info){
         if (element.position == 'left'){
