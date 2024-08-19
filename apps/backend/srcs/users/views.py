@@ -1,8 +1,4 @@
-from drf_spectacular.utils import (
-    OpenApiExample,
-    extend_schema,
-    inline_serializer,
-)
+from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import generics, permissions, serializers, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
@@ -29,7 +25,6 @@ class UserCreateAPIView(generics.CreateAPIView):
         permissions.AllowAny,
     ]
     queryset = CustomUser.objects.all()
-    # serializer_class = UserSignUpSerializer
     serializer_class = UserSerializer
 
 
@@ -43,10 +38,6 @@ class UserAPIViewSet(viewsets.ModelViewSet):
     ]
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    # lookup_field = "nickname"
-
-    # def perform_destroy(self, instance):
-    #     setattr(instance, "is_active", False)
 
 
 class UserCurrentAPIView(generics.RetrieveUpdateDestroyAPIView):
