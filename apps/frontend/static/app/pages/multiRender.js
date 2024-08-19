@@ -8,27 +8,27 @@ const matchHTML = `
 	<span>nickname</span>
 </div>
 <div class="match-multi">
-	<div class="image-profile-middle waiting">
-		<img src="">
+	<div class="image-profile-middle" id="opponent1">
+		<img src="./assets/default-picture.png">
 	</div>
-	<span>Wait Please</span>
+	<span id="opponentSpan1">Wait Please</span>
 </div>
 <div class="match-multi">
-	<div class="image-profile-middle waiting">
-		<img src="">
+	<div class="image-profile-middle" id="opponent2">
+		<img src="./assets/default-picture.png">
 	</div>
-	<span>Wait Please</span>
+	<span id="opponentSpan2">Wait Please</span>
 </div>
 <div class="match-multi">
-	<div class="image-profile-middle waiting">
-		<img src="">
+	<div class="image-profile-middle" id="opponent3">
+		<img src="./assets/default-picture.png">
 	</div>
-	<span>Wait Please</span>
+	<span id="opponentSpan3">Wait Please</span>
 </div>
 `;
 
 const leftSideHTML = `
-<div class="user-profile-team1">
+<div class="user-profile-1p">
 	<div class="image-profile-small">
 		<img src="./assets/default-picture.png">
 	</div>
@@ -36,7 +36,7 @@ const leftSideHTML = `
 	<span>♥♥♥♥♥</span>
 </div>
 <div></div>
-<div class="user-profile-team1">
+<div class="user-profile-2p">
 	<div class="image-profile-small">
 		<img src="./assets/default-picture.png">
 	</div>
@@ -46,7 +46,7 @@ const leftSideHTML = `
 `;
 
 const rightSideHTML = `
-<div class="user-profile-team2">
+<div class="user-profile-3p">
 	<div class="image-profile-small">
 		<img src="./assets/default-picture.png">
 	</div>
@@ -56,7 +56,7 @@ const rightSideHTML = `
 <div>
 	<img src="./assets/g-button-quit.svg">
 </div>
-<div class="user-profile-team2">
+<div class="user-profile-4p">
 	<div class="image-profile-small">
 		<img src="./assets/default-picture.png">
 	</div>
@@ -80,20 +80,14 @@ const bottomHTML = `
 const resultHTML = `
 <div class="result-multi">
 	<span>WINNER</span>
-	<div class="result-multi-team">
-		<div class="result-multi-user">
-			<div class="image-profile-large">
-				<img src="./assets/default-picture.png">
-			</div>
-			<span>nickname</span>
-		</div>
-		<div class="result-multi-user">
-			<div class="image-profile-large">
-				<img src="./assets/default-picture.png">
-			</div>
-			<span>nickname</span>
-		</div>
+	<div class="image-profile-large" id="winner">
+		<img src="./assets/default-picture.png">
 	</div>
+	<span id="winnerNick">nickname</span>
+	<div class="image-profile-large" id="winner2">
+		<img src="./assets/default-picture.png">
+	</div>
+	<span id="winner2Nick">nickname</span>
 </div>
 `;
 
@@ -103,18 +97,35 @@ export function pongMultiPage() {
 	const above = document.getElementById('above');
 	above.innerHTML = matchHTML;
 
+	const img_opponent1 = document.querySelector('.match-multi #opponent1 img');
+	const img_opponent2 = document.querySelector('.match-multi #opponent2 img'); 
+	const img_opponent3 = document.querySelector('.match-multi #opponent3 img');
+	const nickname_opponent1 = document.querySelector('.match-multi #opponentSpan1');
+	const nickname_opponent2 = document.querySelector('.match-multi #opponentSpan2');
+	const nickname_opponent3 = document.querySelector('.match-multi #opponentSpan3');
+
+	const img_opponents = [ img_opponent1, img_opponent2, img_opponent3 ];
+	const nickname_opponents = [ nickname_opponent1, nickname_opponent2, nickname_opponent3 ];
 	const img = document.querySelector('.match-multi .image-profile-middle img');
 	const nickname = document.querySelector('.match-multi span');
-
+	
 	above.classList.add('above-on');
 	if (appState.picture !== null)
 		img.src = appState.picture;
 	nickname.innerHTML = appState.nickname;
+	
 	game_queue('4P', appState.token)
-    .then((data) => {
-      console.log('Received data:', data);
-
-      gameMultiPage(data);
+	.then((data) => {
+	console.log('Received data:', data);
+	  let index = 0;
+	  for (const element of data.user_info) {
+		if (element.nickname != appState.nickname) {
+			img_opponents[index].src = element.picture;
+			nickname_opponents[index].innerHTML = element.nickname;
+			index++;
+		}
+	  }
+	  setTimeout(() => { gameMultiPage(data) } , 5000); //시간 설정이 안됨
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);
@@ -177,16 +188,21 @@ function handleQuitGame() {
 	navigate(parseUrl(basePath))
 }
 
-function gameResultPage() {
+function gameResultPage(data) {
 	const above = document.getElementById('above');
 	above.innerHTML = resultHTML;
 
-	const img = document.querySelector('.result-multi .image-profile-large img');
-	const nickname = document.querySelector('.result-multi .result-multi-team:nth-of-type(1) span');
+	const img = document.querySelector('.result-multi #winner img');
+	const nickname = document.querySelector('.result-multi #winnerNick');
+	const img2 = document.querySelector('.result-multi #winner2 img');
+	const nickname2 = document.querySelector('.result-multi #winner2Nick');
 
 	above.classList.add('above-on');
-	if (appState.picture !== null)
-		img.src = appState.picture;
-	nickname.innerHTML = appState.nickname;
+	if (data.picture !== null)
+		img.src = data.picture;
+	nickname.innerHTML = data.nickname;
+	if (data.picture2 !== null)
+		img2.src = data.picture2;
+	nickname2.innerHTML = data.nickname2;
 	setTimeout(handleQuitGame, 2500);
 }

@@ -80,6 +80,7 @@ export function pong1VS1Page() {
 	if (appState.picture !== null)
 		img.src = appState.picture;
 	nickname.innerHTML = appState.nickname;
+	
 	game_queue('2P', appState.token)
     .then((data) => {
       console.log('Received data:', data);
@@ -90,7 +91,7 @@ export function pong1VS1Page() {
 		}
 	  }
 	  
-	  setTimeout(game1vs1Page(data), 50000); //시간 설정이 안됨
+	  setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);

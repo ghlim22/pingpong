@@ -178,15 +178,25 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(self.game_group, {"type": "two_player", "data": data})
 
     async def _game_end(self, match):
-        if match.left.score == 5:
+        nickname2 = None
+        picture2 = None
+        if match.left.score + match.up.score == 5:
             nickname = match.left.nickname
             picture = match.left.picture
+            if self.type == '4P':
+                nickname2 = match.up.nickname
+                picture2 = match.up.picture
         else:
             nickname = match.right.nickname
             picture = match.right.picture
+            if self.type == '4P':
+                nickname2 = match.down.nickname
+                picture2 = match.down.picture
         data = {
             "nickname": nickname,
             "picture": picture,
+            "nickname2": nickname2,
+            "picture2": picture2,
         }
         logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "game_end", "data": data})
