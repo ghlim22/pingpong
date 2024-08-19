@@ -124,9 +124,13 @@ class UserSerializer(serializers.ModelSerializer):
             "followers",
             "blocks",
             "blocked",
+            "win",
+            "lose",
         ]
         read_only_fields = [
             "pk",
+            "win",
+            "lose",
         ]
 
     def validate(self, data):
