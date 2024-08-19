@@ -6,6 +6,7 @@ import redis.asyncio as redis
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 from .game import PingPongGame
+from users.models import CustomUser
 from .models import GameLog
 
 logger = logging.getLogger("django")
@@ -205,13 +206,25 @@ class GameConsumer(AsyncWebsocketConsumer):
                 picture2 = match.down.picture
         
         game_log = GameLog.objects.create( game_type=self.type )
-        if self.type == '4P':
-            game_log.winners.add(winner_id, winner2_id)
-            game_log.losers.add(loser_id, loser2_id)
-        else:
-            game_log.winners.add(winner_id)
-            game_log.losers.add(loser_id)
+        game_log.winners.add(winner_id)
+        game_log.losers.add(loser_id)
         game_log.save()
+
+        winner = CustomUser.objects.get(id=winner_id)
+        winner.win += 1
+        winner.save()
+        loser = CustomUser.objects.get(id=loser_id)
+        loser.win += 1
+        loser.save()
+        if self.type == '4P':
+            game_log.winners.add(winner2_id)
+            game_log.losers.add(loser2_id)
+            winner2 = CustomUser.objects.get(id=winner2_id)
+            winner2.win += 1
+            winner2.save()
+            loser2 = CustomUser.objects.get(id=loser2_id)
+            loser2.win += 1
+            loser2.save()
 
         data = {
             "nickname": nickname,
