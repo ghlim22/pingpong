@@ -35,8 +35,8 @@ export default function OnlineGame(sock, game_type) {
         left.y = gameData.left.y * canvas.height;
         right.x = gameData.right.x * canvas.width;
         right.y = gameData.right.y * canvas.height;
-		left.score = gameData.left.score;
-		right.score = gameData.right.score;
+        left.score = gameData.left.score;
+        right.score = gameData.right.score;
         ball.x = gameData.ball.x * canvas.width;
         ball.y = gameData.ball.y * canvas.height;
         ball.radius = right.width * (2 / 3);
@@ -69,7 +69,7 @@ export default function OnlineGame(sock, game_type) {
       } else if (data.type === "game_end") {
         endGame(data, ws);
       } else if (data.type === "game_start") {
-        startGame(ws);
+        startGame(ws, data);
       }
     };
 
@@ -206,10 +206,10 @@ export default function OnlineGame(sock, game_type) {
     function draw(left, right, ball) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = "#FFCCCC";
       ctx.fillRect(left.x, left.y, left.width, left.height);
 
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = "#F9E5B1";
       ctx.fillRect(right.x, right.y, left.width, left.height);
 
       ctx.beginPath();
@@ -226,16 +226,16 @@ export default function OnlineGame(sock, game_type) {
     function draw_four(left, right, up, down, ball) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = "#FFCCCC";
       ctx.fillRect(left.x, left.y, left.width, left.height);
 
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = "#F9E5B1";
       ctx.fillRect(right.x, right.y, left.width, left.height);
 
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = "#D9F9C5";
       ctx.fillRect(up.x, up.y, up.width, up.height);
 
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(down.x, down.y, up.width, up.height);
 
       ctx.beginPath();
@@ -249,13 +249,42 @@ export default function OnlineGame(sock, game_type) {
 
     init();
 
-    function startGame(ws) {
+    function startGame(ws, info) {
+      const left_img = document.querySelector('.user-profile-1p .image-profile-small img');
+      const right_img = document.querySelector('.user-profile-4p .image-profile-small img');
+      const up_img = document.querySelector('.user-profile-3p .image-profile-small img');
+      const down_img = document.querySelector('.user-profile-2p .image-profile-small img');
+
+      const left_nick = document.querySelector('.user-profile-1p span');
+      const right_nick = document.querySelector('.user-profile-4p span');
+      const up_nick = document.querySelector('.user-profile-3p span');
+      const down_nick = document.querySelector('.user-profile-2p span');
+
+      for (const element of info.user_info){
+        if (element.position == 'left'){
+          left_img.src = element.picture;
+          left_nick.innerHTML = element.nickname;
+        }
+        else if (element.position == 'right'){
+          right_img.src = element.picture;
+          right_nick.innerHTML = element.nickname;
+        }
+        else if (element.position == 'up'){
+          up_img.src = element.picture;
+          up_nick.innerHTML = element.nickname;
+        }
+        else if (element.position == 'down'){
+          down_img.src = element.picture;
+          down_nick.innerHTML = element.nickname;
+        }
+      }
       ws.send(
         JSON.stringify({
           type: "start",
           data: {
             map_width: canvas.width,
             map_height: canvas.height,
+            users: info.user_info,
           },
         }),
       );
@@ -263,7 +292,7 @@ export default function OnlineGame(sock, game_type) {
 
     function endGame(data, ws) {
 		if (ws) {
-		resolve(data); // 게임 종료 후 Promise를 완료 상태로 설정
+		    resolve(data.data); // 게임 종료 후 Promise를 완료 상태로 설정
         ws.close();
       }
     }

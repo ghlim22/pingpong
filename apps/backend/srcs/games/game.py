@@ -43,10 +43,14 @@ class Bar:
 class Player:
     score: int
     bar: Bar
+    nickname: str
+    picture: str
 
     def __init__(self, bar: Bar):
         self.score = 0
         self.bar = bar
+        self.nickname = None
+        self.picture = None
 
 
 class Map:
@@ -117,10 +121,11 @@ class PingPongGame:
     ball: Ball
     finished: None
 
-    def __init__(self, map_width, map_height):
+    def __init__(self, map_width, map_height, users):
 
         bar_long = map_height / 4
         bar_short = map_width / 80
+        
         self.left = Player(Bar(bar_short, bar_long, 0, (map_height - bar_long) / 2))
         self.right = Player(Bar(bar_short, bar_long, map_width - bar_short, (map_height - bar_long) / 2))
         self.up = Player(Bar(bar_long, bar_short, (map_width - bar_long) / 2, 0))
@@ -129,6 +134,16 @@ class PingPongGame:
         self.ball = Ball(map_width / 2, map_height / 2, bar_short * (2 / 3), 20)
         self.finished = False
         self.started_at = None
+
+        self.players = {'left': self.left, 'right': self.right, 'up': self.up, 'down': self.down}
+        for user in users:
+            user_info = {
+                "nickname": user['nickname'],
+                "picture": user['picture'],  
+                "position": user['position'] 
+            }
+            self.players[user_info["position"]].nickname = user_info["nickname"]
+            self.players[user_info["position"]].picture = user_info["picture"]        
 
     def plus_score(self, str):
 

@@ -2,16 +2,16 @@ import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } fro
 import { game_queue, play_game } from './1vs1Operation.js'
 const matchHTML = `
 <div class="match-1vs1">
-	<div class="image-profile-middle">
+	<div class="image-profile-middle" id="mine">
 		<img src="./assets/default-picture.png">
 	</div>
-	<span>nickname</span>
+	<span id="mySpan">nickname</span>
 </div>
 <div class="match-1vs1">
-	<div class="image-profile-middle waiting">
+	<div class="image-profile-middle" id="opponent">
 		<img src="./assets/default-picture.png">
 	</div>
-	<span>Wait Please</span>
+	<span id="opponentSpan">Wait Please</span>
 </div>
 `;
 
@@ -71,18 +71,27 @@ export function pong1VS1Page() {
 	const above = document.getElementById('above');
 	above.innerHTML = matchHTML;
 
-	const img = document.querySelector('.match-1vs1 .image-profile-middle img');
-	const nickname = document.querySelector('.match-1vs1 span');
+	const img = document.querySelector('.match-1vs1 #mine img');
+	const img_opponent = document.querySelector('.match-1vs1 #opponent img');
+	const nickname = document.querySelector('.match-1vs1 #mySpan');
+	const nickname_opponent = document.querySelector('.match-1vs1 #opponentSpan');
 
 	above.classList.add('above-on');
 	if (appState.picture !== null)
 		img.src = appState.picture;
 	nickname.innerHTML = appState.nickname;
-	game_queue('2P')
+	
+	game_queue('2P', appState.token)
     .then((data) => {
       console.log('Received data:', data);
-
-      game1vs1Page(data);
+	  for (const element of data.user_info){
+		if (element.nickname != appState.nickname){
+		  img_opponent.src = element.picture;
+		  nickname_opponent.innerHTML = element.nickname;
+		}
+	  }
+	  
+	  setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);
@@ -96,7 +105,7 @@ export function pong1VS1Page() {
 	//				match 되면 data {현재유저 포지션, 상대유저 nick, 상대유저 img} 반환
 }
 
-function game1vs1Page(data) {
+function game1vs1Page(info) {
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -116,7 +125,7 @@ function game1vs1Page(data) {
 	bottom.innerHTML = bottomHTML;
 
 	//document.querySelector('#right-side.ingame div img').addEventListener('click', handleQuitGame);
-	play_game(data, '2P')
+	play_game(info, '2P', appState.token)
     .then((data) => {
       console.log('Received data:', data);
 
@@ -153,9 +162,9 @@ function gameResultPage(data) {
 	const nickname = document.querySelector('.result-1vs1 span:nth-of-type(2)');
 	
 	above.classList.add('above-on');
-	if (appState.picture !== null)
-		img.src = appState.picture;
-	nickname.innerHTML = appState.nickname;
+	if (data.picture !== null)
+		img.src = data.picture;
+	nickname.innerHTML = data.nickname;
 	setTimeout(handleQuitGame, 2500);
 }
 

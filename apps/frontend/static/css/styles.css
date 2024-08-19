@@ -635,3 +635,19 @@ body {
 	/*width: 75%;
 	height: 100%;*/
 }
+
+.user-profile-1p .image-profile-small {
+    border: 0.25rem solid #FFCCCC;
+}
+
+.user-profile-2p .image-profile-small {
+    border: 0.25rem solid #FFFFFF;
+}
+
+.user-profile-3p .image-profile-small {
+    border: 0.25rem solid #D9F9C5;
+}
+
+.user-profile-4p .image-profile-small {
+    border: 0.25rem solid #F9E5B1;
+}
