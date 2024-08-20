@@ -1,6 +1,6 @@
-import django
-
-django.setup()
+# import django
+#
+# django.setup()
 
 from urllib.parse import parse_qs
 

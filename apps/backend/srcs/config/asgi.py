@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
 
 import os
 
-import games.routing
 import chat.routing
+import games.routing
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
@@ -24,7 +24,9 @@ application = ProtocolTypeRouter(
         "http": get_asgi_application(),
         # "websocket": AuthMiddlewareStack(URLRouter(games.routing.websocket_urlpatterns))
         "websocket": CustomTokenAuthMiddleware(
-            AllowedHostsOriginValidator(URLRouter(games.routing.websocket_urlpatterns + chat.routing.websocket_urlpatterns))
+            AllowedHostsOriginValidator(
+                URLRouter(games.routing.websocket_urlpatterns + chat.routing.websocket_urlpatterns)
+            )
         ),
     }
 )
