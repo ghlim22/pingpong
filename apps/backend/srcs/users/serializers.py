@@ -10,55 +10,6 @@ from .models import CustomUser
 from .validators import NicknameValidator
 
 
-class UserSignUpSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
-        required=True,
-        validators=[UniqueValidator(queryset=CustomUser.objects.all())],
-        min_length=3,
-    )
-    password = serializers.CharField(
-        write_only=True,
-        required=True,
-        validators=[validate_password],
-        min_length=8,
-    )
-    confirm_password = serializers.CharField(
-        write_only=True,
-        required=True,
-        min_length=8,
-    )
-    nickname = serializers.CharField(
-        required=True,
-        validators=[UniqueValidator(queryset=CustomUser.objects.all()), NicknameValidator()],
-        min_length=2,
-        max_length=8,
-    )
-    picture = serializers.ImageField(
-        required=True,
-        write_only=True,
-    )
-
-    class Meta:
-        model = CustomUser
-        fields = ["email", "password", "confirm_password", "nickname", "picture"]
-
-    def validate(self, data):
-        if data["password"] != data["confirm_password"]:
-            raise serializers.ValidationError({"confirm_password": "Password didn't match"})
-        del data["confirm_password"]
-        return data
-
-    def create(self, validated_data):
-        user = CustomUser.objects.create_user(
-            email=validated_data["email"],
-            password=validated_data["password"],
-            nickname=validated_data["nickname"],
-            picture=validated_data["picture"],
-        )
-        # Token.objects.create(user=user)  # Generate a DRF default token for given user.
-        return user
-
-
 class UserSignInSerializer(serializers.Serializer):
     email = serializers.CharField(required=True, min_length=3)
     password = serializers.CharField(write_only=True, required=True, min_length=8)
@@ -110,6 +61,18 @@ class UserFollowSerializer(serializers.ModelSerializer):
         ]
 
 
+class UserBlockSerializer(serializers.ModelSerializer):
+    blocks = UserSimpleSerializer(many=True, read_only=True)
+    blocked = UserSimpleSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            "blocks",
+            "blocked",
+        ]
+
+
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
@@ -144,6 +107,9 @@ class UserSerializer(serializers.ModelSerializer):
         required=True,
     )
     followings = UserSimpleSerializer(many=True, read_only=True)
+    followers = UserSimpleSerializer(many=True, read_only=True)
+    blocks = UserSimpleSerializer(many=True, read_only=True)
+    blocked = UserSimpleSerializer(many=True, read_only=True)
 
     class Meta:
         model = CustomUser
@@ -155,10 +121,16 @@ class UserSerializer(serializers.ModelSerializer):
             "nickname",
             "picture",
             "followings",
-            # "followers",
+            "followers",
+            "blocks",
+            "blocked",
+            "win",
+            "lose",
         ]
         read_only_fields = [
             "pk",
+            "win",
+            "lose",
         ]
 
     def validate(self, data):
