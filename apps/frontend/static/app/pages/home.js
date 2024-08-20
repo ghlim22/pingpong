@@ -15,12 +15,6 @@ const mainHTML = `
 </div>
 `;
 
-const leftSideHTML = `
-<t-user-info class="p-button-current"></t-user-info>
-<t-invite class="receive-invitation"></t-invite>
-<t-fold class="connect"></t-fold>
-`;
-
 const rightSideHTML = `
 <div class="p-button-chat">
 	<img src="./assets/s-button-message.svg">
@@ -34,6 +28,12 @@ export function homePage() {
 		navigate(parseUrl(basePath + 'login'));
 		return;
 	}
+	const leftSideHTML = `
+	<t-user-info class="p-button-current" data-nick="${appState.nickname}" data-img="${appState.picture}" data-id="${appState.token}"></t-user-info>
+	<t-invite class="receive-invitation"></t-invite>
+	<t-fold class="connect"></t-fold>
+	`;
+
 	document.getElementById('top').innerHTML = "";
 	document.getElementById('bottom').innerHTML = "";
 	document.getElementById('main').innerHTML = mainHTML;

@@ -28,7 +28,6 @@ from drf_spectacular.views import (
 urlpatterns = [
     path("api/admin/", admin.site.urls),
     path("api/users/", include("users.urls")),
-    path("wss/games/", include("games.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

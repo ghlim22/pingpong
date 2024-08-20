@@ -255,12 +255,14 @@ export default function OnlineGame(sock, game_type) {
       const left_nick = document.querySelector('.user-profile-1p span');
       const right_nick = document.querySelector('.user-profile-2p span');
       
+      let up_img, down_img, up_nick, down_nick;
+
       if (game_type == "4P")
       {
-        const up_img = document.querySelector('.user-profile-3p .image-profile-small img');
-        const down_img = document.querySelector('.user-profile-4p .image-profile-small img');
-        const up_nick = document.querySelector('.user-profile-3p span');
-        const down_nick = document.querySelector('.user-profile-4p span');
+        up_img = document.querySelector('.user-profile-3p .image-profile-small img');
+        down_img = document.querySelector('.user-profile-4p .image-profile-small img');
+        up_nick = document.querySelector('.user-profile-3p span');
+        down_nick = document.querySelector('.user-profile-4p span');
       }
 
       for (const element of info.user_info){

@@ -1,16 +1,17 @@
 import asyncio
 import json
 import logging
+import django
 
+django.setup()
 import redis.asyncio as redis
+from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 from .game import PingPongGame
 from users.models import CustomUser
 from .models import GameLog
-
 logger = logging.getLogger("django")
-
 
 class GameConsumer(AsyncWebsocketConsumer):
     class Games:
@@ -204,27 +205,31 @@ class GameConsumer(AsyncWebsocketConsumer):
                 loser2_id = [user["id"] for user in self.user_info_list if user["position"] == "up"]
                 nickname2 = match.down.nickname
                 picture2 = match.down.picture
-        
-        game_log = GameLog.objects.create( game_type=self.type )
-        game_log.winners.add(winner_id)
-        game_log.losers.add(loser_id)
-        game_log.save()
 
-        winner = CustomUser.objects.get(id=winner_id)
+        # ORM 호출을 비동기적으로 변환
+        game_log = await sync_to_async(GameLog.objects.create)(game_type=self.type)
+        await sync_to_async(game_log.winners.add)(*winner_id)
+        await sync_to_async(game_log.losers.add)(*loser_id)
+        await sync_to_async(game_log.save)()
+
+        winner = await sync_to_async(CustomUser.objects.get)(id=winner_id[0])
         winner.win += 1
-        winner.save()
-        loser = CustomUser.objects.get(id=loser_id)
+        await sync_to_async(winner.save)()
+
+        loser = await sync_to_async(CustomUser.objects.get)(id=loser_id[0])
         loser.win += 1
-        loser.save()
+        await sync_to_async(loser.save)()
+
         if self.type == '4P':
-            game_log.winners.add(winner2_id)
-            game_log.losers.add(loser2_id)
-            winner2 = CustomUser.objects.get(id=winner2_id)
+            await sync_to_async(game_log.winners.add)(*winner2_id)
+            await sync_to_async(game_log.losers.add)(*loser2_id)
+            winner2 = await sync_to_async(CustomUser.objects.get)(id=winner2_id[0])
             winner2.win += 1
-            winner2.save()
-            loser2 = CustomUser.objects.get(id=loser2_id)
+            await sync_to_async(winner2.save)()
+
+            loser2 = await sync_to_async(CustomUser.objects.get)(id=loser2_id[0])
             loser2.win += 1
-            loser2.save()
+            await sync_to_async(loser2.save)()
 
         data = {
             "nickname": nickname,

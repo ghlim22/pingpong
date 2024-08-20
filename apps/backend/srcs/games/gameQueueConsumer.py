@@ -1,19 +1,13 @@
-import asyncio
 import json
 import logging
 import uuid
 
 import redis.asyncio as redis
-from channels.exceptions import (
-    AcceptConnection,
-    DenyConnection,
-    InvalidChannelLayerError,
-)
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 logger = logging.getLogger("django")
 
-class RankGameRoomConsumer(AsyncWebsocketConsumer):
+class GameQueueConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.game_type = self.scope["url_route"]["kwargs"]["type"]
         self.room_group_name = "game_queue"

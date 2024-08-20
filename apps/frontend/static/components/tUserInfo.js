@@ -13,6 +13,10 @@ const HTMLTemplate = await fetchTUserInfo();
 export class TUserInfo extends HTMLElement {
     constructor() {
         super();
+        this.nick = null;
+        this.img = null;
+        this.id = null;
+        this.isLoggedin = false;
         //this.addEventListener('click', e => this.toggleCard());
     }
 
@@ -20,7 +24,10 @@ export class TUserInfo extends HTMLElement {
         const shadowRoot = this.attachShadow({mode: 'open'});
         const instance = HTMLTemplate.content.cloneNode(true);
         shadowRoot.appendChild(instance);
-        //const id = this.getAttribute('data-id');
+        this.nick = this.getAttribute('data-nick');
+        this.img = this.getAttribute('data-img');
+        this.id = this.getAttribute('data-id');
+        this.isLoggedin = this.getAttribute('data-isLoggedin');
 		this.render();
     }
 
@@ -29,10 +36,10 @@ export class TUserInfo extends HTMLElement {
         const img = this.shadowRoot.querySelector('.image-profile-small img');
         const nickname = this.shadowRoot.querySelector('.t-user-info__nickname');
 
-        if (appState.picture !== null)
-            img.src = appState.picture;
-        nickname.innerHTML = appState.nickname;
-		if (appState.isLoggedIn)
+        if (this.img !== null)
+            img.src = this.img;
+        nickname.innerHTML = this.nick;
+		if (this.isLoggedin === 'true')
 			border.classList.add("connected");
     }
 }

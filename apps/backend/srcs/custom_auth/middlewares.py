@@ -1,15 +1,14 @@
-# import django
-#
-# django.setup()
+import django
+
 
 from urllib.parse import parse_qs
-
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authtoken.models import Token
 
 
+django.setup()
 @database_sync_to_async  # Retrieving the data from the database asynchronously.
 def get_user(token: str):
     try:
