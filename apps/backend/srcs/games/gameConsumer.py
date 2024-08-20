@@ -6,6 +6,8 @@ import redis.asyncio as redis
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 from .game import PingPongGame
+from users.models import CustomUser
+from .models import GameLog
 
 logger = logging.getLogger("django")
 
@@ -43,22 +45,23 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         if self.position == 'left':
             user_info_dict = await self.redis.hgetall("game_users")
-            user_info_list = [
-                json.loads(user_info_dict[channel_name])
-                for channel_name in user_info_dict
+            self.user_info_list = [
+                json.loads(user_info_dict[self.channel_name])
+                for self.channel_name in user_info_dict
             ]
             await self.channel_layer.group_send(
                 self.game_group,
                 {
                     "type": "game_start",
                     "game_type": self.type,
-                    "user_info": user_info_list,
+                    "user_info": self.user_info_list,
                 },
             )
         logger.info(self.position)
 
     async def save_user_info(self, user):
         user_info = {
+            "id": user.id,
             "nickname": user.nickname,
             "picture": user.picture.url,
             "position": self.position
@@ -178,20 +181,51 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(self.game_group, {"type": "two_player", "data": data})
 
     async def _game_end(self, match):
-        nickname2 = None
         picture2 = None
+        nickname2 = None
+
         if match.left.score + match.up.score == 5:
             nickname = match.left.nickname
             picture = match.left.picture
+            winner_id = [user["id"] for user in self.user_info_list if user["position"] == "left"]
+            loser_id = [user["id"] for user in self.user_info_list if user["position"] == "right"]
             if self.type == '4P':
+                winner2_id = [user["id"] for user in self.user_info_list if user["position"] == "up"]
+                loser2_id = [user["id"] for user in self.user_info_list if user["position"] == "down"]
                 nickname2 = match.up.nickname
                 picture2 = match.up.picture
         else:
             nickname = match.right.nickname
             picture = match.right.picture
+            winner_id = [user["id"] for user in self.user_info_list if user["position"] == "right"]
+            loser_id = [user["id"] for user in self.user_info_list if user["position"] == "left"]
             if self.type == '4P':
+                winner2_id = [user["id"] for user in self.user_info_list if user["position"] == "down"]
+                loser2_id = [user["id"] for user in self.user_info_list if user["position"] == "up"]
                 nickname2 = match.down.nickname
                 picture2 = match.down.picture
+        
+        game_log = GameLog.objects.create( game_type=self.type )
+        game_log.winners.add(winner_id)
+        game_log.losers.add(loser_id)
+        game_log.save()
+
+        winner = CustomUser.objects.get(id=winner_id)
+        winner.win += 1
+        winner.save()
+        loser = CustomUser.objects.get(id=loser_id)
+        loser.win += 1
+        loser.save()
+        if self.type == '4P':
+            game_log.winners.add(winner2_id)
+            game_log.losers.add(loser2_id)
+            winner2 = CustomUser.objects.get(id=winner2_id)
+            winner2.win += 1
+            winner2.save()
+            loser2 = CustomUser.objects.get(id=loser2_id)
+            loser2.win += 1
+            loser2.save()
+
         data = {
             "nickname": nickname,
             "picture": picture,
