@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext as _
 from rest_framework.authtoken.models import Token
-
+    
 from .managers import CustomUserManager
 
 # Create your models here.
@@ -26,6 +26,7 @@ class CustomUser(AbstractUser):
         _("Picture"), upload_to="users/profile/", default="users/profile-default.png", help_text=_("Required.")
     )
     followings = models.ManyToManyField(to="self", related_name="followers", blank=True, symmetrical=False)
+
     blocks = models.ManyToManyField(to="self", related_name="blocked", blank=True, symmetrical=False)
     win = models.IntegerField(default=0)
     lose = models.IntegerField(default=0)

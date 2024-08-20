@@ -36,7 +36,7 @@ const leftSideHTML = `
 	<span>♥♥♥♥♥</span>
 </div>
 <div></div>
-<div class="user-profile-2p">
+<div class="user-profile-4p">
 	<div class="image-profile-small">
 		<img src="./assets/default-picture.png">
 	</div>
@@ -56,7 +56,7 @@ const rightSideHTML = `
 <div>
 	<img src="./assets/g-button-quit.svg">
 </div>
-<div class="user-profile-4p">
+<div class="user-profile-2p">
 	<div class="image-profile-small">
 		<img src="./assets/default-picture.png">
 	</div>
