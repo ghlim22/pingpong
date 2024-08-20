@@ -169,3 +169,9 @@ class UserSignInAPIView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data  # Return value of serializer.validate()
         return Response(data, status=status.HTTP_200_OK)
+
+
+@permission_classes([permissions.AllowAny])
+@api_view(["GET"])
+def signin_remote(request):
+    return Response()
