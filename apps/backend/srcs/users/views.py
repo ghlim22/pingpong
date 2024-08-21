@@ -18,6 +18,7 @@ from .serializers import (
     UserFollowSerializer,
     UserSerializer,
     UserSignInSerializer,
+    UserSimpleSerializer,
 )
 
 # Create your views here.
@@ -45,6 +46,15 @@ class UserAPIViewSet(viewsets.ModelViewSet):
     ]
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+
+
+@extend_schema(responses=UserSimpleSerializer)
+@permission_classes([permissions.AllowAny])
+@api_view(["GET"])
+def get_active_user_list(request):
+    queryset = CustomUser.objects.all().filter(status__gte=1)
+    serializer = UserSimpleSerializer(queryset, many=True)
+    return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class UserCurrentAPIView(generics.RetrieveUpdateDestroyAPIView):

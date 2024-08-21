@@ -42,11 +42,13 @@ class UserSimpleSerializer(serializers.ModelSerializer):
             "pk",
             "picture",
             "nickname",
+            "status",
         ]
         read_only_fields = [
             "pk",
             "picture",
             "nickname",
+            "status",
         ]
 
 
