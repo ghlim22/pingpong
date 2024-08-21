@@ -28,6 +28,11 @@ export class TFold extends HTMLElement {
 		folder.appendChild(user);
 	}
 
+	removeAll() {
+		const folder = this.shadowRoot.querySelector('.t-fold__users');
+		folder.replaceChildren();
+	}
+
     render() {
         const span = this.shadowRoot.querySelector('.t-fold__id span');
         const img = this.shadowRoot.querySelector('.t-fold__id img');

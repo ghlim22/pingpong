@@ -651,3 +651,151 @@ body {
 .user-profile-4p .image-profile-small {
     border: 0.25rem solid #F9E5B1;
 }
+
+.tournament-room-container {
+	display: flex;
+	flex-wrap: wrap;
+	width: 40.5rem;
+	height: 28rem;
+	margin-top: 2rem;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.tournament-room-container::-webkit-scrollbar {
+    width: 0;
+}
+
+.tournament-room-container:hover::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+.tournament-room-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+}
+
+.tournament-room-container::-webkit-scrollbar-thumb {
+	background-color: rgba(119, 119, 255, 0.2);
+}
+
+.tournament-room-container.room-centered {
+	justify-content: center;
+	align-items: center;
+}
+
+.tournament-room-container * {
+	margin: 0.5rem;
+}
+
+.tournament-room,
+.tournament-room-add {
+	display: flex;
+	width: 12.5rem;
+	height: 12.5rem;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+
+.tournament-room {
+	color: blue;
+	font-size: 2rem;
+	background-color: #9999FF;
+}
+
+.tournament-room:hover {
+	background-color: #EEEEFF;
+}
+
+.tournament-room-add {
+	color: #9999FF;
+	font-size: 5rem;
+	background-color: #ccccff;
+}
+
+.tournament-room-add:hover {
+	background-color: #EEEEFF;
+}
+
+.add-room-setting-box {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.add-room-setting-box div {
+	width: 100vh;
+}
+
+.add-room-setting {
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	background-color: #ddddff;
+}
+
+.add-room-setting-top {
+	display: flex;
+	flex-direction: row;
+}
+
+.add-room-setting-top * {
+	padding: 1rem;
+}
+
+.add-room-setting-main {
+	display: flex;
+	justify-content: center;
+	height: 30vh;
+	align-items: center;
+}
+
+.add-room-setting-bottom {
+	display: flex;
+	justify-content: center;
+	height: 30vh;
+	font-size: 2.5rem;
+	align-content: center;
+	color: blue;
+}
+
+.add-room-setting-bottom * {
+	padding-top: 5rem;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+
+.tournament-room-in {
+	display: flex;
+}
+
+.tournament-room-in * {
+	padding: 0.25rem 0.5rem;
+}
+
+.tournament-match-order {
+	width: inherit;
+	height: inherit;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.tournament-match-order div {
+	padding: 3rem;
+	margin: 1rem;
+	background-color: #eeeeff;
+}
+
+.tournament-match-order div t-block {
+	padding: 0.5rem;
+}
+
+.tournament-match-order-final {
+	display: flex;
+	flex-direction: row;
+}

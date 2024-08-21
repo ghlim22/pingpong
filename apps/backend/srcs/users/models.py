@@ -18,9 +18,7 @@ class CustomUser(AbstractUser):
     last_name = None
     email = models.EmailField(_("Email Address"), unique=True, help_text=_("Required."))
     nickname = models.CharField(_("Nickname"), unique=True, max_length=8, help_text=_("Required."))
-    picture = models.ImageField(
-        _("Picture"), upload_to="users/profile/", default="users/profile-default.png", help_text=_("Required.")
-    )
+    picture = models.ImageField(_("Picture"), upload_to="users/profile/", default="users/profile-default.png", help_text=_("Required."))
     followings = models.ManyToManyField(to="self", related_name="followers", blank=True, symmetrical=False)
 
     blocks = models.ManyToManyField(to="self", related_name="blocked", blank=True, symmetrical=False)

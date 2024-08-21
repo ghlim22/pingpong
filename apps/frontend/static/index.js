@@ -7,6 +7,7 @@ import { basePath } from './app/state.js';
 import { TUserInfo } from './components/tUserInfo.js';
 import { TInvite } from './components/tInvite.js';
 import { TFold } from './components/tFold.js';
+import { TBlock } from './components/tBlock.js';
 
 //function
 import { navigate, parseUrl } from './app/router.js';
@@ -15,7 +16,7 @@ import { handleSubmit, submitJoin, submitLogin } from './app/pages/loginOperatio
 import { homePage } from './app/pages/home.js';
 import { pong1VS1Page } from './app/pages/1vs1Render.js';
 import { pongMultiPage } from './app/pages/multiRender.js';
-import { tournamentPage } from './app/pages/tournament.js';
+import { tournamentPage } from './app/pages/tournamentRender.js';
 import { chatPage } from './app/pages/chat.js';
 
 export {
@@ -25,6 +26,7 @@ export {
     TUserInfo,
     TInvite,
     TFold,
+    TBlock,
     navigate,
     parseUrl,
     loginPage,
@@ -39,7 +41,9 @@ export {
 
 
 window.onpopstate = () => {
-	//navigate(parseUrl(basePath));
+	if (appState.currentCleanupFn !== null) {
+        appState.currentCleanupFn();
+    }
 	navigate(parseUrl(window.location.pathname));
 };
 

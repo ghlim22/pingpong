@@ -45,7 +45,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.save_user_info(user)
 
         if self.position == 'left':
-            user_info_dict = await self.redis.hgetall("game_users")
+            user_info_dict = await self.redis.hgetall(self.game_id)
             self.user_info_list = [
                 json.loads(user_info_dict[self.channel_name])
                 for self.channel_name in user_info_dict
@@ -67,7 +67,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             "picture": user.picture.url,
             "position": self.position
         }
-        await self.redis.hset("game_users", self.channel_name, json.dumps(user_info))
+        await self.redis.hset(self.game_id, self.channel_name, json.dumps(user_info))
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -80,7 +80,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         logger.info("User disconnected")
         await self._decrement_group_size(self.game_group)
-        await self.redis.hdel("game_users", self.channel_name)
+        await self.redis.hdel(self.game_id, self.channel_name)
         await self.channel_layer.group_discard(self.game_group, self.channel_name)
         group_size = await self._get_group_size(self.game_group)
         logger.info(f"Group size after disconnection: {group_size}")

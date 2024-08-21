@@ -13,35 +13,34 @@ const HTMLTemplate = await fetchTUserInfo();
 export class TUserInfo extends HTMLElement {
     constructor() {
         super();
-        this.nick = null;
-        this.img = null;
-        this.id = null;
-        this.isLoggedin = false;
-        //this.addEventListener('click', e => this.toggleCard());
+        // this.nick = null;
+        // this.img = null;
+        // this.id = null;
+        // this.isLoggedin = false;
     }
 
     connectedCallback() {
         const shadowRoot = this.attachShadow({mode: 'open'});
         const instance = HTMLTemplate.content.cloneNode(true);
         shadowRoot.appendChild(instance);
+
         this.nick = this.getAttribute('data-nick');
         this.img = this.getAttribute('data-img');
         this.id = this.getAttribute('data-id');
         this.isLoggedin = this.getAttribute('data-isLoggedin');
-		this.render();
+        this.render();
     }
-
+    
     render() {
         const border = this.shadowRoot.querySelector('.t-user-info__container div');
         const img = this.shadowRoot.querySelector('.image-profile-small img');
         const nickname = this.shadowRoot.querySelector('.t-user-info__nickname');
-
-        if (this.img !== null)
-            img.src = this.img;
+        
+        if (this.img !== null) img.src = this.img;
         nickname.innerHTML = this.nick;
-		if (this.isLoggedin === 'true')
-			border.classList.add("connected");
+        if (this.isLoggedin === 'true') border.classList.add("connected");
     }
 }
 
 customElements.define('t-user-info', TUserInfo);
+

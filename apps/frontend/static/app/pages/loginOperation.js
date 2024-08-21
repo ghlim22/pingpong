@@ -105,61 +105,9 @@ export function submitLogin(event) {
 	.then((data) => {
 		loginUser(data['token'], data['email'], data['nickname'], data['picture'])
 		navigate(parseUrl(basePath));
-		main_ws(appState.token);
+		// main_ws(appState.token);
 	})
 	.catch(error => {
 		console.log('Error: ', error);
 	});
-}
-
-function main_ws(token) {
-	let ws = new WebSocket(`wss://localhost/wss/games/main/?token=${token}`);
-	const connect = document.querySelector('.connect');
-	const friend = document.querySelector('.friend');
-
-	ws.onmessage = (event) => {
-		const data = JSON.parse(event.data);
-		console.log('on message', data);
-		const user = document.createElement('t-user-info');
-		user.classList.add("p-button-current")
-		user.setAttribute('data-nick', data.nick);
-		user.setAttribute('data-img', data.img);
-		user.setAttribute('data-id', data.id);
-
-		if (data.type == 'connected')
-		{
-			user.setAttribute('data-isLoggedin', 'true');
-			
-			connect.addUserInfo(user);
-			// connect.appendChild(user);
-			const isExist = friend.querySelector('#${data.id}');
-			if (isExist)
-				friend.removeChild(isExist);
-			friend.appendChild(user);
-		}
-		else if (data.type == 'disconnected')
-		{
-			user.setAttribute('data-isLoggedin', 'false');
-			
-			connect.removeChild(connect.querySelector('#${data.id}'));
-			friend.removeChild(friend.querySelector('#${data.id}'));
-			friend.appendChild(user);
-		}
-		else if (data.type == 'modify')
-		{
-			user.setAttribute('data-isLoggedin', 'true');
-
-			const isExist = connect.querySelector('#${data.id}');
-			if (isExist)
-				connect.removeChild(isExist);
-			friend.removeChild(friend.querySelector('#${data.id}'));
-
-			connect.appendChild(user);
-			friend.appendChild(user);
-		}
-	}
-
-	ws.onerror = (error) => {
-
-	}
 }

@@ -10,6 +10,7 @@ logger = logging.getLogger("django")
 class mainConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_group_name = "main"
+        self.redis = redis.from_url("redis://redis")
 
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -17,34 +18,39 @@ class mainConsumer(AsyncWebsocketConsumer):
         )
         await self.accept()
 
-        user = self.scope["user"]
-        if user.is_authenticated:
+        self.user = self.scope["user"]
+        if self.user.is_authenticated:
+            await self.save_user_info(True)
+        else:   
             self.disconnect()
-
-        self.data = {
-            "nick" : user.nickname,
-            "img" : user.picture,
-            "id" : user.id,
-        }
+        await self._send()
         
-        await self.channel_layer.group_send(self.room_group_name, {"type": "connected", "data": self.data})
+    async def save_user_info(self, status):
+        user_info = {
+            "nick" : self.user.nickname,
+            "img" : self.user.picture.url,
+            "id" : self.user.id,
+            "isLoggedin" : status,
+        }
+        await self.redis.hset("main", self.user.id, json.dumps(user_info))
 
-    async def disconnect_message(self, close_code):
-        await self.channel_layer.group_send(self.room_group_name, {"type": "disconnected", "data": self.data})
-
+    async def disconnect(self, close_code):
+        await self.redis.hdel("main", self.user.id)
+        await self.save_user_info(False)
+        await self._send()
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-
         logger.info(f"[RANK] 사용자 연결 해제됨: {self.channel_name}")
 
-    async def modify_message(self):
-        # Send user info to all clients
-        await self.channel_layer.group_send(self.room_group_name, {"type": "modify", "data": self.data})
+    async def _send(self):
+        user_info_dict = await self.redis.hgetall("main")
+        user_info_list = [
+            json.loads(user_info_dict[channel_name])
+            for channel_name in user_info_dict
+        ]
+        await self.channel_layer.group_send(self.room_group_name, {"type": "update", "users": user_info_list})
 
-    async def connected(self, event):
+    async def update(self, event):
         await self.send(text_data=json.dumps(event))
 
     async def disconnected(self, event):
-        await self.send(text_data=json.dumps(event))
-
-    async def modify(self, event):
         await self.send(text_data=json.dumps(event))

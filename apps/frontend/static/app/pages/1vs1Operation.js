@@ -5,6 +5,12 @@ export function game_queue(type, token) {
   return new Promise((resolve, reject) => {
     let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
     
+    appState.currentCleanupFn = () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+      navigate(parseUrl(basePath));
+    };
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         ws.close(); 
