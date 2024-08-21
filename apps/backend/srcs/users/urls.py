@@ -25,8 +25,10 @@ from .views import (
     UserSignInAPIView,
     block,
     follow,
+    get_42access_token,
     get_block_list,
     getFollowList,
+    signin_remote,
 )
 
 router = routers.SimpleRouter()
@@ -40,6 +42,8 @@ urlpatterns = [
     path("current/block/<int:pk>/", block),
     path("current/block/", get_block_list),
     path("current/", UserCurrentAPIView.as_view()),
+    path("signin/remote/", signin_remote),
+    path("signin/remote/callback", get_42access_token),
 ]
 
 urlpatterns += router.urls

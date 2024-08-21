@@ -1,3 +1,10 @@
+from urllib.parse import quote
+
+import requests
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+from django.shortcuts import redirect
+from django.utils.http import urlencode
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import generics, permissions, serializers, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
@@ -174,4 +181,42 @@ class UserSignInAPIView(generics.GenericAPIView):
 @permission_classes([permissions.AllowAny])
 @api_view(["GET"])
 def signin_remote(request):
-    return Response()
+    referral_url = request.GET.get("referral_url")
+    if referral_url:
+        request.session["referral_url"] = referral_url
+        referral_url = quote(referral_url)
+    params = {
+        "client_id": "u-s4t2ud-b89b6b91d03e4c4ba5eb82d9171a46da61dcfde5635fbebec0afa55cd6fba2cb",
+        "redirect_uri": "http://localhost:8000/api/users/signin/remote/callback",
+        "response_type": "code",
+    }
+    url = "https://api.intra.42.fr/oauth/authorize?"
+    url += urlencode(params)
+    return redirect(to=url)
+
+
+@permission_classes([permissions.AllowAny])
+@api_view(["GET"])
+def get_42access_token(request):
+    code = request.GET.get("code")
+    print(code)
+    if not code:
+        return Response(data={"error": "code is missing."}, status=status.HTTP_400_BAD_REQUEST)
+    params = {
+        "grant_type": "authorization_code",
+        "client_id": "u-s4t2ud-b89b6b91d03e4c4ba5eb82d9171a46da61dcfde5635fbebec0afa55cd6fba2cb",
+        "client_secret": "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",
+        "code": code,
+        # "redirect_uri": "http://localhost:8000/api/users/signin/remote/callback",
+    }
+    response = requests.post(url="https://api.intra.42.fr/oauth/token", data=params)
+    if not response.status_code == 200:
+        return Response(data={"error": "failed to obtain access token."}, status=status.HTTP_401_UNAUTHORIZED)
+    access_token = response.json().get("access_token")
+    print(access_token)
+
+    return Response(status=status.HTTP_200_OK)
+
+
+def callback(request):
+    print(request.data)
