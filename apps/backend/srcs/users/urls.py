@@ -45,7 +45,7 @@ urlpatterns = [
     path("current/block/", get_block_list),
     path("current/", UserCurrentAPIView.as_view()),
     path("signin/remote/", signin_remote),
-    path("signin/remote/callback", get_42access_token),
+    path("signin/remote/callback/", get_42access_token),
 ]
 
 urlpatterns += router.urls

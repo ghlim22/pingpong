@@ -196,11 +196,22 @@ def signin_remote(request):
     return redirect(to=url)
 
 
+def get_access_token(code: str) -> str:
+    params = {
+        "grant_type": "authorization_code",
+        "client_id": "u-s4t2ud-b89b6b91d03e4c4ba5eb82d9171a46da61dcfde5635fbebec0afa55cd6fba2cb",
+        "client_secret": "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",
+        "code": code,
+        "redirect_uri": "http://localhost:8000/api/users/signin/remote/callback/",
+    }
+
+
 @permission_classes([permissions.AllowAny])
 @api_view(["GET"])
 def get_42access_token(request):
+    # Get access token
     code = request.GET.get("code")
-    print(code)
+    print(f"Code: {code}")
     if not code:
         return Response(data={"error": "code is missing."}, status=status.HTTP_400_BAD_REQUEST)
     params = {
@@ -208,16 +219,21 @@ def get_42access_token(request):
         "client_id": "u-s4t2ud-b89b6b91d03e4c4ba5eb82d9171a46da61dcfde5635fbebec0afa55cd6fba2cb",
         "client_secret": "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",
         "code": code,
-        # "redirect_uri": "http://localhost:8000/api/users/signin/remote/callback",
+        "redirect_uri": "http://localhost:8000/api/users/signin/remote/callback",
     }
     response = requests.post(url="https://api.intra.42.fr/oauth/token", data=params)
     if not response.status_code == 200:
-        return Response(data={"error": "failed to obtain access token."}, status=status.HTTP_401_UNAUTHORIZED)
+        # return redirect(to="https://localhost")
+        return Response(data=response.json(), status=response.status_code)
     access_token = response.json().get("access_token")
-    print(access_token)
+    print(f"Access Token: {access_token}")
+
+    # Get user's data
+    url = "https://api.intra.42.fr/v2/me"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+    }
+    response = requests.get(url=url, headers=headers)
+    print(response.json())
 
     return Response(status=status.HTTP_200_OK)
-
-
-def callback(request):
-    print(request.data)
