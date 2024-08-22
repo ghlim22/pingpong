@@ -29,7 +29,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.game_group, self.channel_name)
         await self.accept()
 
-        user = self.scope["user"]
+        self.user = self.scope["user"]
         group_size = await self._increment_and_get_group_size(self.game_group)
 
         if group_size == max:
@@ -41,8 +41,10 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif group_size == 3:
             self.position = 'down'
 
-        if user.is_authenticated:
-            await self.save_user_info(user)
+        if self.user.is_authenticated:
+            await self.save_user_info(self.user)
+        else:
+            self.close()
 
         if self.position == 'left':
             user_info_dict = await self.redis.hgetall(self.game_id)
@@ -79,11 +81,11 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         logger.info("User disconnected")
-        await self._decrement_group_size(self.game_group)
-        await self.redis.hdel(self.game_id, self.channel_name)
-        await self.channel_layer.group_discard(self.game_group, self.channel_name)
-        group_size = await self._get_group_size(self.game_group)
-        logger.info(f"Group size after disconnection: {group_size}")
+        if self.user and self.user.id:
+            await self._decrement_group_size(self.game_group)
+            await self.redis.hdel(self.game_id, self.channel_name)
+            logger.info(f"Channel name: {self.channel_name}, Type: {type(self.channel_name)}")
+            await self.channel_layer.group_discard(self.game_group, self.channel_name)
 
     async def _get_group_size(self, group_name):
         size = await self.redis.get(group_name)

@@ -10,8 +10,7 @@ logger = logging.getLogger("django")
 class GameQueueConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.game_type = self.scope["url_route"]["kwargs"]["type"]
-        self.room_group_name = "game_queue"
-        logger.info("hihi")
+        self.room_group_name = self.game_type
         self.redis = redis.from_url("redis://redis")
         self.game_id = str(uuid.uuid4())  # 고유한 game_id 생성
 
@@ -23,9 +22,11 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         # Save user information in Redis
-        user = self.scope["user"]
-        if user.is_authenticated:
-            await self.save_user_info(user)
+        self.user = self.scope["user"]
+        if self.user.is_authenticated:
+            await self.save_user_info(self.user)
+        else:
+            self.close()
 
         await self.increment_and_check_group_size(self.room_group_name)
 
@@ -39,13 +40,10 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
         await self.redis.hset("game_users", self.channel_name, json.dumps(user_info))
 
     async def disconnect(self, close_code):
-        await self.decrement_group_size(self.room_group_name)
-
-        # Remove user info from Redis
-        await self.redis.hdel("game_users", self.channel_name)
-
-        # 방 그룹에서 제거
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        if self.user and self.user.id:
+            await self.decrement_group_size(self.room_group_name)
+            await self.redis.hdel("game_users", self.channel_name)
+            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
         logger.info(f"[RANK] 사용자 연결 해제됨: {self.channel_name}")
 
@@ -60,7 +58,7 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
 
         if self.game_type == "2P":
             num = 2
-        elif self.game_type == "4P":
+        else:
             num = 4
 
         if group_size == num:
@@ -79,7 +77,6 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
             json.loads(user_info_dict[channel_name])
             for channel_name in user_info_dict
         ]
-
         data = {
                     "game_id": self.game_id,
                     "user_info": user_info_list,

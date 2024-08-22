@@ -22,7 +22,7 @@ class mainConsumer(AsyncWebsocketConsumer):
         if self.user.is_authenticated:
             await self.save_user_info(True)
         else:   
-            self.disconnect()
+            self.close()
         await self._send()
         
     async def save_user_info(self, status):
@@ -35,10 +35,11 @@ class mainConsumer(AsyncWebsocketConsumer):
         await self.redis.hset("main", self.user.id, json.dumps(user_info))
 
     async def disconnect(self, close_code):
-        await self.redis.hdel("main", self.user.id)
-        await self.save_user_info(False)
-        await self._send()
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        if self.user and self.user.id:
+            await self.redis.hdel("main", self.user.id)
+            await self.save_user_info(False)
+            await self._send()
+            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         logger.info(f"[RANK] 사용자 연결 해제됨: {self.channel_name}")
 
     async def _send(self):

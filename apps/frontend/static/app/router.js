@@ -52,7 +52,10 @@ export function navigate(parsed) {
 		setClaslistDefault();
 		page();
 	}
-	main_ws(appState.token);
+	if (appState.token !== null)
+	{
+		main_ws(appState.token);
+	}
 }
 
 function notFoundPage() {
