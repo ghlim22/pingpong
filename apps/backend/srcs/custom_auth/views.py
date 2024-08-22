@@ -1,8 +1,9 @@
-from urllib.parse import quote, urlencode
+from urllib.parse import quote, urlencode, urlparse
 
 import requests
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.base import ContentFile
 from django.shortcuts import redirect
 from rest_framework import permissions, status
 from rest_framework.authtoken.models import Token
@@ -56,6 +57,7 @@ def authenticate(request):
         return Response(data={"error": "code is missing."}, status=status.HTTP_400_BAD_REQUEST)
     access_token = get_access_token(code)
     user_data = get_user_data(access_token)
+    print(user_data)
     try:
         user = CustomUser.objects.get(email=user_data.get("email"))
         token = Token.objects.get(user=user)
@@ -68,13 +70,18 @@ def authenticate(request):
         }
         return Response(data=data, status=status.HTTP_200_OK)
     except ObjectDoesNotExist:
+        email = user_data.get("email")
         data = {
-            "email": user_data.get("email"),
             "nickname": user_data.get("login"),
         }
-        user = CustomUser.objects.create_user()
+        user = CustomUser.objects.create_user(email=email, password=None, **data)
+        image_url = user_data.get("image")
+        image_name = urlparse(image_url).path.split("/")[-1]
+        response = requests.get(image_url)
+        if response.status_code == status.HTTP_200_OK:
+            user.picture.save(image_name, ContentFile(response.content))
+        user.save()
 
-    print(user_data)
     return Response(status=status.HTTP_200_OK)
 
 
