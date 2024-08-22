@@ -68,7 +68,11 @@ def authenticate(request):
             "picture": user.picture.url,
             "token": token.key,
         }
-        return Response(data=data, status=status.HTTP_200_OK)
+        # return Response(data=data, status=status.HTTP_200_OK)
+        url = "https://localhost/?"
+        url += urlencode(data)
+        print(url)
+        return redirect(to=url)
     except ObjectDoesNotExist:
         email = user_data.get("email")
         data = {
@@ -81,7 +85,8 @@ def authenticate(request):
         if response.status_code == status.HTTP_200_OK:
             user.picture.save(name=image_name, content=ContentFile(response.content))
         user.save()
-    return Response(status=status.HTTP_200_OK)
+    return redirect(to="https://localhost/")
+    # return Response(status=status.HTTP_200_OK)
 
 
 @permission_classes([permissions.AllowAny])
