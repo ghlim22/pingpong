@@ -76,12 +76,11 @@ def authenticate(request):
         }
         user = CustomUser.objects.create_user(email=email, password=None, **data)
         image_url = user_data.get("image")
-        image_name = urlparse(image_url).path.split("/")[-1]
+        image_name = urlparse(url=image_url).path.split("/")[-1]
         response = requests.get(image_url)
         if response.status_code == status.HTTP_200_OK:
-            user.picture.save(image_name, ContentFile(response.content))
+            user.picture.save(name=image_name, content=ContentFile(response.content))
         user.save()
-
     return Response(status=status.HTTP_200_OK)
 
 
