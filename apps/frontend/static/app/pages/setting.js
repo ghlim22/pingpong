@@ -38,8 +38,17 @@ const mainHTML = `
 `;
 
 export function settingPage() {
+	const leftSideHTML = `
+	<t-user-info class="p-button-current" data-nick="${appState.nickname}" data-img="${appState.picture}" data-id="${appState.token}" data-isloggedin="true"></t-user-info>
+	<t-invite class="receive-invitation"></t-invite>
+	<t-fold class="connect"></t-fold>
+	`;
+
+	console.log(appState);
+
 	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('main').innerHTML = mainHTML;
+	document.getElementById('left-side').innerHTML = leftSideHTML;
 
 	document.querySelector('.logo-small').addEventListener('click', () => {
 		navigate(parseUrl(basePath));
@@ -94,7 +103,8 @@ export function submitPicture(event) {
 	.then((data) => {
 		console.log('edit success');
 		alert('edit success');
-		appState.picture = picture;
+		appState.picture = data['picture'];
+		sessionStorage.setItem('appState', JSON.stringify(appState));
 		navigate(parseUrl(basePath + 'setting'));
 	})
 	.catch(error => {
@@ -141,6 +151,7 @@ export function submitNickname(event) {
 		console.log('edit success');
 		alert('edit success');
 		appState.nickname = nickname;
+		sessionStorage.setItem('appState', JSON.stringify(appState));
 		navigate(parseUrl(basePath + 'setting'));
 	})
 	.catch(error => {
