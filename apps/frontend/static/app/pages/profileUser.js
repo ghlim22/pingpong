@@ -4,13 +4,24 @@ const topHTML = `
 <span class="logo-small">PONG</span>
 `;
 
+				//<span class="t-button">x</span>
 const mainHTML = `
 <div class="inner_setting">
     <div class="inner_setting_window">
-		<span class="t-button">x</span>
         <div class="inner_profile_top">
+			<div class="user-profile-field"></div>
+			<div class="user-button-field"></div>
         </div>
-        <div class="inner_profile_main"></div>
+        <div class="inner_profile_main">
+			<div>
+				<span>win</span>
+				<span>0</span>
+			</div>
+			<div>
+				<span>lose</span>
+				<span>0</span>
+			</div>
+		</div>
         <div class="inner_profile_bottom"></div>
     </div>
 </div>
@@ -24,7 +35,7 @@ const rightSideHTML = `
 <t-fold class="friend"></t-fold>
 `;
 
-export function profileUserPage() {
+export function profileUserPage(parsed) {
 	if (!appState.isLoggedIn) {
 		navigate(parseUrl(basePath + 'login'));
 		return;
@@ -51,4 +62,10 @@ export function profileUserPage() {
 	document.querySelector('.p-button-setting').addEventListener('click', () => {
 		navigate(parseUrl(basePath + 'setting'))
 	});
+	document.querySelector('.logo-small').addEventListener('click', () => {
+		navigate(parseUrl(basePath));
+	});
+	document.querySelector('.t-button').addEventListener('click', () => {
+        navigate(parseUrl(basePath));
+    });
 }

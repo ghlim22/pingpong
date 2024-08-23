@@ -1,4 +1,4 @@
-import { appState, navigate, parseUrl, basePath } from '../index.js';
+import { appState, navigate, parseUrl, basePath, profileUserPage } from '../index.js';
 
 'use strict';
 
@@ -41,7 +41,10 @@ export class TUserInfo extends HTMLElement {
         if (this.isLoggedin === 'true') border.classList.add("connected");
 
 		this.addEventListener('click', () => {
-			navigate(parseUrl(basePath + 'profile/:' + this.nick));
+			if (this.classList.contains('p-button-user')) {
+				navigate(parseUrl(basePath + 'profile/:' + this.nick));
+				//profileUserPage
+			}
 		});
     }
 }

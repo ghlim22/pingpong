@@ -48,6 +48,7 @@ export function navigate(parsed) {
 		window.history.pushState({}, parsed.path, window.location.origin + parsed.path);
 	}
 	if (parsed.isParams) {
+		console.log(parsed);
 		setClaslistDefault();
 		page(parsed.params);
 	}
