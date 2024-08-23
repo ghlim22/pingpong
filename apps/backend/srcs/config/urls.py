@@ -26,6 +26,7 @@ from drf_spectacular.views import (
 
 urlpatterns = [
     path("api/admin/", admin.site.urls),
+    path("api/auth/", include("custom_auth.urls")),
     path("api/users/", include("users.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

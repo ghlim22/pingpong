@@ -23,13 +23,17 @@ env = environ.Env(
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Take environment variables from .env file
-environ.Env.read_env(os.path.join(BASE_DIR, "sample.txt"))
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
+API_UID = env("API_UID")
+API_SECRET = env("API_SECRET")
+API_REDIRECT = env("API_REDIRECT")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
