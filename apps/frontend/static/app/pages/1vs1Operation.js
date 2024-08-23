@@ -28,6 +28,12 @@ export function game_queue(type, token) {
 export function play_game(info, type, token) {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(`wss://localhost/wss/games/start/${info.game_id}/${type}/?token=${token}`);
+    appState.currentCleanupFn = () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+      navigate(parseUrl(basePath));
+    };
     OnlineGame(ws, type)
     .then((data) => {
       console.log('Received data:', data);
@@ -39,7 +45,3 @@ export function play_game(info, type, token) {
     });
   });
 }
-
-
-// const sock = new WebSocket(`ws://localhost:8000/ws/games/start/${data.game_id}/${type}/`);
-//       OnlineGame(sock, type);

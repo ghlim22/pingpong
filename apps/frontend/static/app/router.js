@@ -90,16 +90,50 @@ function setClaslistDefault() {
 }
 
 function main_ws(token) {
-	let ws = new WebSocket(`wss://localhost/wss/games/main/?token=${token}`);
+	console.log(appState.ws);
+	if (appState.ws === null)
+		appState.ws = new WebSocket(`wss://localhost/wss/games/main/?token=${token}`);
+	else
+		appState.ws.send(JSON.stringify({ type: "updateMine"}));
 	const connect = document.querySelector('.connect');
 	const friend = document.querySelector('.friend');
 
-	ws.onmessage = (event) => {
+	appState.ws.onmessage = (event) => {
 		const data = JSON.parse(event.data);
+
+		// let followData;
+		// fetch('api/users/current/follow/', {
+		// 	method: 'GET',
+		// 	headers: {
+		// 		'Authorization': "Token " + appState.token
+		// 	}
+		// })
+		// .then((response) => {
+		// 	if (response.status === 200) {
+		// 		return response.json().then(data => {
+		// 			return data;
+		// 		});
+		// 	} else if (response.status === 400) {
+		// 		return response.json().then(data => {
+		// 			throw new Error('Bad Request');
+		// 		});
+		// 	} else {
+		// 		return response.json().then(data => {
+		// 			console.log('Other status: ', data);
+		// 			throw new Error('Unexpected status code: ', response.status);
+		// 		});
+		// 	}
+		// })
+		// .then((data) => {
+		// 	console.log('Data: ', data);
+		// 	followData = data;
+		// })
+		// .catch(error => {
+		// 	console.log('Error: ', error);
+		// });
 
     	if (data.type === 'update') {
 			const userInfoList = data.users;
-			console.log('~', userInfoList);
 			connect.removeAll();
 			friend.removeAll();
 			
@@ -116,36 +150,6 @@ function main_ws(token) {
         	});
     	}
 
-		let followData;
-		fetch('api/users/current/follow/', {
-			method: 'GET',
-			headers: {
-				'Authorization': "Token " + appState.token
-			}
-		})
-		.then((response) => {
-			if (response.status === 200) {
-				return response.json().then(data => {
-					return data;
-				});
-			} else if (response.status === 400) {
-				return response.json().then(data => {
-					throw new Error('Bad Request');
-				});
-			} else {
-				return response.json().then(data => {
-					console.log('Other status: ', data);
-					throw new Error('Unexpected status code: ', response.status);
-				});
-			}
-		})
-		.then((data) => {
-			console.log('Data: ', data);
-			followData = data;
-		})
-		.catch(error => {
-			console.log('Error: ', error);
-		});
 	}
 		// const info = JSON.parse(event.data);
 		
@@ -189,7 +193,7 @@ function main_ws(token) {
 		// 	friend.appendChild(user);
 		// }
 
-	ws.onerror = (error) => {
-
+	appState.ws.onclose = (error) => {
+		appState.ws = null;
 	}
 }

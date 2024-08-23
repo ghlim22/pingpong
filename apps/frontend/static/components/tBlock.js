@@ -24,6 +24,14 @@ export class TBlock extends HTMLElement {
 		this.render();
     }
 
+    setImageNick(pic, nick) {
+        const img = this.shadowRoot.querySelector('.image-profile-small img');
+        const nickname = this.shadowRoot.querySelector('.t-block__nickname');
+
+        nickname.innerHTML = nick;
+        img.src = appState.picture = pic;
+    }
+
     render() {
         const border = this.shadowRoot.querySelector('.t-block__container div');
         const img = this.shadowRoot.querySelector('.image-profile-small img');

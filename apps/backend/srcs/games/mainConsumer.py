@@ -40,8 +40,18 @@ class mainConsumer(AsyncWebsocketConsumer):
             await self.save_user_info(False)
             await self._send()
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        logger.info(f"[RANK] 사용자 연결 해제됨: {self.channel_name}")
+        logger.info(f"[main] 사용자 연결 해제됨: {self.channel_name}")
 
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        if (data.get("type") == 'updateMine'):
+            user_info_dict = await self.redis.hgetall("main")
+            user_info_list = [
+                json.loads(user_info_dict[channel_name])
+                for channel_name in user_info_dict
+            ]
+            await self.channel_layer.send(self.channel_name, {"type": "update", "users": user_info_list})
+    
     async def _send(self):
         user_info_dict = await self.redis.hgetall("main")
         user_info_list = [

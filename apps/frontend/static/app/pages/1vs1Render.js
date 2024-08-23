@@ -1,5 +1,6 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
 import { game_queue, play_game } from './1vs1Operation.js'
+import { matchOrderPage } from './tournamentRender.js'
 const matchHTML = `
 <div class="match-1vs1">
 	<div class="image-profile-middle" id="mine">
@@ -67,7 +68,7 @@ const resultHTML = `
 
 let timerId;
 
-export function pong1VS1Page() {
+export function pong1VS1Page(game_id = null) {
 	const above = document.getElementById('above');
 	above.innerHTML = matchHTML;
 
@@ -81,7 +82,10 @@ export function pong1VS1Page() {
 		img.src = appState.picture;
 	nickname.innerHTML = appState.nickname;
 	
-	game_queue('2P', appState.token)
+	let type = '2P'
+	if (isTour !== null)
+		type = game_id;
+	game_queue(type, appState.token)
     .then((data) => {
       console.log('Received data:', data);
 	  for (const element of data.user_info){
@@ -105,7 +109,7 @@ export function pong1VS1Page() {
 	//				match 되면 data {현재유저 포지션, 상대유저 nick, 상대유저 img} 반환
 }
 
-function game1vs1Page(info) {
+export function game1vs1Page(info) {
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -123,13 +127,16 @@ function game1vs1Page(info) {
 	main.innerHTML = mainHTML;
 	top.innerHTML = topHTML;
 	bottom.innerHTML = bottomHTML;
-
 	//document.querySelector('#right-side.ingame div img').addEventListener('click', handleQuitGame);
 	play_game(info, '2P', appState.token)
     .then((data) => {
       console.log('Received data:', data);
-
-      gameResultPage(data);
+	  if (info.game_id2 === "false" || appState !== data.nickname)
+      	gameResultPage(data);
+	  else
+	  {
+		pong1VS1Page(info.game_id3);
+	  }
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);
