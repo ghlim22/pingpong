@@ -2,9 +2,11 @@ from urllib.parse import quote, urlencode
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from . import oauth
@@ -35,12 +37,12 @@ def authenticate(request):
 
 @permission_classes([permissions.AllowAny])
 @api_view(["GET"])
-def redirect_to_oauth(request):
+def redirect_to_oauth(request: Request) -> HttpResponse:
     referer = request.GET.get("referer")
     if referer:
         request.session["referer"] = referer
         referer = quote(referer)
-    params = {
+    params: dict = {
         "client_id": settings.API_UID,
         "redirect_uri": settings.API_REDIRECT,
         "response_type": "code",
