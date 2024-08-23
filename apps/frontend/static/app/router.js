@@ -1,13 +1,13 @@
-import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, basePath, appState } from '../index.js';
+import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState } from '../index.js';
 
 const routes = {
-	[basePath + 'login']:		loginPage,
-	[basePath]:					homePage,
+	[basePath + 'login']:			loginPage,
+	[basePath]:						homePage,
 	[basePath + '1vs1']:			pong1VS1Page,
 	[basePath + 'multi']:			pongMultiPage,
 	[basePath + 'tournament']:		tournamentPage,
 	[basePath + 'setting']:			settingPage,
-	[basePath + 'profile/:nick']:			settingPage,
+	[basePath + 'profile/:nick']:	profileUserPage,
 	//'/profile/edit-profile':		profileEditPage,
 	//'/profile/:nick':				profileUserPage,
 	//'/setting/:nick':					settingUserPage,

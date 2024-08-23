@@ -18,6 +18,7 @@ import { pong1VS1Page } from './app/pages/1vs1Render.js';
 import { pongMultiPage } from './app/pages/multiRender.js';
 import { tournamentPage } from './app/pages/tournamentRender.js';
 import { settingPage, submitPicture, submitNickname } from './app/pages/setting.js';
+import { profileUserPage } from './app/pages/profileUser.js';
 
 export {
     appState,
@@ -39,6 +40,7 @@ export {
     settingPage,
 	submitPicture,
 	submitNickname,
+	profileUserPage,
 };
 
 

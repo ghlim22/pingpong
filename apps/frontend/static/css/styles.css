@@ -664,6 +664,13 @@ body {
     font-size: 0.875rem;
 }
 
+.inner_profile_top {
+	width: inherit;
+	/*height: 3.125rem;*/
+	height: 5rem;
+	display: flex;
+}
+
 .in-game {
 	position: relative;
 	/*height: 90vh;*/
