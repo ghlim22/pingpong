@@ -157,7 +157,7 @@ class UserSerializer(serializers.ModelSerializer):
         password = validated_data.pop("password", None)
         if password is not None:
             instance.set_password(password)
-        for (key, value) in validated_data.items():
+        for key, value in validated_data.items():
             setattr(instance, key, value)
         instance.save()
         return instance
