@@ -9,7 +9,6 @@ const mainHTML = `
     <div class="inner_setting_window">
 		<span class="t-button">x</span>
         <div class="inner_profile_top">
-			<span>Edit Profile</span>
         </div>
         <div class="inner_profile_main"></div>
         <div class="inner_profile_bottom"></div>
@@ -41,6 +40,13 @@ export function profileUserPage() {
 	document.getElementById('main').innerHTML = mainHTML;
 	document.getElementById('left-side').innerHTML = leftSideHTML;
 	document.getElementById('right-side').innerHTML = rightSideHTML;
+
+	const user = document.createElement('t-user-info');
+	user.setAttribute('data-nick', appState.nickname);
+	user.setAttribute('data-img', appState.picture);
+	user.setAttribute('data-id', '0000');
+	user.setAttribute('data-isLoggedin', 'false');
+	document.querySelector('.inner_profile_top').appendChild(user);
 
 	document.querySelector('.p-button-setting').addEventListener('click', () => {
 		navigate(parseUrl(basePath + 'setting'))
