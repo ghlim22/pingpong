@@ -157,6 +157,48 @@ def block(request, pk):
     return Response(status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    responses=inline_serializer(
+        name="OtherUserDetailSerializer",
+        fields={
+            "picture": serializers.URLField(),
+            "win": serializers.IntegerField(),
+            "lose": serializers.IntegerField(),
+            "following": serializers.BooleanField(),
+            "blocked": serializers.BooleanField(),
+        },
+    )
+)
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def OtherUserDetailView(request, pk):
+    """
+    Show other user's detail.
+    """
+    instance = request.user
+    obj = get_object_or_404(queryset=CustomUser.objects.all(), pk=pk)
+    if instance.pk == obj.pk:
+        return Response(data={"error": "You cannot make this request of yourself."}, status=status.HTTP_400_BAD_REQUEST)
+    if obj in instance.followings.all():
+        following = True
+    else:
+        following = False
+    if obj in instance.blocks.all():
+        blocked = True
+    else:
+        blocked = False
+
+    data = {
+        "picture": obj.picture.url,
+        "win": obj.win,
+        "lose": obj.lose,
+        "following": following,
+        "blocked": blocked,
+    }
+
+    return Response(data=data, status=status.HTTP_200_OK)
+
+
 class UserSignInAPIView(generics.GenericAPIView):
     """
     Login a user
