@@ -22,7 +22,7 @@ def authenticate(request):
         return Response(data={"error": "code is missing."}, status=status.HTTP_401_UNAUTHORIZED)
         # return redirect_failure()
 
-    access_token = oauth.request_token()
+    access_token = oauth.request_token(code)
     user = oauth.request_user(access_token)
 
     email = user.get("email")
