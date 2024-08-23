@@ -1,4 +1,4 @@
-import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, chatPage, basePath, appState } from '../index.js';
+import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, basePath, appState } from '../index.js';
 
 const routes = {
 	[basePath + 'login']:		loginPage,
@@ -6,10 +6,11 @@ const routes = {
 	[basePath + '1vs1']:			pong1VS1Page,
 	[basePath + 'multi']:			pongMultiPage,
 	[basePath + 'tournament']:		tournamentPage,
-	[basePath + 'chat']:			chatPage,
+	[basePath + 'setting']:			settingPage,
+	[basePath + 'profile/:nick']:			settingPage,
 	//'/profile/edit-profile':		profileEditPage,
 	//'/profile/:nick':				profileUserPage,
-	//'/chat/:nick':					chatUserPage,
+	//'/setting/:nick':					settingUserPage,
 	//'/tournament/:num':			tournamentRoomPage,
 };
 
@@ -41,6 +42,8 @@ export function parseUrl(url) {
 export function navigate(parsed) {
 	const currentPath = window.location.pathname;
 	const page = routes[parsed.route] || notFoundPage;
+	console.log('parsed: ');
+	console.log(parsed);
 	if (currentPath !== parsed.path) {
 		window.history.pushState({}, parsed.path, window.location.origin + parsed.path);
 	}
@@ -96,13 +99,12 @@ function main_ws(token) {
 
     	if (data.type === 'update') {
 			const userInfoList = data.users;
-			console.log('~', userInfoList);
 			connect.removeAll();
 			friend.removeAll();
 			
 			userInfoList.forEach(userInfo => {
 				const user = document.createElement('t-user-info');
-				user.classList.add("p-button-current");
+				user.classList.add("p-button-user");
 				user.setAttribute('data-nick', userInfo.nick || 'Unknown');
 				user.setAttribute('data-img', userInfo.img || '../assets/default.png');
 				user.setAttribute('data-id', userInfo.id || '0000');
@@ -137,7 +139,6 @@ function main_ws(token) {
 			}
 		})
 		.then((data) => {
-			console.log('Data: ', data);
 			followData = data;
 		})
 		.catch(error => {

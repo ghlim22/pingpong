@@ -16,9 +16,9 @@ const mainHTML = `
 `;
 
 const rightSideHTML = `
-<div class="p-button-chat">
-	<img src="./assets/s-button-message.svg">
-	<span>chat</span>
+<div class="p-button-setting">
+	<img src="./assets/s-button-cog.svg">
+	<span>setting</span>
 </div>
 <t-fold class="friend"></t-fold>
 `;
@@ -29,7 +29,7 @@ export function homePage() {
 		return;
 	}
 	const leftSideHTML = `
-	<t-user-info class="p-button-current" data-nick="${appState.nickname}" data-img="${appState.picture}" data-id="${appState.token}"></t-user-info>
+	<t-user-info class="p-button-current" data-nick="${appState.nickname}" data-img="${appState.picture}" data-id="${appState.token}" data-isloggedin="true"></t-user-info>
 	<t-invite class="receive-invitation"></t-invite>
 	<t-fold class="connect"></t-fold>
 	`;
@@ -49,7 +49,7 @@ export function homePage() {
 	document.getElementById('tournament').addEventListener('click', () => {
 		navigate(parseUrl(basePath + 'tournament'))
 	});
-	document.querySelector('.p-button-chat').addEventListener('click', () => {
-		navigate(parseUrl(basePath + 'chat'))
+	document.querySelector('.p-button-setting').addEventListener('click', () => {
+		navigate(parseUrl(basePath + 'setting'))
 	});
 }

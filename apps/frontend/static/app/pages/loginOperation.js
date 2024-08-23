@@ -1,21 +1,10 @@
 import { appState, loginUser, basePath, navigate, parseUrl, TUserInfo } from '../../index.js';
 import { loginHTML } from './loginRender.js';
 
-export function handleSubmit(event) {
-	if (event.target.matches('[data-join]')) {
-		submitJoin(event);
-		return ;
-	} else if (event.target.matches('[data-login]')) {
-		submitLogin(event);
-		return ;
-	}
-}
-
 export function submitJoin(event) {
 	if (!(event.target.matches('[data-join]'))) {
 		return ;
 	}
-	event.preventDefault();
 
 	const email = event.target.querySelector('#idInput').value;
 	const password = event.target.querySelector('#passwordInput').value;
@@ -68,7 +57,6 @@ export function submitLogin(event) {
 	if (!(event.target.matches('[data-login]'))) {
 		return ;
 	}
-	event.preventDefault();
 
 	const email = event.target.querySelector('#idInput').value;
 	const password = event.target.querySelector('#passwordInput').value;

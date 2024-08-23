@@ -1,4 +1,4 @@
-import { appState } from '../index.js';
+import { appState, navigate, parseUrl, basePath } from '../index.js';
 
 'use strict';
 
@@ -39,6 +39,10 @@ export class TUserInfo extends HTMLElement {
         if (this.img !== null) img.src = this.img;
         nickname.innerHTML = this.nick;
         if (this.isLoggedin === 'true') border.classList.add("connected");
+
+		this.addEventListener('click', () => {
+			navigate(parseUrl(basePath + 'profile/:' + this.nick));
+		});
     }
 }
 

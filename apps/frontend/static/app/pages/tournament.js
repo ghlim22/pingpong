@@ -14,9 +14,9 @@ const leftSideHTML = `
 `;
 
 const rightSideHTML = `
-<div class="p-button-chat">
+<div class="p-button-setting">
 	<img src="./assets/s-button-message.svg">
-	<span>chat</span>
+	<span>setting</span>
 </div>
 <t-fold class="friend"></t-fold>
 `;
@@ -32,8 +32,8 @@ export function tournamentPage() {
 	document.getElementById('left-side').innerHTML = leftSideHTML;
 	document.getElementById('right-side').innerHTML = rightSideHTML;
 
-	document.querySelector('.p-button-chat').addEventListener('click', () => {
-		navigate(parseUrl(basePath + 'chat'))
+	document.querySelector('.p-button-setting').addEventListener('click', () => {
+		navigate(parseUrl(basePath + 'setting'))
 	});
 	document.querySelector('.logo-small').addEventListener('click', () => {
 		navigate(parseUrl(basePath));
