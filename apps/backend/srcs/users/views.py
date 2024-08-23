@@ -1,3 +1,10 @@
+from urllib.parse import quote
+
+import requests
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+from django.shortcuts import redirect
+from django.utils.http import urlencode
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import generics, permissions, serializers, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
@@ -11,6 +18,7 @@ from .serializers import (
     UserFollowSerializer,
     UserSerializer,
     UserSignInSerializer,
+    UserSimpleSerializer,
 )
 
 # Create your views here.
@@ -40,6 +48,15 @@ class UserAPIViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
+@extend_schema(responses=UserSimpleSerializer)
+@permission_classes([permissions.AllowAny])
+@api_view(["GET"])
+def get_active_user_list(request):
+    queryset = CustomUser.objects.all().filter(status__gte=1)
+    serializer = UserSimpleSerializer(queryset, many=True)
+    return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
 class UserCurrentAPIView(generics.RetrieveUpdateDestroyAPIView):
     """
     Performs an action for requesting user himself.
@@ -62,15 +79,6 @@ class UserCurrentAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = request.user
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        validated_data = serializer.validated_data
-
-        for (key, value) in validated_data.items():
-            if not hasattr(instance, key):
-                raise serializers.ValidationError({key: "User does not have this field."})
-            # Check if the new value is different from the existing value except password.
-            if getattr(instance, key) == value:
-                raise serializers.ValidationError({key: "The new value must be different from the existing value."})
-
         self.perform_update(serializer)
 
         if getattr(instance, "_prefetched_objects_cache", None):
@@ -169,3 +177,63 @@ class UserSignInAPIView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data  # Return value of serializer.validate()
         return Response(data, status=status.HTTP_200_OK)
+
+
+@permission_classes([permissions.AllowAny])
+@api_view(["GET"])
+def signin_remote(request):
+    referral_url = request.GET.get("referral_url")
+    if referral_url:
+        request.session["referral_url"] = referral_url
+        referral_url = quote(referral_url)
+    params = {
+        "client_id": "u-s4t2ud-b89b6b91d03e4c4ba5eb82d9171a46da61dcfde5635fbebec0afa55cd6fba2cb",
+        "redirect_uri": "http://localhost:8000/api/users/signin/remote/callback",
+        "response_type": "code",
+    }
+    url = "https://api.intra.42.fr/oauth/authorize?"
+    url += urlencode(params)
+    return redirect(to=url)
+
+
+def get_access_token(code: str) -> str:
+    params = {
+        "grant_type": "authorization_code",
+        "client_id": "u-s4t2ud-b89b6b91d03e4c4ba5eb82d9171a46da61dcfde5635fbebec0afa55cd6fba2cb",
+        "client_secret": "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",
+        "code": code,
+        "redirect_uri": "http://localhost:8000/api/users/signin/remote/callback/",
+    }
+
+
+@permission_classes([permissions.AllowAny])
+@api_view(["GET"])
+def get_42access_token(request):
+    # Get access token
+    code = request.GET.get("code")
+    print(f"Code: {code}")
+    if not code:
+        return Response(data={"error": "code is missing."}, status=status.HTTP_400_BAD_REQUEST)
+    params = {
+        "grant_type": "authorization_code",
+        "client_id": "u-s4t2ud-b89b6b91d03e4c4ba5eb82d9171a46da61dcfde5635fbebec0afa55cd6fba2cb",
+        "client_secret": "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",
+        "code": code,
+        "redirect_uri": "http://localhost:8000/api/users/signin/remote/callback",
+    }
+    response = requests.post(url="https://api.intra.42.fr/oauth/token", data=params)
+    if not response.status_code == 200:
+        # return redirect(to="https://localhost")
+        return Response(data=response.json(), status=response.status_code)
+    access_token = response.json().get("access_token")
+    print(f"Access Token: {access_token}")
+
+    # Get user's data
+    url = "https://api.intra.42.fr/v2/me"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+    }
+    response = requests.get(url=url, headers=headers)
+    print(response.json())
+
+    return Response(status=status.HTTP_200_OK)

@@ -1,6 +1,9 @@
+import enum
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext as _
+from rest_framework.exceptions import ValidationError
 
 from .managers import CustomUserManager
 
@@ -13,6 +16,11 @@ class CustomUser(AbstractUser):
     Email, password, and nickname are required. Other fields are optional.
     """
 
+    class Status(models.IntegerChoices):
+        DISCONNECTED = 0
+        CONNECTED = 1
+        PLAYING = 2
+
     username = None
     first_name = None
     last_name = None
@@ -24,6 +32,7 @@ class CustomUser(AbstractUser):
     blocks = models.ManyToManyField(to="self", related_name="blocked", blank=True, symmetrical=False)
     win = models.IntegerField(default=0)
     lose = models.IntegerField(default=0)
+    status = models.IntegerField(choices=Status, default=Status.DISCONNECTED)
 
     # 2FA Fields
     # otp_auth_url = models.CharField(_("OTP Auth URL"), max_length=255, blank=True, default="", help_text=_("Optional."))
