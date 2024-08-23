@@ -79,15 +79,6 @@ class UserCurrentAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = request.user
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        validated_data = serializer.validated_data
-
-        for (key, value) in validated_data.items():
-            if not hasattr(instance, key):
-                raise serializers.ValidationError({key: "User does not have this field."})
-            # Check if the new value is different from the existing value except password.
-            if getattr(instance, key) == value:
-                raise serializers.ValidationError({key: "The new value must be different from the existing value."})
-
         self.perform_update(serializer)
 
         if getattr(instance, "_prefetched_objects_cache", None):
