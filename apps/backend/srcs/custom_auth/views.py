@@ -20,16 +20,13 @@ def authenticate(request):
         return Response(data={"error": "code is missing."}, status=status.HTTP_401_UNAUTHORIZED)
         # return redirect_failure()
 
-    access_token = oauth.get_token(code)
-    user_data = oauth.get_user_data(access_token)
+    access_token = oauth.request_token()
+    user = oauth.request_user(access_token)
 
-    email = user_data.get("email")
-    nickname = user_data.get("login")
-    image = user_data.get("image")
+    email = user.get("email")
+    nickname = user.get("login")
+    image = user.get("image")
 
-    print(user_data)
-    for (key, value) in request.META.items():
-        print(f"{key}: {value}")
     try:
         return oauth.login(email)
     except ObjectDoesNotExist:

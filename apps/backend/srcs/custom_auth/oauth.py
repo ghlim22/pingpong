@@ -33,6 +33,25 @@ def request_token(code: str) -> str | HttpResponse:
     return access_token
 
 
+def request_user(access_token: str) -> dict | HttpResponse:
+    url = "https://api.intra.42.fr/v2/me"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.get(url=url, headers=headers)
+    if response.status_code != HTTP_200_OK:
+        return Response(status=response.status_code)
+
+    data = {
+        "email": response.json().get("email"),
+        "login": response.json().get("login"),
+        "image": response.json().get("image").get("link"),
+    }
+
+    return data
+
+
 def login(email: str) -> HttpResponse:
     """
     Log in a user with given credentials from 42API.
@@ -62,7 +81,7 @@ def register(email: str, nickname: str, image: str) -> HttpResponse:
 
     user = CustomUser.objects.create_user(email=email, password=None, nickname=nickname)
     image_name = urlparse(url=image).path.split("/")[-1]
-    response = requests.get(image)
+    response = requests.get(url=image)
     if response.status_code == HTTP_200_OK:
         user.picture.save(name=image_name, content=ContentFile(response.content))
     user.save()
