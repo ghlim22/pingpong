@@ -23,19 +23,10 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
 
 urlpatterns = [
     path("api/admin/", admin.site.urls),
     path("api/users/", include("users.urls")),
-    path("api/token/", TokenObtainPairView.as_view()),
-    path("api/token/refresh/", TokenRefreshView.as_view()),
-    path("api/token/verify/", TokenVerifyView.as_view()),
-    path("wss/games/", include("games.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
