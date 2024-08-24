@@ -8,29 +8,30 @@ const topHTML = `
 const tournamentRoomHTML = `
 <div class="tournament-room-in">
 	<div>
-		<t-block class="1p"></t-block>
-		<t-block data-status="wait" class="2p"></t-block>
+		<t-block class="player1"></t-block>
+		<t-block data-status="wait" class="player3"></t-block>
 	</div>
 	<div>
-		<t-block data-status="wait" class="3P" ></t-block>
-		<t-block data-status="wait" class="4p"></t-block>
+		<t-block data-status="wait" class="player2" ></t-block>
+		<t-block data-status="wait" class="player4"></t-block>
 	</div>
 </div>
+<div id="hi">hihi</div>
 `;
 
 const matchOrderHTML = `
 <div class="tournament-match-order">
 	<div class="tournament-match-order-left">
-		<t-block id="1p"></t-block>
-		<t-block id="2p"></t-block>
+		<t-block id="player1"></t-block>
+		<t-block id="player2"></t-block>
 	</div>
 	<div class="tournament-match-order-final">
-		<t-block id="5p" data-status="wait"></t-block>
-		<t-block id="6p" data-status="wait"></t-block>
+		<t-block id="player5" data-status="wait"></t-block>
+		<t-block id="player6" data-status="wait"></t-block>
 	</div>
 	<div class="tournament-match-order-right">
-		<t-block id="3p"></t-block>
-		<t-block id="4p"></t-block>
+		<t-block id="player3"></t-block>
+		<t-block id="player4"></t-block>
 	</div>
 </div>
 `;
@@ -46,7 +47,6 @@ export function tournamentPage() {
 	document.querySelector('.logo-small').addEventListener('click', () => {
 		navigate(parseUrl(basePath));
 	});
-
 	tournament_game_queue('tournament', appState.token)
     .then((data) => {
 	  tournamentGame(data);
@@ -58,13 +58,13 @@ export function tournamentPage() {
 }
 
 function tournamentGame(info) {
-	matchOrderPage(info.user_info_list);
+	matchOrderPage(info.user_info);
 
-	user_info_list.forEach((user_info, index) => {
+	info.user_info.forEach((user_info, index) => {
 		if (user_info.nickname === appState.nickname) {
 			if (index > 1)
 				info.game_id = info.game_id2
-			setTimeout(() => { game1vs1Page(data) } , 5000);
+			setTimeout(() => { game1vs1Page(info) } , 5000);
 		}
 	});
 }
@@ -76,12 +76,12 @@ export function matchOrderPage(data) {
 	above.classList.add('above-on');
 
 	const objects = [
-        't-block[id="1p"]',
-        't-block[id="2p"]',
-        't-block[id="3p"]',
-        't-block[id="4p"]',
+        '.tournament-match-order #player1',
+        '.tournament-match-order #player2',
+        '.tournament-match-order #player3',
+        '.tournament-match-order #player4',
       ];
-
+	console.log('on matchOrderPage', data);
 	populateUserInfo(data, objects);
 }
 

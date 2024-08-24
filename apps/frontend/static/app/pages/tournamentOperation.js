@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, TBlock } from '../../index.js';
 import OnlineGame from "./game.js";
 
 export function play_tour_game(info, type, token) {
@@ -27,10 +27,10 @@ export function tournament_game_queue(type, token) {
       let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
       
       const objects = [
-        't-block[id="1p"]',
-        't-block[id="2p"]',
-        't-block[id="3p"]',
-        't-block[id="4p"]',
+        '.tournament-room-in .player1',
+        '.tournament-room-in .player2',
+        '.tournament-room-in .player3',
+        '.tournament-room-in .player4',
       ];
       
       appState.currentCleanupFn = () => {
@@ -43,9 +43,13 @@ export function tournament_game_queue(type, token) {
       ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
           console.log('on message', data);
-          populateUserInfo(data.users, objects);
+          if (data.type === "update")
+            populateUserInfo(data.users, objects);
           if (data.type === "create")
+          {
+            ws.close();
             resolve(data.data);
+          }
       };
       
       ws.onerror = (error) => {
@@ -58,16 +62,20 @@ export function tournament_game_queue(type, token) {
   //       OnlineGame(sock, type);
   export function populateUserInfo(user_info_list, select_objects) {
       // 사용자 정보의 수에 따라 선택할 요소의 수를 결정합니다.
-      const userCount = user_info_list.length;
-      console.log(document.querySelector('t-block[id="1p"]'));
-      const objects = select_objects.slice(0, userCount).map(selector => document.querySelector(selector));
-      console.log(objects);
+      const objects = select_objects.slice(0, 4).map(selector => document.querySelector(selector));
+      console.log(user_info_list[0].picture);
+      console.log(user_info_list[0].nickname);
+
+      console.log(objects[0] instanceof TBlock);  
       
-      // user_info_list의 각 사용자 정보를 요소에 적용합니다.
+      for(let i = 0; i < 4;++i)
+        objects[i].resetImageNick();
+      
       user_info_list.forEach((user_info, index) => {
-          // 이미지와 이름 요소를 가져와서, 해당 사용자 정보를 적용합니다.
+        // 이미지와 이름 요소를 가져와서, 해당 사용자 정보를 적용합니다.
+        // console.log(index);  
           if (objects[index]) {
-              objects[index].setImageNick(user_info,picture, user_info.nickname);
+              objects[index].setImageNick(user_info.picture, user_info.nickname);
           }
       });
     }

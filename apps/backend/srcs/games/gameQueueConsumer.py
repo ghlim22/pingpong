@@ -52,6 +52,8 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
             await self.decrement_group_size(self.room_group_name)
             await self.redis.hdel(f"{self.game_type}_game", self.channel_name)
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        if self.game_type == 'tournament':
+            await self._send()
 
         logger.info(f"queue 사용자 연결 해제됨: {self.channel_name}")
 
@@ -63,12 +65,11 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
         """
         group_size = await self.redis.eval(lua_script, 1, group_name)
         logger.info(f"queue group 사용자 연결됨: {group_size}")
-
-        if self.game_type == "2P":
-            num = 2
-        else:
+        num = 2
+        if self.game_type == 'tournament' or self.game_type == '4P':
             num = 4
 
+        logger.info(f"max: {num}")
         if group_size == num:
             try:
                 await self.create_game()
