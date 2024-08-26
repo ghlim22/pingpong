@@ -216,6 +216,9 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         # ORM 호출을 비동기적으로 변환
         game_log = await sync_to_async(GameLog.objects.create)(game_type=self.type)
+        game_log.game_type = self.type
+        await sync_to_async(game_log.players.add)(*winner_id)
+        await sync_to_async(game_log.players.add)(*loser_id)
         await sync_to_async(game_log.winners.add)(*winner_id)
         await sync_to_async(game_log.losers.add)(*loser_id)
         await sync_to_async(game_log.save)()

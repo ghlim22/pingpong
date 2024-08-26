@@ -141,48 +141,56 @@ function main_ws(token) {
 			connect.removeAll();
 			friend.removeAll();
 			
-			userInfoList.forEach(userInfo => {
-				const user = document.createElement('t-user-info');
-				user.classList.add("p-button-user");
-				user.setAttribute('data-nick', userInfo.nick || 'Unknown');
-				user.setAttribute('data-img', userInfo.img || '../assets/default.png');
-				user.setAttribute('data-id', userInfo.id || '0000');
-				user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
-				
-				if (userInfo.isLoggedin)
-					connect.addUserInfo(user);
-        	});
-    	}
+			let followData = [];
+			fetch('/api/users/current/follow/', {
+				method: 'GET',
+				headers: {
+					'Authorization': "Token " + appState.token
+				}
+			})
+			.then((response) => {
+				if (response.status === 200) {
+					return response.json().then(data => {
+						return data;
+					});
+				} else if (response.status === 400) {
+					return response.json().then(data => {
+						throw new Error('Bad Request');
+					});
+				} else {
+					return response.json().then(data => {
+						console.log('Other status: ', data);
+						throw new Error('Unexpected status code: ', response.status);
+					});
+				}
+			})
+			.then((data) => {
+				followData = data; // followData 배열에 데이터를 저장
+			})
+			.catch(error => {
+				console.log('Error: ', error);
+			})
+			.finally(() => {
+				// userInfoList를 반복하면서 followData에 포함된 사용자만 추가
+				userInfoList.forEach(userInfo => {
+					const user = document.createElement('t-user-info');
+					user.classList.add("p-button-user");
+					user.setAttribute('data-nick', userInfo.nick || 'Unknown');
+					user.setAttribute('data-img', userInfo.img || '../assets/default.png');
+					user.setAttribute('data-id', userInfo.id || '0000');
+					user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
+					
+					// followData에 userInfo.id가 포함된 경우에만 addUserInfo를 실행
+					if (userInfo.isLoggedin) {
+						connect.addUserInfo(user);
+					}
+					if (followData.some(follow => follow.id === userInfo.id)) {
+						friend.addUserInfo(user);
+					}
+				});
+			});
+		}
 
-		let followData;
-		fetch('/api/users/current/follow/', {
-			method: 'GET',
-			headers: {
-				'Authorization': "Token " + appState.token
-			}
-		})
-		.then((response) => {
-			if (response.status === 200) {
-				return response.json().then(data => {
-					return data;
-				});
-			} else if (response.status === 400) {
-				return response.json().then(data => {
-					throw new Error('Bad Request');
-				});
-			} else {
-				return response.json().then(data => {
-					console.log('Other status: ', data);
-					throw new Error('Unexpected status code: ', response.status);
-				});
-			}
-		})
-		.then((data) => {
-			followData = data;
-		})
-		.catch(error => {
-			console.log('Error: ', error);
-		});
 	}
 		// const info = JSON.parse(event.data);
 		
