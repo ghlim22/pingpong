@@ -44,9 +44,9 @@ export function tournamentPage() {
 	document.getElementById('bottom').innerHTML = "";
 	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('main').innerHTML = tournamentRoomHTML;
-	document.querySelector('.logo-small').addEventListener('click', () => {
-		navigate(parseUrl(basePath));
-	});
+	//document.querySelector('.logo-small').addEventListener('click', () => {
+	//	navigate(parseUrl(basePath));
+	//});
 	tournament_game_queue('tournament', appState.token)
     .then((data) => {
 	  tournamentGame(data);
