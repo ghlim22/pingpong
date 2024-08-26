@@ -13,7 +13,7 @@ from users.models import CustomUser
 from .models import GameLog
 logger = logging.getLogger("django")
 
-class GameConsumer(AsyncWebsocketConsumer):
+class TourGameConsumer(AsyncWebsocketConsumer):
     class Games:
         pass
 

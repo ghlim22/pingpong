@@ -10,10 +10,15 @@ logger = logging.getLogger("django")
 class GameQueueConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.game_type = self.scope["url_route"]["kwargs"]["type"]
-        self.room_group_name = "game_queue"
-        logger.info("hihi")
+        self.room_group_name = self.game_type
         self.redis = redis.from_url("redis://redis")
         self.game_id = str(uuid.uuid4())  # 고유한 game_id 생성
+        if self.game_type == 'tournament':
+            self.game_id2 = str(uuid.uuid4())
+            self.game_id3 = str(uuid.uuid4())  # 고유한 game_id 생성
+        else:
+            self.game_id2 = "false"
+            self.game_id3 = "false"
 
         # 방 그룹에 추가
         await self.channel_layer.group_add(
@@ -23,31 +28,34 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         # Save user information in Redis
-        user = self.scope["user"]
-        if user.is_authenticated:
-            await self.save_user_info(user)
+        self.user = self.scope["user"]
+        if self.user.is_authenticated:
+            await self.save_user_info(self.user)
+        else:
+            self.close()
 
+        if self.game_type == 'tournament':
+            await self._send()
         await self.increment_and_check_group_size(self.room_group_name)
 
-        logger.info(f"[RANK] 사용자 연결됨: {self.channel_name}, Game ID: {self.game_id}")
+        logger.info(f"queue 사용자 연결됨: {self.channel_name}, Game ID: {self.game_id}")
 
     async def save_user_info(self, user):
         user_info = {
             "nickname": user.nickname,
             "picture": user.picture.url
         }
-        await self.redis.hset("game_users", self.channel_name, json.dumps(user_info))
+        await self.redis.hset(f"{self.game_type}_game", self.channel_name, json.dumps(user_info))
 
     async def disconnect(self, close_code):
-        await self.decrement_group_size(self.room_group_name)
+        if self.user and self.user.id:
+            await self.decrement_group_size(self.room_group_name)
+            await self.redis.hdel(f"{self.game_type}_game", self.channel_name)
+            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        if self.game_type == 'tournament':
+            await self._send()
 
-        # Remove user info from Redis
-        await self.redis.hdel("game_users", self.channel_name)
-
-        # 방 그룹에서 제거
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-
-        logger.info(f"[RANK] 사용자 연결 해제됨: {self.channel_name}")
+        logger.info(f"queue 사용자 연결 해제됨: {self.channel_name}")
 
 
     async def increment_and_check_group_size(self, group_name):
@@ -56,13 +64,12 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
         return size
         """
         group_size = await self.redis.eval(lua_script, 1, group_name)
-        logger.info(f"[RANK] 사용자 연결됨: {group_size}")
-
-        if self.game_type == "2P":
-            num = 2
-        elif self.game_type == "4P":
+        logger.info(f"queue group 사용자 연결됨: {group_size}")
+        num = 2
+        if self.game_type == 'tournament' or self.game_type == '4P':
             num = 4
 
+        logger.info(f"max: {num}")
         if group_size == num:
             try:
                 await self.create_game()
@@ -74,19 +81,31 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
 
     async def create_game(self):
         # Get all user info from Redis
-        user_info_dict = await self.redis.hgetall("game_users")
+        user_info_dict = await self.redis.hgetall(f"{self.game_type}_game")
         user_info_list = [
             json.loads(user_info_dict[channel_name])
             for channel_name in user_info_dict
         ]
-
         data = {
                     "game_id": self.game_id,
+                    "game_id2" : self.game_id2,
+                    "game_id3" : self.game_id3,
                     "user_info": user_info_list,
                 }
-        # Send user info to all clients
         await self.channel_layer.group_send(self.room_group_name, {"type": "create", "data": data})
 
     async def create(self, event):
+        # Send the data to WebSocket
+        await self.send(text_data=json.dumps(event))
+
+    async def _send(self):
+        user_info_dict = await self.redis.hgetall(f"{self.game_type}_game")
+        user_info_list = [
+            json.loads(user_info_dict[channel_name])
+            for channel_name in user_info_dict
+        ]
+        await self.channel_layer.group_send(self.room_group_name, {"type": "update", "users": user_info_list})
+
+    async def update(self, event):
         # Send the data to WebSocket
         await self.send(text_data=json.dumps(event))

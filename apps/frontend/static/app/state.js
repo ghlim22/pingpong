@@ -8,6 +8,7 @@ export let appState = {
 	connect:			8,
 	friend:				4,
 	currentCleanupFn:	null,
+	ws:					null,
 };
 // 나중에는 export 지우기
 

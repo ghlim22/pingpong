@@ -1,5 +1,6 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
 import { game_queue, play_game } from './1vs1Operation.js'
+import { matchOrderPage } from './tournamentRender.js'
 const matchHTML = `
 <div class="match-1vs1">
 	<div class="image-profile-middle" id="mine">
@@ -81,7 +82,7 @@ export function pong1VS1Page() {
 		img.src = appState.picture;
 	nickname.innerHTML = appState.nickname;
 	
-	game_queue('2P', appState.token)
+	game_queue("2P", appState.token)
     .then((data) => {
       console.log('Received data:', data);
 	  for (const element of data.user_info){
@@ -105,7 +106,7 @@ export function pong1VS1Page() {
 	//				match 되면 data {현재유저 포지션, 상대유저 nick, 상대유저 img} 반환
 }
 
-function game1vs1Page(info) {
+export function game1vs1Page(info) {
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -123,13 +124,17 @@ function game1vs1Page(info) {
 	main.innerHTML = mainHTML;
 	top.innerHTML = topHTML;
 	bottom.innerHTML = bottomHTML;
-
 	//document.querySelector('#right-side.ingame div img').addEventListener('click', handleQuitGame);
-	play_game(info, '2P', appState.token)
+	console.log('Received info:', info);
+	play_game(info, "2P", appState.token)
     .then((data) => {
       console.log('Received data:', data);
-
-      gameResultPage(data);
+	  if (info.game_id2 === "false" || appState.nickname !== data.nickname)
+      	gameResultPage(data);
+	  else
+	  {
+		tournamentLastGame(info.game_id3);
+	  }
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);
@@ -152,6 +157,45 @@ function game1vs1Page(info) {
 	//				15점 : 정상종료, 승자처리 후, 양측 유저에 result 띄우고 종료
 	//				그외 : 비정상종료, 남은 유저 승자 처리 후, 남은 유저에 result 띄우고 종료
 	//			뒤로가기와 브라우저 닫힘은 일단 제쪽인듯?
+}
+
+export function tournamentLastGame(game_id) {
+	const above = document.getElementById('above');
+	above.innerHTML = matchHTML;
+
+	const img = document.querySelector('.match-1vs1 #mine img');
+	const img_opponent = document.querySelector('.match-1vs1 #opponent img');
+	const nickname = document.querySelector('.match-1vs1 #mySpan');
+	const nickname_opponent = document.querySelector('.match-1vs1 #opponentSpan');
+
+	above.classList.add('above-on');
+	if (appState.picture !== null)
+		img.src = appState.picture;
+	nickname.innerHTML = appState.nickname;
+	
+	console.log("tour last game_id", game_id);
+	game_queue(game_id, appState.token)
+    .then((data) => {
+      console.log('Received data:', data);
+	  for (const element of data.user_info){
+		if (element.nickname != appState.nickname){
+		  img_opponent.src = element.picture;
+		  nickname_opponent.innerHTML = element.nickname;
+		}
+	  }
+	  
+	  setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
+    })
+    .catch((error) => {
+      console.error('Error fetching game queue:', error);
+    });
+	// setTimeout(game1vs1Page, 500);
+	// jikang2:	임시로 0.5초 뒤에 game1vs1Page() 가 실행되도록 설정해둠.
+	//			위 구문 주석처리하고,
+	//			이 부분에서 game1vs1Page(*MATCH*());
+	//			*MATCH* = 1vs1Operation.js의 match하는 함수,
+	//			ex)	현재 유저의 토큰을 받아서 1vs1 대기큐에 넣은 후,
+	//				match 되면 data {현재유저 포지션, 상대유저 nick, 상대유저 img} 반환
 }
 
 function gameResultPage(data) {

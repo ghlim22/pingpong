@@ -17,7 +17,7 @@ class tournamentConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name,
-        )
+        )   
         await self.accept()
 
         user = self.scope["user"]
@@ -52,7 +52,7 @@ class tournamentConsumer(AsyncWebsocketConsumer):
         # 방 그룹에서 제거
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
-        logger.info(f"[RANK] 사용자 연결 해제됨: {self.channel_name}")
+        logger.info(f"tor group사용자 연결 해제됨: {self.channel_name}")
 
 
     async def increment_and_check_group_size(self, group_name):
@@ -61,7 +61,7 @@ class tournamentConsumer(AsyncWebsocketConsumer):
         return size
         """
         group_size = await self.redis.eval(lua_script, 1, group_name)
-        logger.info(f"[RANK] 사용자 연결됨: {group_size}")
+        logger.info(f"tor group사용자 연결됨: {group_size}")
 
         if self.game_type == "2P":
             num = 2
