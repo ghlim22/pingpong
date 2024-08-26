@@ -20,6 +20,7 @@ from django.urls import path
 from rest_framework import routers
 
 from .views import (
+    GameLogListView,
     OtherUserDetailView,
     UserAPIViewSet,
     UserCreateAPIView,
@@ -45,6 +46,7 @@ urlpatterns = [
     path("current/block/", get_block_list),
     path("current/other/<int:pk>", OtherUserDetailView),
     path("current/", UserCurrentAPIView.as_view()),
+    path("logs/<int:pk>", GameLogListView),
 ]
 
 urlpatterns += router.urls
