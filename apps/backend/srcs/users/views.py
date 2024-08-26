@@ -206,7 +206,7 @@ def GameLogListView(request, pk):
     List requesting user's game logs.
     """
     instance = get_object_or_404(CustomUser.objects.all(), pk=pk)
-    logs = instance.joined_games.order_by("-timestamp")
+    logs = instance.joined_games.all().order_by("-timestamp")
     return_list = []
     for log in logs:
         if instance in log.winners:
