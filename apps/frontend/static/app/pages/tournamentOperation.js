@@ -26,6 +26,11 @@ export function tournament_game_queue(type, token) {
     return new Promise((resolve, reject) => {
       let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
       
+	  document.querySelector('.logo-small').addEventListener('click', () => {
+		navigate(parseUrl(basePath));
+		ws.close();
+	});
+	
       const objects = [
         '.tournament-room-in .player1',
         '.tournament-room-in .player2',

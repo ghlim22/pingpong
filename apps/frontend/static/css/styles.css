@@ -708,6 +708,44 @@ body {
 	font-size: 2rem;
 }
 
+#chat-log {
+	width: 46.2rem;
+	height: 21rem;
+	margin-top: 1rem;
+	border: none;
+	padding: 1rem;
+	resize: none;
+	font-size: 1.2rem;
+	border-top: solid 0.5rem #eeeeff;
+	outline: none;
+}
+
+#chat-message-input {
+	width: 43.9rem;
+	height: 3rem;
+	border-radius: 5rem;
+	border: solid 2px #9999FF;
+	font-size: 1.2rem;
+	padding-left: 2rem;
+	padding-right: 2rem;
+}
+
+#s-button-send,
+#s-button-pong {
+	width: 2.6rem;
+	height: 2.6rem;
+	position: absolute;
+	bottom: 13.1rem;
+}
+
+#s-button-send {
+	right: 27.5rem;
+}
+
+#s-button-pong {
+	right: 30.5rem;
+}
+
 .in-game {
 	position: relative;
 	/*height: 90vh;*/

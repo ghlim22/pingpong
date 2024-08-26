@@ -121,8 +121,23 @@ function appendButtons(data, userInfo) {
 	document.querySelector('.s-button-friend').addEventListener('click', () => {friendHandler(data, userInfo);});
 }
 
+const chatHTML = `
+    <textarea id="chat-log" cols="100" rows="20" readonly>{{ messages_text }}</textarea>
+    <input id="chat-message-input" type="text" size="100" autocomplete="off" placeholder="Enter Message">
+	<img id="s-button-pong" src="/assets/s-button-pong.svg">
+	<img id="s-button-send" src="/assets/s-button-send.svg">
+`;
+
 function messageHandler(data, userInfo) {
-	//
+	const message = document.querySelector('.s-button-message');
+	if (message.src == "https://localhost/assets/s-button-message.svg") {
+		message.src = "/assets/s-button-unmessage.svg"
+		document.querySelector('.inner_profile_bottom').innerHTML = chatHTML;
+	}
+	else if (message.src == "https://localhost/assets/s-button-unmessage.svg") {
+		message.src = "/assets/s-button-message.svg"
+		document.querySelector('.inner_profile_bottom').innerHTML = "";
+	}
 }
 
 function blockHandler(data, userInfo) {
