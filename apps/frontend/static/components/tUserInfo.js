@@ -42,8 +42,11 @@ export class TUserInfo extends HTMLElement {
 
 		this.addEventListener('click', () => {
 			if (this.classList.contains('p-button-user')) {
-				navigate(parseUrl(basePath + 'profile/:' + this.nick));
-				//profileUserPage
+				navigate(parseUrl(basePath + 'profile/:' + this.nick), {
+					nickname: this.nick,
+					picture: this.img,
+					pk: this.id
+				});
 			}
 		});
     }

@@ -671,6 +671,41 @@ body {
 	/*height: 3.125rem;*/
 	height: 5rem;
 	display: flex;
+	justify-content: space-between;
+}
+
+.inner_profile_top div {
+	display: flex;
+	align-items: center;
+	padding: 0.4rem;
+}
+
+.user-button-field img {
+	height: 3rem;
+	padding-right: 2rem;
+	padding-top: 0.8rem;
+	cursor: pointer;
+}
+
+.user-button-field span {
+	padding-right: 0.5rem;
+}
+
+.inner_profile_main {
+	width: inherit;
+	display: flex;
+	justify-content: start;
+}
+
+.inner_profile_main div {
+	margin-right: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+.inner_profile_main span {
+	margin-left: 1.5rem;
+	color: blue;
+	font-size: 2rem;
 }
 
 .in-game {

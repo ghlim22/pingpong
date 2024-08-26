@@ -39,16 +39,16 @@ export function parseUrl(url) {
 	return { path: url, route: url, isParams: false, params: {} };
 }
 
-export function navigate(parsed) {
+export function navigate(parsed, data = null) {
 	const currentPath = window.location.pathname;
 	const page = routes[parsed.route] || notFoundPage;
-	console.log('parsed: ');
-	console.log(parsed);
 	if (currentPath !== parsed.path) {
 		window.history.pushState({}, parsed.path, window.location.origin + parsed.path);
 	}
-	if (parsed.isParams) {
-		console.log(parsed);
+	if (data !== null) {
+		profileUserPage(data);
+	}
+	else if (parsed.isParams) {
 		setClaslistDefault();
 		page(parsed.params);
 	}
@@ -56,7 +56,8 @@ export function navigate(parsed) {
 		setClaslistDefault();
 		page();
 	}
-	main_ws(appState.token);
+	if (appState.token !== null)
+		main_ws(appState.token);
 }
 
 function notFoundPage() {
@@ -117,7 +118,7 @@ function main_ws(token) {
     	}
 
 		let followData;
-		fetch('api/users/current/follow/', {
+		fetch('/api/users/current/follow/', {
 			method: 'GET',
 			headers: {
 				'Authorization': "Token " + appState.token

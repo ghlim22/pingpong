@@ -44,8 +44,6 @@ export function settingPage() {
 	<t-fold class="connect"></t-fold>
 	`;
 
-	console.log(appState);
-
 	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('main').innerHTML = mainHTML;
 	document.getElementById('left-side').innerHTML = leftSideHTML;
