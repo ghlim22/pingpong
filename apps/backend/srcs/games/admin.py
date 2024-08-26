@@ -8,7 +8,9 @@ from .models import GameLog
 class GameLogAdmin(admin.ModelAdmin):
     filter_horizontal = [
         "players",
+        "winners",
+        "losers",
     ]
 
 
-admin.site.register(GameLog)
+admin.site.register(GameLog, GameLogAdmin)
