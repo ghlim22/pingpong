@@ -326,6 +326,7 @@ body {
 	/*width: 50%;*/
 	padding-top: 1.5625rem;
 	caret-color: #9999FF;
+	background-color: rgba(0, 0, 0, 0);
 }
 
 .type-info::placeholder {
@@ -406,9 +407,10 @@ body {
 	border-radius: 3.125rem;
 	background-color: #EEEEFF;
 	color: #7777FF;
+	cursor: pointer;
 }
 
-.p-button-chat {
+.p-button-setting {
 	width: 17.5rem;
 	height: 5rem;
 	display: flex;
@@ -419,13 +421,13 @@ body {
 	font-size: 2.25rem;
 }
 
-#right-side .p-button-chat img{
+#right-side .p-button-setting img{
 	margin-left: 1.25rem;
 	width: 4rem;
 	width: 3rem;
 }
 
-.p-button-chat span{
+.p-button-setting span{
 	margin-left: 3.125rem;
 }
 
@@ -534,7 +536,7 @@ body {
 	color: black;
 }
 
-.inner_chat {
+.inner_setting {
     padding: 1.25rem;
     border: 0.1875rem solid #9999FF; /* 경계선 추가, 필요 시 제거 가능 */
 	border-radius: 3.125rem;
@@ -546,9 +548,10 @@ body {
 	/*opacity: 0; px*/
 	display: flex;
 	justify-content : space-around;
+	background-color: #EEEEFF;
 }
 
-.inner_chat_list {
+.inner_setting_list {
     /* padding: 1.25rem; */
 	width: 17.5rem;
 	top: 7rem;
@@ -563,53 +566,97 @@ body {
 	overflow-x: hidden;
 }
 
-.inner_chat_list * {
+.inner_setting_list * {
 	margin-bottom: 0.625rem;
 }
 
-.inner_chat_list::-webkit-scrollbar {
+.inner_setting_list::-webkit-scrollbar {
     width: 0;
 }
 
-.inner_chat_list:hover::-webkit-scrollbar {
+.inner_setting_list:hover::-webkit-scrollbar {
     width: 0.5rem;
 }
 
-.inner_chat_list::-webkit-scrollbar-track {
+.inner_setting_list::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0);
 }
 
-.inner_chat_list::-webkit-scrollbar-thumb {
+.inner_setting_list::-webkit-scrollbar-thumb {
 	background-color: rgba(119, 119, 255, 0.2);
 }
 
-.inner_chat_top {
+.inner_setting_top {
 	width: inherit;
-	height: 3.125rem;
+	/*height: 3.125rem;*/
+	height: 5rem;
 	display: flex;
 	align-items: center;
 	align-content: center;
-	flex-direction: row-reverse;
+	justify-content: center;
+	font-size: 2.5rem;
+	color: #444AFF;
 }
 
-.inner_chat_top * {
+.inner_setting_top * {
 	padding-right: 0.625rem;
 }
 
 /* 오른쪽 div 스타일 */
-.inner_chat_window {
-    background-color: #EEEEFF; /* 배경색 추가, 필요 시 변경 가능 */
+.inner_setting_window {
+    background-color: #FFFFFF; /* 배경색 추가, 필요 시 변경 가능 */
     /* padding: 1.25rem; */
-	width: 28.75rem;
+	width: 48.2rem;
 	top: 7rem;
 	left: 40rem;
 	gap: 0; /* px */
 	border-radius: 2.1875rem;
 	/*opacity: 0; px*/
-
 }
 
-#chat-log {
+.inner_setting_main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 2rem;
+}
+
+.inner_setting_window > span:first-child {
+	position: absolute;
+	left: 72rem;
+}
+
+.inner_setting_window label {
+	display: inline-block;
+	font-size: 2rem;
+	width: 13rem;
+	margin-top: 2rem;
+	margin-left: 1rem;
+	cursor: pointer;
+}
+
+#form-picture input {
+	display: block;
+}
+
+#form-picture-file-name {
+	display: inline-block;
+	width: 26.8rem;
+	font-size: 2.25rem;
+	text-align: center;
+	margin-top: 1.5625rem;
+	padding: 0.5rem;
+	border: none;
+	color: #9999FF;
+	border-bottom: 0.01rem solid #9999FF;
+}
+
+.inner_setting_window button {
+	margin: 1rem;
+	background-color: rgba(0, 0, 0, 0);
+}
+
+#setting-log {
     width: 100%; /* 부모 div의 너비에 맞추기 */
     height: 25rem; /* 원하는 높이 설정 */
     padding: 0.625rem; /* 텍스트와 테두리 사이의 여백 */
@@ -617,6 +664,48 @@ body {
     resize: none; /* 사용자가 크기 조정을 못하게 함, 필요 시 변경 가능 */
     font-family: Arial, sans-serif; /* 텍스트 스타일 */
     font-size: 0.875rem;
+}
+
+.inner_profile_top {
+	width: inherit;
+	/*height: 3.125rem;*/
+	height: 5rem;
+	display: flex;
+	justify-content: space-between;
+}
+
+.inner_profile_top div {
+	display: flex;
+	align-items: center;
+	padding: 0.4rem;
+}
+
+.user-button-field img {
+	height: 3rem;
+	padding-right: 2rem;
+	padding-top: 0.8rem;
+	cursor: pointer;
+}
+
+.user-button-field span {
+	padding-right: 0.5rem;
+}
+
+.inner_profile_main {
+	width: inherit;
+	display: flex;
+	justify-content: start;
+}
+
+.inner_profile_main div {
+	margin-right: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+.inner_profile_main span {
+	margin-left: 1.5rem;
+	color: blue;
+	font-size: 2rem;
 }
 
 .in-game {
@@ -650,4 +739,152 @@ body {
 
 .user-profile-4p .image-profile-small {
     border: 0.25rem solid #F9E5B1;
+}
+
+.tournament-room-container {
+	display: flex;
+	flex-wrap: wrap;
+	width: 40.5rem;
+	height: 28rem;
+	margin-top: 2rem;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.tournament-room-container::-webkit-scrollbar {
+    width: 0;
+}
+
+.tournament-room-container:hover::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+.tournament-room-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+}
+
+.tournament-room-container::-webkit-scrollbar-thumb {
+	background-color: rgba(119, 119, 255, 0.2);
+}
+
+.tournament-room-container.room-centered {
+	justify-content: center;
+	align-items: center;
+}
+
+.tournament-room-container * {
+	margin: 0.5rem;
+}
+
+.tournament-room,
+.tournament-room-add {
+	display: flex;
+	width: 12.5rem;
+	height: 12.5rem;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+
+.tournament-room {
+	color: blue;
+	font-size: 2rem;
+	background-color: #9999FF;
+}
+
+.tournament-room:hover {
+	background-color: #EEEEFF;
+}
+
+.tournament-room-add {
+	color: #9999FF;
+	font-size: 5rem;
+	background-color: #ccccff;
+}
+
+.tournament-room-add:hover {
+	background-color: #EEEEFF;
+}
+
+.add-room-setting-box {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.add-room-setting-box div {
+	width: 100vh;
+}
+
+.add-room-setting {
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	background-color: #ddddff;
+}
+
+.add-room-setting-top {
+	display: flex;
+	flex-direction: row;
+}
+
+.add-room-setting-top * {
+	padding: 1rem;
+}
+
+.add-room-setting-main {
+	display: flex;
+	justify-content: center;
+	height: 30vh;
+	align-items: center;
+}
+
+.add-room-setting-bottom {
+	display: flex;
+	justify-content: center;
+	height: 30vh;
+	font-size: 2.5rem;
+	align-content: center;
+	color: blue;
+}
+
+.add-room-setting-bottom * {
+	padding-top: 5rem;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+
+.tournament-room-in {
+	display: flex;
+}
+
+.tournament-room-in * {
+	padding: 0.25rem 0.5rem;
+}
+
+.tournament-match-order {
+	width: inherit;
+	height: inherit;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.tournament-match-order div {
+	padding: 3rem;
+	margin: 1rem;
+	background-color: #eeeeff;
+}
+
+.tournament-match-order div t-block {
+	padding: 0.5rem;
+}
+
+.tournament-match-order-final {
+	display: flex;
+	flex-direction: row;
 }

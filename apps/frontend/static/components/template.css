@@ -125,3 +125,22 @@
 .t-fold__id.friend {
 	flex-direction: row-reverse;
 }
+
+.t-block__container {
+	width: 15rem;
+	height: 15rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background-color: #CCCCFF;
+	font-size: 1.5rem;
+}
+
+.t-block__container span {
+	padding: 0.5rem;
+}
+
+.t-block__container div.connected {
+    border: 0.25rem solid blue;
+}

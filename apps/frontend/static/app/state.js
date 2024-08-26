@@ -1,12 +1,14 @@
 export let appState = {
-	isLoggedIn:	false,
-	token:		null,
-	email:		null,
-	nickname:	null,
-	picture:	null,
-	invitation:	3,
-	connect:	8,
-	friend:		4,
+	isLoggedIn:			false,
+	token:				null,
+	email:				null,
+	nickname:			null,
+	picture:			null,
+	invitation:			3,
+	connect:			8,
+	friend:				4,
+	currentCleanupFn:	null,
+	ws:					null,
 };
 // 나중에는 export 지우기
 

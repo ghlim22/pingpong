@@ -1,4 +1,4 @@
-import { appState } from '../index.js';
+import { appState, navigate, parseUrl, basePath, profileUserPage } from '../index.js';
 
 'use strict';
 
@@ -13,28 +13,44 @@ const HTMLTemplate = await fetchTUserInfo();
 export class TUserInfo extends HTMLElement {
     constructor() {
         super();
-        //this.addEventListener('click', e => this.toggleCard());
+        // this.nick = null;
+        // this.img = null;
+        // this.id = null;
+        // this.isLoggedin = false;
     }
 
     connectedCallback() {
         const shadowRoot = this.attachShadow({mode: 'open'});
         const instance = HTMLTemplate.content.cloneNode(true);
         shadowRoot.appendChild(instance);
-        //const id = this.getAttribute('data-id');
-		this.render();
-    }
 
+        this.nick = this.getAttribute('data-nick');
+        this.img = this.getAttribute('data-img');
+        this.id = this.getAttribute('data-id');
+        this.isLoggedin = this.getAttribute('data-isLoggedin');
+        this.render();
+    }
+    
     render() {
         const border = this.shadowRoot.querySelector('.t-user-info__container div');
         const img = this.shadowRoot.querySelector('.image-profile-small img');
         const nickname = this.shadowRoot.querySelector('.t-user-info__nickname');
+        
+        if (this.img !== null) img.src = this.img;
+        nickname.innerHTML = this.nick;
+        if (this.isLoggedin === 'true') border.classList.add("connected");
 
-        if (appState.picture !== null)
-            img.src = appState.picture;
-        nickname.innerHTML = appState.nickname;
-		if (appState.isLoggedIn)
-			border.classList.add("connected");
+		this.addEventListener('click', () => {
+			if (this.classList.contains('p-button-user')) {
+				navigate(parseUrl(basePath + 'profile/:' + this.nick), {
+					nickname: this.nick,
+					picture: this.img,
+					pk: this.id
+				});
+			}
+		});
     }
 }
 
 customElements.define('t-user-info', TUserInfo);
+

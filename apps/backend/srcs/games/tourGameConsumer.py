@@ -13,7 +13,7 @@ from users.models import CustomUser
 from .models import GameLog
 logger = logging.getLogger("django")
 
-class GameConsumer(AsyncWebsocketConsumer):
+class TourGameConsumer(AsyncWebsocketConsumer):
     class Games:
         pass
 
@@ -216,9 +216,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         # ORM 호출을 비동기적으로 변환
         game_log = await sync_to_async(GameLog.objects.create)(game_type=self.type)
-        game_log.game_type = self.type
-        await sync_to_async(game_log.players.add)(*winner_id)
-        await sync_to_async(game_log.players.add)(*loser_id)
         await sync_to_async(game_log.winners.add)(*winner_id)
         await sync_to_async(game_log.losers.add)(*loser_id)
         await sync_to_async(game_log.save)()
@@ -228,7 +225,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await sync_to_async(winner.save)()
 
         loser = await sync_to_async(CustomUser.objects.get)(id=loser_id[0])
-        loser.lose += 1
+        loser.win -= 1
         await sync_to_async(loser.save)()
 
         if self.type == '4P':
@@ -239,7 +236,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await sync_to_async(winner2.save)()
 
             loser2 = await sync_to_async(CustomUser.objects.get)(id=loser2_id[0])
-            loser2.lose += 1
+            loser2.win -= 1
             await sync_to_async(loser2.save)()
 
         data = {

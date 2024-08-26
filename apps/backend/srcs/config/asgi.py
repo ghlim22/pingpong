@@ -8,7 +8,7 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
 """
 
 import os
-
+import django
 import chat.routing
 import games.routing
 from channels.auth import AuthMiddlewareStack
@@ -18,7 +18,7 @@ from custom_auth.middlewares import CustomTokenAuthMiddleware
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development")
-
+django.setup()
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),

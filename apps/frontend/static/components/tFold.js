@@ -23,26 +23,27 @@ export class TFold extends HTMLElement {
 		this.render();
     }
 
+	addUserInfo(user) {
+        const folder = this.shadowRoot.querySelector('.t-fold__users');
+		folder.appendChild(user);
+	}
+
+	removeAll() {
+		const folder = this.shadowRoot.querySelector('.t-fold__users');
+		folder.replaceChildren();
+	}
+
     render() {
         const span = this.shadowRoot.querySelector('.t-fold__id span');
         const img = this.shadowRoot.querySelector('.t-fold__id img');
-        const folder = this.shadowRoot.querySelector('.t-fold__users');
-		let folderHTML = "";
-		let foldState = "";
 
 		if (this.classList.contains('connect')) {
-			foldState = appState.connect;
 			span.innerHTML = "connect";
 		}
 		else {
-			foldState = appState.friend;
 			span.innerHTML = "friend";
 			this.shadowRoot.querySelector('.t-fold__id').classList.add('friend');
 		}
-		for (let i = 0; i < foldState; i++) {
-			folderHTML = folderHTML + `<t-user-info class="p-button-user"></t-user-info>`;
-		}
-		folder.innerHTML = folderHTML;
         img.addEventListener('click', this.fold);
 	}
 
