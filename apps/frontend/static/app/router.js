@@ -94,7 +94,6 @@ function setClaslistDefault() {
 }
 
 function main_ws(token) {
-	console.log(appState.ws);
 	if (appState.ws === null)
 		appState.ws = new WebSocket(`wss://localhost/wss/games/main/?token=${token}`);
 	else
@@ -104,37 +103,6 @@ function main_ws(token) {
 
 	appState.ws.onmessage = (event) => {
 		const data = JSON.parse(event.data);
-
-		// let followData;
-		// fetch('api/users/current/follow/', {
-		// 	method: 'GET',
-		// 	headers: {
-		// 		'Authorization': "Token " + appState.token
-		// 	}
-		// })
-		// .then((response) => {
-		// 	if (response.status === 200) {
-		// 		return response.json().then(data => {
-		// 			return data;
-		// 		});
-		// 	} else if (response.status === 400) {
-		// 		return response.json().then(data => {
-		// 			throw new Error('Bad Request');
-		// 		});
-		// 	} else {
-		// 		return response.json().then(data => {
-		// 			console.log('Other status: ', data);
-		// 			throw new Error('Unexpected status code: ', response.status);
-		// 		});
-		// 	}
-		// })
-		// .then((data) => {
-		// 	console.log('Data: ', data);
-		// 	followData = data;
-		// })
-		// .catch(error => {
-		// 	console.log('Error: ', error);
-		// });
 
     	if (data.type === 'update') {
 			const userInfoList = data.users;
@@ -171,26 +139,35 @@ function main_ws(token) {
 				console.log('Error: ', error);
 			})
 			.finally(() => {
-				// userInfoList를 반복하면서 followData에 포함된 사용자만 추가
 				userInfoList.forEach(userInfo => {
-					const user = document.createElement('t-user-info');
-					user.classList.add("p-button-user");
-					user.setAttribute('data-nick', userInfo.nick || 'Unknown');
-					user.setAttribute('data-img', userInfo.img || '../assets/default.png');
-					user.setAttribute('data-id', userInfo.id || '0000');
-					user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
-					
-					// followData에 userInfo.id가 포함된 경우에만 addUserInfo를 실행
 					if (userInfo.isLoggedin) {
+						const user = document.createElement('t-user-info');
+						user.classList.add("p-button-user");
+						user.setAttribute('data-nick', userInfo.nick || 'Unknown');
+						user.setAttribute('data-img', userInfo.img || '../assets/default.png');
+						user.setAttribute('data-id', userInfo.id || '0000');
+						user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
 						connect.addUserInfo(user);
 					}
-					if (followData.some(follow => follow.id === userInfo.id)) {
+					const followingsIds = followData.followings.map(user => user.pk);
+					if (followingsIds.includes(userInfo.id))	{
+						const user = document.createElement('t-user-info');
+						user.classList.add("p-button-user");
+						user.setAttribute('data-nick', userInfo.nick || 'Unknown');
+						user.setAttribute('data-img', userInfo.img || '../assets/default.png');
+						user.setAttribute('data-id', userInfo.id || '0000');
+						user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
 						friend.addUserInfo(user);
 					}
 				});
 			});
 		}
-
+		else if (data.type === 'invite') {
+			// 게임 초대 메시지를 받았을 때 처리하는 로직
+			// data.nick
+			// data.img
+		}
+		
 	}
 		// const info = JSON.parse(event.data);
 		

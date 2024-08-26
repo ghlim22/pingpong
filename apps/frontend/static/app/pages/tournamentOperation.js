@@ -45,10 +45,15 @@ export function tournament_game_queue(type, token) {
           console.log('on message', data);
           if (data.type === "update")
             populateUserInfo(data.users, objects);
-          if (data.type === "create")
+          else if (data.type === "create")
           {
             ws.close();
             resolve(data.data);
+          }
+          else if (data.type === "close_connection")
+          {
+            ws.close();
+            resolve(data);
           }
       };
       

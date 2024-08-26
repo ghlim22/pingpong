@@ -49,6 +49,8 @@ export function tournamentPage() {
 	});
 	tournament_game_queue('tournament', appState.token)
     .then((data) => {
+	  if (data.type === "close_connection")
+		return;
 	  tournamentGame(data);
     })
     .catch((error) => {
