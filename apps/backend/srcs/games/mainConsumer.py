@@ -51,7 +51,7 @@ class mainConsumer(AsyncWebsocketConsumer):
                 json.loads(user_info_dict[channel_name])
                 for channel_name in user_info_dict
             ]
-            await self.channel_layer.send(self.channel_name, {"type": "update", "users": user_info_list})
+            await self.channel_layer.send(self.channel_name, {"type": "update", "users": user_info_list, "my_id": self.user.id})
         elif data.get("type") == 'invite':  # 게임 초대 로직
             await self.invite_user(data)
         elif data.get("type") == 'update_user_info':
@@ -96,7 +96,7 @@ class mainConsumer(AsyncWebsocketConsumer):
             json.loads(user_info_dict[channel_name])
             for channel_name in user_info_dict
         ]
-        await self.channel_layer.group_send(self.room_group_name, {"type": "update", "users": user_info_list})
+        await self.channel_layer.group_send(self.room_group_name, {"type": "update", "users": user_info_list, "my_id": self.user.id})
 
     async def update(self, event):
         await self.send(text_data=json.dumps(event))

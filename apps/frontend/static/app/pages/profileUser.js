@@ -284,18 +284,77 @@ function initializeChat(others, userInfo) {
     if (messageInput) {
         messageInput.focus();
         messageInput.onkeyup = function(e) {
-            if (e.keyCode === 13 && messageInput.value.trim() !== '') {  // Enter 키 확인
-                const message = messageInput.value;
-                appState.chat_ws.send(JSON.stringify({
-                    'message': message,
-                    'sender': userInfo.username  // 사용자의 정보를 추가로 전송 가능
-                }));
-                messageInput.value = ''; // 입력 필드 초기화
-            }
+			fetch('/api/users/current/block/', {
+				method: 'GET',
+				headers: {
+					'Authorization': "Token " + appState.token
+				}
+			})
+			.then((response) => {
+				if (response.status === 200) {
+					return response.json();
+				}
+				else if (response.status === 401) {
+					console.log('response 401')
+					throw new Error('Bad Request');
+				}
+				else {
+					console.log('Other status: ');
+					throw new Error('Unexpected status code: ', response.status);
+				}
+			})
+			.then((responseData) => {
+				let isBlocked = responseData.blocked.some(user => {
+					return user.pk === Number(others);
+				});
+				let isBlocks = responseData.blocks.some(user => {
+					return user.pk === Number(others);
+				});
+
+				if (!isBlocks && !isBlocked && e.keyCode === 13 && messageInput.value.trim() !== '') {
+					const message = messageInput.value;
+					appState.chat_ws.send(JSON.stringify({
+						'message': message,
+						'sender': userInfo.username  // 사용자의 정보를 추가로 전송 가능
+					}));
+					messageInput.value = ''; // 입력 필드 초기화
+				}
+			})
+			.catch(error => {
+				console.log('Error: ', error);
+			});
         };
     } else {
         console.error("Element with id 'chat-message-input' not found.");
     }
+}
+
+function checkCanTalk() {
+	fetch('/api/users/current/block/', {
+		method: 'GET',
+		headers: {
+			'Authorization': "Token " + appState.token
+		}
+	})
+	.then((response) => {
+		if (response.status === 200) {
+			return response.json();
+		}
+		else if (response.status === 401) {
+			console.log('response 401')
+			throw new Error('Bad Request');
+		}
+		else {
+			console.log('Other status: ');
+			throw new Error('Unexpected status code: ', response.status);
+		}
+	})
+	.then((responseData) => {
+		console.log('responseData', responseData);
+	})
+	.catch(error => {
+		console.log('Error: ', error);
+	});
 }
 
 function blockHandler(data, userInfo) {

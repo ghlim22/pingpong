@@ -107,6 +107,7 @@ function main_ws(token) {
 
     	if (data.type === 'update') {
 			const userInfoList = data.users;
+			appState.id = data.my_id;
 			connect.removeAll();
 			friend.removeAll();
 			

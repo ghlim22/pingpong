@@ -4,6 +4,7 @@ export let appState = {
 	email:				null,
 	nickname:			null,
 	picture:			null,
+	id:					null,
 	invitation:			3,
 	connect:			8,
 	friend:				4,
