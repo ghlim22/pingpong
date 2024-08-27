@@ -167,8 +167,13 @@ function gameMultiPage(data) {
 	play_game(data, '4P', appState.token)
     .then((data) => {
       console.log('Received data:', data);
-
-      gameResultPage(data);
+	  if (data.type === "disconnect_all")
+	  {
+		alert("iii");
+		navigate(parseUrl(basePath));
+	  }
+	  else
+		gameResultPage(data);
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);

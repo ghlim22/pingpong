@@ -37,7 +37,7 @@ export function play_game(info, type, token) {
     };
     OnlineGame(ws, type)
     .then((data) => {
-      console.log('Received data:', data);
+      console.log('Received data:', data.data);
       resolve(data)
     })
     .catch((error) => {
