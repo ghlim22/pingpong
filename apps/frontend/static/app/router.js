@@ -168,7 +168,6 @@ function main_ws(token) {
 			// data.nick
 			// data.img
 		}
-		
 	}
 		// const info = JSON.parse(event.data);
 		
