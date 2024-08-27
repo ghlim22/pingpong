@@ -55,11 +55,13 @@ export function profileUserPage(data) {
 	putGameLog(data);
 
 	document.querySelector('.p-button-setting').addEventListener('click', () => {
-		appState.chat_ws.close();
+		if (appState.chat_ws !== null)
+			appState.chat_ws.close();
 		navigate(parseUrl(basePath + 'setting'))
 	});
 	document.querySelector('.logo-small').addEventListener('click', () => {
-		appState.chat_ws.close();
+		if (appState.chat_ws !== null)
+			appState.chat_ws.close();
 		navigate(parseUrl(basePath));
 	});
 }
@@ -217,8 +219,8 @@ function appendButtons(data, userInfo) {
 const chatHTML = `
     <textarea id="chat-log" cols="100" rows="20" readonly></textarea>
     <input id="chat-message-input" type="text" size="100" autocomplete="off" placeholder="Enter Message">
+	<img id="s-button-pong" src="/assets/s-button-pong.svg">
 	`;
-	// <img id="s-button-pong" src="/assets/s-button-pong.svg">
 	// <img id="s-button-send" src="/assets/s-button-send.svg">
 
 function messageHandler(data, userInfo) {
@@ -229,11 +231,18 @@ function messageHandler(data, userInfo) {
 		document.querySelector('.inner_profile_bottom').classList.remove('default');
 		document.querySelector('.inner_profile_bottom').innerHTML = chatHTML;
 		initializeChat(data.pk, userInfo);
+		appState.currentCleanupFn = () => {
+			if (appState.chat_ws !== null)
+				appState.chat_ws.close();
+		};
 	}
 	else if (message.src == "https://localhost/assets/s-button-unmessage.svg") {
 		message.src = "/assets/s-button-message.svg"
 		document.querySelector('.inner_profile_bottom').innerHTML = "";
 		document.querySelector('.inner_profile_bottom').classList.add('default');
+		if (appState.chat_ws !== null)
+			appState.chat_ws.close();
+		appState.currentCleanupFn = null;
 		putGameLog(data);
 	}
 }

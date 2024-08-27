@@ -45,15 +45,15 @@ export function navigate(parsed, data = null) {
 	if (currentPath !== parsed.path) {
 		window.history.pushState({}, parsed.path, window.location.origin + parsed.path);
 	}
+	appState.currentCleanupFn = null;
+	setClaslistDefault();
 	if (data !== null) {
 		profileUserPage(data);
 	}
 	else if (parsed.isParams) {
-		setClaslistDefault();
 		page(parsed.params);
 	}
 	else {
-		setClaslistDefault();
 		page();
 	}
 	if (appState.token !== null)

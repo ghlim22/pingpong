@@ -43,7 +43,6 @@ export function settingPage() {
 	<t-invite class="receive-invitation"></t-invite>
 	<t-fold class="connect"></t-fold>
 	`;
-    appState.currentCleanupFn = null;
 	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('main').innerHTML = mainHTML;
 	document.getElementById('left-side').innerHTML = leftSideHTML;
