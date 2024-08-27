@@ -20,6 +20,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("signin/", views.redirect_to_oauth),
-    path("redirect/", views.authenticate),
+    path("signin", views.redirect_to_oauth),
+    path("redirect", views.authenticate),
 ]
