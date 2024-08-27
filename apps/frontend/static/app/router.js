@@ -184,9 +184,6 @@ function main_ws(token) {
 					if (userInfo.isLoggedin) {
 						connect.addUserInfo(user);
 					}
-					if (followData.some(follow => follow.id === userInfo.id)) {
-						friend.addUserInfo(user);
-					}
 				});
 			});
 		}

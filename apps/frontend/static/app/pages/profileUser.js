@@ -21,7 +21,7 @@ const mainHTML = `
 				<span class="inner_profile_lose">0</span>
 			</div>
 		</div>
-        <div class="inner_profile_bottom"></div>
+        <div class="inner_profile_bottom default"></div>
     </div>
 </div>
 `;
@@ -52,12 +52,103 @@ export function profileUserPage(data) {
 	document.getElementById('right-side').innerHTML = rightSideHTML;
 
 	appendField(data);
+	putGameLog(data);
 
 	document.querySelector('.p-button-setting').addEventListener('click', () => {
 		navigate(parseUrl(basePath + 'setting'))
 	});
 	document.querySelector('.logo-small').addEventListener('click', () => {
 		navigate(parseUrl(basePath));
+	});
+}
+
+function putGameLog(data) {
+	fetch('/api/users/logs/' + data.pk, {
+		method: 'GET',
+		headers: {
+			'Authorization': "Token " + appState.token
+		}
+	})
+	.then((response) => {
+		if (response.status === 200) {
+			return response.json();
+		}
+		else if (response.status === 404) {
+			document.querySelector('.inner_profile_bottom').innerHTML = `
+			<div class="inner_profile_log_404">
+				<img src="/assets/s-button-unpong.svg">
+			</div>
+			`;
+			throw new Error('404');
+		}
+		else {
+			console.log('Other status: ');
+			throw new Error('Unexpected status code: ', response.status);
+		}
+	})
+	.then((data) => {
+		renderGameLog(data);
+		console.log('Logs: ', data);
+	})
+	.catch(error => {
+		console.log('Logs Error: ', error);
+	});
+}
+
+function parseTimestamp(timestamp) {
+	const date = new Date(timestamp);
+
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, '0');
+	const day = String(date.getDate()).padStart(2, '0');
+	const hours = String(date.getHours()).padStart(2, '0');
+	const minutes = String(date.getMinutes()).padStart(2, '0');
+
+	const formattedDate = `${year}.${month}.${day} ${hours}:${minutes}`;
+
+	return formattedDate;
+}
+
+function renderGameLog(data) {
+	document.querySelector('.inner_profile_bottom').innerHTML = `
+	<div class="inner_profile_log_date">
+		<span class="inner_profile_log_head">Date</span>
+	</div>
+	<div class="inner_profile_log_game">
+		<span class="inner_profile_log_head">Game</span>
+	</div>
+	<div class="inner_profile_log_result">
+		<span class="inner_profile_log_head">Result</span>
+	</div>
+	<div class="inner_profile_log_competitor">
+		<span class="inner_profile_log_head">Competitor</span>
+	</div>
+	`;
+	Object.keys(data).forEach(log => {
+		const date = document.createElement('span');
+		const game = document.createElement('span');
+		const result = document.createElement('span');
+		const competitor = document.createElement('span');
+
+		date.innerText = parseTimestamp(data[log].timestamp);
+		if (data[log].type === '2P') {
+			game.innerText = '1vs1';
+			competitor.innerText = data[log].players[0];
+		}
+		else {
+			game.innerText = 'multi';
+			competitor.innerText = `${data[log].players[0]}, ${data[log].players[1]}`;
+		}
+		if (data[log].won) {
+			result.innerText = 'win';
+		}
+		else {
+			result.innerText = 'lose';
+		}
+		document.querySelector('.inner_profile_log_date').appendChild(date);
+		document.querySelector('.inner_profile_log_game').appendChild(game);
+		document.querySelector('.inner_profile_log_result').appendChild(result);
+		document.querySelector('.inner_profile_log_competitor').appendChild(competitor);
 	});
 }
 
@@ -132,11 +223,14 @@ function messageHandler(data, userInfo) {
 	const message = document.querySelector('.s-button-message');
 	if (message.src == "https://localhost/assets/s-button-message.svg") {
 		message.src = "/assets/s-button-unmessage.svg"
+		document.querySelector('.inner_profile_bottom').classList.remove('default');
 		document.querySelector('.inner_profile_bottom').innerHTML = chatHTML;
 	}
 	else if (message.src == "https://localhost/assets/s-button-unmessage.svg") {
 		message.src = "/assets/s-button-message.svg"
 		document.querySelector('.inner_profile_bottom').innerHTML = "";
+		document.querySelector('.inner_profile_bottom').classList.add('default');
+		putGameLog(data);
 	}
 }
 
