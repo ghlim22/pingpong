@@ -9,6 +9,7 @@ export let appState = {
 	friend:				4,
 	currentCleanupFn:	null,
 	ws:					null,
+	chat_ws:			null,
 };
 // 나중에는 export 지우기
 
