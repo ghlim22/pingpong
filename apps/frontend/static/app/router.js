@@ -103,6 +103,7 @@ function main_ws(token) {
 
 	appState.ws.onmessage = (event) => {
 		const data = JSON.parse(event.data);
+		console.log(data);
 
     	if (data.type === 'update') {
 			const userInfoList = data.users;

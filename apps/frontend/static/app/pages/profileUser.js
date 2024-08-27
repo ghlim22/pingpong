@@ -54,9 +54,11 @@ export function profileUserPage(data) {
 	appendField(data);
 
 	document.querySelector('.p-button-setting').addEventListener('click', () => {
+		appState.chat_ws.close();
 		navigate(parseUrl(basePath + 'setting'))
 	});
 	document.querySelector('.logo-small').addEventListener('click', () => {
+		appState.chat_ws.close();
 		navigate(parseUrl(basePath));
 	});
 }
@@ -122,22 +124,79 @@ function appendButtons(data, userInfo) {
 }
 
 const chatHTML = `
-    <textarea id="chat-log" cols="100" rows="20" readonly>{{ messages_text }}</textarea>
+    <textarea id="chat-log" cols="100" rows="20" readonly></textarea>
     <input id="chat-message-input" type="text" size="100" autocomplete="off" placeholder="Enter Message">
-	<img id="s-button-pong" src="/assets/s-button-pong.svg">
-	<img id="s-button-send" src="/assets/s-button-send.svg">
-`;
+	`;
+	// <img id="s-button-pong" src="/assets/s-button-pong.svg">
+	// <img id="s-button-send" src="/assets/s-button-send.svg">
 
 function messageHandler(data, userInfo) {
 	const message = document.querySelector('.s-button-message');
-	if (message.src == "https://localhost/assets/s-button-message.svg") {
-		message.src = "/assets/s-button-unmessage.svg"
-		document.querySelector('.inner_profile_bottom').innerHTML = chatHTML;
-	}
+	if (message.src === "https://localhost/assets/s-button-message.svg") {
+        // 버튼 이미지를 변경
+        message.src = "/assets/s-button-unmessage.svg";
+        
+        // 채팅 UI를 삽입할 HTML을 준비 (이것이 chatHTML로 가정)
+        document.querySelector('.inner_profile_bottom').innerHTML = chatHTML;
+
+        // DOM이 업데이트된 후 WebSocket 초기화
+        initializeChat(data.pk, userInfo);
+    }
 	else if (message.src == "https://localhost/assets/s-button-unmessage.svg") {
 		message.src = "/assets/s-button-message.svg"
 		document.querySelector('.inner_profile_bottom').innerHTML = "";
 	}
+}
+
+function initializeChat(others, userInfo) {
+    appState.chat_ws = new WebSocket(`wss://localhost/wss/chat/${others}/?token=${appState.token}`);
+
+    // 메시지 수신 시 채팅 로그에 추가
+    appState.chat_ws.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+		if (data.type === "chat_message")
+		{
+			console.log(data);
+        	document.querySelector('#chat-log').value += `${data.user_name}: ${data.message}\n`;
+			
+		}
+		else if (data.type === "update")
+		{
+			console.log(data);
+			document.querySelector('#chat-log').value += data.messages_text;
+			if (data.messages_text !== "")
+				document.querySelector('#chat-log').value += '\n';
+		}
+    };
+
+    // WebSocket 연결 종료 시 오류 로그
+    appState.chat_ws.onclose = function(e) {
+		if (e.wasClean) {
+			// 연결이 정상적으로 종료된 경우
+			console.log(`Chat socket closed cleanly, code=${e.code}, reason=${e.reason}`);
+		} else {
+			// 연결이 비정상적으로 종료된 경우
+			console.error(`Chat socket closed unexpectedly, code=${e.code}`);
+		}
+    };
+
+    // 메시지 입력 및 전송 처리
+    const messageInput = document.querySelector('#chat-message-input');
+    if (messageInput) {
+        messageInput.focus();
+        messageInput.onkeyup = function(e) {
+            if (e.keyCode === 13 && messageInput.value.trim() !== '') {  // Enter 키 확인
+                const message = messageInput.value;
+                appState.chat_ws.send(JSON.stringify({
+                    'message': message,
+                    'sender': userInfo.username  // 사용자의 정보를 추가로 전송 가능
+                }));
+                messageInput.value = ''; // 입력 필드 초기화
+            }
+        };
+    } else {
+        console.error("Element with id 'chat-message-input' not found.");
+    }
 }
 
 function blockHandler(data, userInfo) {
