@@ -695,6 +695,8 @@ body {
 	width: inherit;
 	display: flex;
 	justify-content: start;
+	border-bottom: solid 0.5rem #eeeeff;
+	padding-bottom: 1rem;
 }
 
 .inner_profile_main div {
@@ -708,15 +710,93 @@ body {
 	font-size: 2rem;
 }
 
+.inner_profile_log_404 {
+	width: inherit;
+	height: 24rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.inner_profile_log_404 img {
+	width: 10rem;
+	height: 10rem;
+}
+
+.inner_profile_bottom.default {
+	width: inherit;
+	height: 24rem;
+	display: flex;
+	justify-content: center;
+	font-size: 1.8rem;
+	color: #444AFF;
+}
+
+.inner_profile_bottom div {
+	height: 24rem;
+	display: flex;
+	flex-direction: column;
+	white-space: nowrap;
+}
+
+.inner_profile_log_date {
+	width: 17rem;
+}
+
+.inner_profile_log_game,
+.inner_profile_log_result {
+	width: 8rem;
+	align-items: center;
+}
+
+.inner_profile_log_competitor {
+	width: 11rem;
+	align-items: center;
+}
+
+.inner_profile_bottom div span {
+	display: inline-block;
+	max-width: 100%;
+	overflow-x: auto;
+	white-space: nowrap;
+	/*vertical-align: top;*/
+	padding: 0.5rem;
+}
+
+.inner_profile_bottom div span::-webkit-scrollbar {
+    height: 0;
+}
+
+.inner_profile_bottom div span:hover::-webkit-scrollbar {
+    height: 0.15rem;
+}
+
+.inner_profile_bottom div span::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+}
+
+.inner_profile_bottom div span::-webkit-scrollbar-thumb {
+	background-color: rgba(119, 119, 255, 0.2);
+}
+
+.inner_profile_log_head {
+	/*width: inherit;*/
+	display: inline-block;
+	font-size: 2rem;
+	color: black;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+	border-bottom: 0.15rem solid #ccccff;
+}
+
 #chat-log {
 	width: 46.2rem;
 	height: 21rem;
-	margin-top: 1rem;
 	border: none;
 	padding: 1rem;
 	resize: none;
 	font-size: 1.2rem;
-	border-top: solid 0.5rem #eeeeff;
 	outline: none;
 }
 
@@ -724,7 +804,7 @@ body {
 	width: 43.9rem;
 	height: 3rem;
 	border-radius: 5rem;
-	border: solid 2px #9999FF;
+	border: solid 0.15rem #9999FF;
 	font-size: 1.2rem;
 	padding-left: 2rem;
 	padding-right: 2rem;
