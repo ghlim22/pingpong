@@ -11,6 +11,7 @@ export let appState = {
 	currentCleanupFn:	null,
 	ws:					null,
 	chat_ws:			null,
+	inTournament:		false,
 };
 // 나중에는 export 지우기
 

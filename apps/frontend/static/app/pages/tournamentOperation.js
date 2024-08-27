@@ -27,6 +27,7 @@ export function tournament_game_queue(type, token) {
       let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
       
 	  document.querySelector('.logo-small').addEventListener('click', () => {
+		appState.inTournament = false;
 		navigate(parseUrl(basePath));
 		ws.close();
 	});
@@ -42,6 +43,7 @@ export function tournament_game_queue(type, token) {
         if (ws.readyState === WebSocket.OPEN) {
           ws.close();
         }
+		appState.inTournament = false;
         navigate(parseUrl(basePath));
       };
   

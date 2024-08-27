@@ -186,10 +186,14 @@ async function appendField(data) {
 }
 
 function appendButtons(data, userInfo) {
+	let pong = document.createElement('img');
 	let message = document.createElement('img');
 	let block = document.createElement('img');
 	let friend = document.createElement('img');
+	//<img id="s-button-pong" src="/assets/s-button-pong.svg">
 
+	pong.classList.add('s-button');
+	pong.classList.add('s-button-pong');
 	message.classList.add('s-button');
 	message.classList.add('s-button-message');
 	block.classList.add('s-button');
@@ -198,6 +202,10 @@ function appendButtons(data, userInfo) {
 	friend.classList.add('s-button-friend');
 
 	message.src = "/assets/s-button-message.svg";
+	if (appState.inTournament)
+		pong.src = "/assets/s-button-pong.svg";
+	else
+		pong.src = "/assets/s-button-unpong.svg";
 	if (userInfo.blocked)
 		block.src = "/assets/s-button-unblock.svg";
 	else
@@ -207,6 +215,7 @@ function appendButtons(data, userInfo) {
 	else
 		friend.src = "/assets/s-button-follow.svg";
 
+	document.querySelector('.user-button-field').appendChild(pong);
 	document.querySelector('.user-button-field').appendChild(message);
 	document.querySelector('.user-button-field').appendChild(block);
 	document.querySelector('.user-button-field').appendChild(friend);
@@ -219,7 +228,6 @@ function appendButtons(data, userInfo) {
 const chatHTML = `
     <textarea id="chat-log" cols="100" rows="20" readonly></textarea>
     <input id="chat-message-input" type="text" size="100" autocomplete="off" placeholder="Enter Message">
-	<img id="s-button-pong" src="/assets/s-button-pong.svg">
 	`;
 	// <img id="s-button-send" src="/assets/s-button-send.svg">
 

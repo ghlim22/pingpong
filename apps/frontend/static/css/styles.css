@@ -725,19 +725,39 @@ body {
 }
 
 .inner_profile_bottom.default {
-	width: inherit;
+
+    width: 100%;
+    height: 24rem;
+    display: flex;
+    /*justify-content: flex-start; div들을 가로로 정렬*/
+	justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    overflow-x: auto; /* 가로 스크롤바도 필요시 활성화 */
+    font-size: 1.8rem;
+    color: #444AFF;
+    /*gap: 1rem; div 간 간격 추가*/
+
+	/*width: inherit;
 	height: 24rem;
 	display: flex;
 	justify-content: center;
 	font-size: 1.8rem;
 	color: #444AFF;
+	overflow-y: auto;
+	overflow-x: hidden;*/
 }
 
 .inner_profile_bottom div {
-	height: 24rem;
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap;
+    overflow: hidden;
+
+	/*height: 24rem;
 	display: flex;
 	flex-direction: column;
-	white-space: nowrap;
+	white-space: nowrap;*/
 }
 
 .inner_profile_log_date {
@@ -756,15 +776,36 @@ body {
 }
 
 .inner_profile_bottom div span {
-	display: inline-block;
+    display: block;
+    padding: 0.5rem;
+    overflow-x: auto;
+    white-space: nowrap;
+
+	/*display: inline-block;
 	max-width: 100%;
 	overflow-x: auto;
+	overflow-y: hidden;
 	white-space: nowrap;
-	/*vertical-align: top;*/
-	padding: 0.5rem;
+	padding: 0.5rem;*/
 }
 
-.inner_profile_bottom div span::-webkit-scrollbar {
+.inner_profile_bottom::-webkit-scrollbar {
+    width: 0;
+}
+
+.inner_profile_bottom:hover::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+.inner_profile_bottom::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+}
+
+.inner_profile_bottom::-webkit-scrollbar-thumb {
+	background-color: rgba(119, 119, 255, 0.2);
+}
+
+.inner_profile_bottom::-webkit-scrollbar {
     height: 0;
 }
 
