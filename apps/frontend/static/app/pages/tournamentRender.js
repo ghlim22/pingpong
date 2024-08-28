@@ -16,7 +16,6 @@ const tournamentRoomHTML = `
 		<t-block data-status="wait" class="player4"></t-block>
 	</div>
 </div>
-<div id="hi">hihi</div>
 `;
 
 const matchOrderHTML = `
@@ -41,14 +40,17 @@ export function tournamentPage() {
 		navigate(parseUrl(basePath + 'login'));
 		return;
 	}
+	appState.inTournament = true;
 	document.getElementById('bottom').innerHTML = "";
 	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('main').innerHTML = tournamentRoomHTML;
-	document.querySelector('.logo-small').addEventListener('click', () => {
-		navigate(parseUrl(basePath));
-	});
+	//document.querySelector('.logo-small').addEventListener('click', () => {
+	//	navigate(parseUrl(basePath));
+	//});
 	tournament_game_queue('tournament', appState.token)
     .then((data) => {
+	  if (data.type === "close_connection")
+		return;
 	  tournamentGame(data);
     })
     .catch((error) => {

@@ -221,7 +221,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         await sync_to_async(game_log.players.add)(*loser_id)
         await sync_to_async(game_log.winners.add)(*winner_id)
         await sync_to_async(game_log.losers.add)(*loser_id)
-        await sync_to_async(game_log.save)()
 
         winner = await sync_to_async(CustomUser.objects.get)(id=winner_id[0])#[0]
         winner.win += 1
@@ -232,6 +231,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         await sync_to_async(loser.save)()
 
         if self.type == '4P':
+            await sync_to_async(game_log.players.add)(*winner2_id)
+            await sync_to_async(game_log.players.add)(*loser2_id)
             await sync_to_async(game_log.winners.add)(*winner2_id)
             await sync_to_async(game_log.losers.add)(*loser2_id)
             winner2 = await sync_to_async(CustomUser.objects.get)(id=winner2_id[0])
@@ -249,6 +250,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             "picture2": picture2,
             "game_type": self.type,
         }
+        await sync_to_async(game_log.save)()
 
         logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "game_end", "data": data})

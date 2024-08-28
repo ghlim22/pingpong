@@ -26,6 +26,12 @@ export function tournament_game_queue(type, token) {
     return new Promise((resolve, reject) => {
       let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
       
+	  document.querySelector('.logo-small').addEventListener('click', () => {
+		appState.inTournament = false;
+		navigate(parseUrl(basePath));
+		ws.close();
+	});
+	
       const objects = [
         '.tournament-room-in .player1',
         '.tournament-room-in .player2',
@@ -37,6 +43,7 @@ export function tournament_game_queue(type, token) {
         if (ws.readyState === WebSocket.OPEN) {
           ws.close();
         }
+		appState.inTournament = false;
         navigate(parseUrl(basePath));
       };
   
@@ -45,10 +52,15 @@ export function tournament_game_queue(type, token) {
           console.log('on message', data);
           if (data.type === "update")
             populateUserInfo(data.users, objects);
-          if (data.type === "create")
+          else if (data.type === "create")
           {
             ws.close();
             resolve(data.data);
+          }
+          else if (data.type === "close_connection")
+          {
+            ws.close();
+            resolve(data);
           }
       };
       

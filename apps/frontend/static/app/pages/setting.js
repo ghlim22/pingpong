@@ -43,7 +43,6 @@ export function settingPage() {
 	<t-invite class="receive-invitation"></t-invite>
 	<t-fold class="connect"></t-fold>
 	`;
-
 	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('main').innerHTML = mainHTML;
 	document.getElementById('left-side').innerHTML = leftSideHTML;
@@ -64,12 +63,10 @@ export function submitPicture(event) {
 	if (!(event.target.matches('[data-picture]'))) {
 		return ;
 	}
-
 	const picture = event.target.querySelector('#imgInput').files[0];
-	
 	const formData = new FormData();
 	formData.append('picture', picture);
-
+	
 	fetch('api/users/current/', {
 		method: 'PATCH',
 		headers: {
@@ -103,6 +100,11 @@ export function submitPicture(event) {
 		alert('edit success');
 		appState.picture = data['picture'];
 		sessionStorage.setItem('appState', JSON.stringify(appState));
+		appState.ws.send(JSON.stringify({
+			"type": "update_user_info",
+			"field": "img",
+			"value": data['picture'],
+		}));
 		navigate(parseUrl(basePath + 'setting'));
 	})
 	.catch(error => {
@@ -150,6 +152,11 @@ export function submitNickname(event) {
 		alert('edit success');
 		appState.nickname = nickname;
 		sessionStorage.setItem('appState', JSON.stringify(appState));
+		appState.ws.send(JSON.stringify({
+			"type": "update_user_info",
+			"field": "nick",
+			"value": nickname,
+		}));
 		navigate(parseUrl(basePath + 'setting'));
 	})
 	.catch(error => {
