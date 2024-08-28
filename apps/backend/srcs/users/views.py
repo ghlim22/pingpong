@@ -214,10 +214,17 @@ def GameLogListView(request, pk):
             won = True
         else:
             won = False
+
         players = []
-        for player in log.players.all():
-            if player.pk != instance.pk:
-                players.append(player.nickname)
+
+        if won:
+            opponents = log.losers.all()
+        else:
+            opponents = log.winners.all()
+
+        for opponent in opponents:
+            players.append(opponent.nickname)
+
         game = {
             "timestamp": log.timestamp,
             "type": log.game_type,
@@ -225,7 +232,6 @@ def GameLogListView(request, pk):
             "players": players,
         }
         return_list.append(game)
-    JSONRenderer()
 
     return Response(data=return_list, status=status.HTTP_200_OK)
 

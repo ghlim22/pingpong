@@ -4,12 +4,14 @@ export let appState = {
 	email:				null,
 	nickname:			null,
 	picture:			null,
-	invitation:			3,
+	id:					null,
+	invitation:			0,
 	connect:			8,
 	friend:				4,
 	currentCleanupFn:	null,
 	ws:					null,
 	chat_ws:			null,
+	inTournament:		false,
 };
 // 나중에는 export 지우기
 

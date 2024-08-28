@@ -1,9 +1,9 @@
-import { appState, navigate, parseUrl, basePath, profileUserPage } from '../index.js';
+import { appState, navigate, parseUrl, basePath, profileUserPage } from '/index.js';
 
 'use strict';
 
 async function fetchTUserInfo() {
-    const templateHTML = await fetch('./components/tUserInfo.html');
+    const templateHTML = await fetch('/components/tUserInfo.html');
     const textHTMLTemplate = await templateHTML.text();
     return new DOMParser().parseFromString(textHTMLTemplate, 'text/html').querySelector('template');
 }

@@ -1,5 +1,5 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, TBlock } from '../../index.js';
-import OnlineGame from "./game.js";
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, TBlock } from '/index.js';
+import OnlineGame from "/app/pages/game.js";
 
 export function play_tour_game(info, type, token) {
     return new Promise((resolve, reject) => {
@@ -26,10 +26,11 @@ export function tournament_game_queue(type, token) {
     return new Promise((resolve, reject) => {
       let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
       
-      document.querySelector('.logo-small').addEventListener('click', () => {
-        navigate(parseUrl(basePath));
-        ws.close();
-      });
+	  document.querySelector('.logo-small').addEventListener('click', () => {
+		appState.inTournament = false;
+		navigate(parseUrl(basePath));
+		ws.close();
+	});
 	
       const objects = [
         '.tournament-room-in .player1',
@@ -42,6 +43,7 @@ export function tournament_game_queue(type, token) {
         if (ws.readyState === WebSocket.OPEN) {
           ws.close();
         }
+		appState.inTournament = false;
         navigate(parseUrl(basePath));
       };
   

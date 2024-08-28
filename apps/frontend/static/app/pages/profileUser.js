@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
 
 const topHTML = `
 <span class="logo-small">PONG</span>
@@ -39,11 +39,17 @@ export function profileUserPage(data) {
 		navigate(parseUrl(basePath + 'login'));
 		return;
 	}
+	if (data.pk === undefined) {
+		navigate(parseUrl(basePath + '404'));
+		return;
+	}
 	const leftSideHTML = `
 	<t-user-info class="p-button-current" data-nick="${appState.nickname}" data-img="${appState.picture}" data-id="${appState.token}" data-isloggedin="true"></t-user-info>
 	<t-invite class="receive-invitation"></t-invite>
 	<t-fold class="connect"></t-fold>
 	`;
+
+	console.log('data.pk', data.pk);
 
 	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('bottom').innerHTML = "";
@@ -168,12 +174,12 @@ async function appendField(data) {
 	if (data.nickname === appState.nickname) {
 		userInfo = await getMyInfo(data);
 		if (userInfo === null)
-			return;
+			return false;
 	}
 	else {
 		userInfo = await getUserInfo(data);
 		if (userInfo === null)
-			return;
+			return false;
 		appendButtons(data, userInfo);
 	}
 	let quit = document.createElement('span');
@@ -183,13 +189,18 @@ async function appendField(data) {
 
 	document.querySelector('.inner_profile_win').innerText = userInfo.win;
 	document.querySelector('.inner_profile_lose').innerText = userInfo.lose;
+	return true;
 }
 
 function appendButtons(data, userInfo) {
+	let pong = document.createElement('img');
 	let message = document.createElement('img');
 	let block = document.createElement('img');
 	let friend = document.createElement('img');
+	//<img id="s-button-pong" src="/assets/s-button-pong.svg">
 
+	pong.classList.add('s-button');
+	pong.classList.add('s-button-pong');
 	message.classList.add('s-button');
 	message.classList.add('s-button-message');
 	block.classList.add('s-button');
@@ -198,6 +209,10 @@ function appendButtons(data, userInfo) {
 	friend.classList.add('s-button-friend');
 
 	message.src = "/assets/s-button-message.svg";
+	if (appState.inTournament)
+		pong.src = "/assets/s-button-pong.svg";
+	else
+		pong.src = "/assets/s-button-unpong.svg";
 	if (userInfo.blocked)
 		block.src = "/assets/s-button-unblock.svg";
 	else
@@ -207,6 +222,7 @@ function appendButtons(data, userInfo) {
 	else
 		friend.src = "/assets/s-button-follow.svg";
 
+	document.querySelector('.user-button-field').appendChild(pong);
 	document.querySelector('.user-button-field').appendChild(message);
 	document.querySelector('.user-button-field').appendChild(block);
 	document.querySelector('.user-button-field').appendChild(friend);
@@ -220,7 +236,6 @@ const chatHTML = `
     <textarea id="chat-log" cols="100" rows="20" readonly></textarea>
     <input id="chat-message-input" type="text" size="100" autocomplete="off" placeholder="Enter Message">
 	`;
-	// <img id="s-button-pong" src="/assets/s-button-pong.svg">
 	// <img id="s-button-send" src="/assets/s-button-send.svg">
 
 function messageHandler(data, userInfo) {
@@ -231,11 +246,18 @@ function messageHandler(data, userInfo) {
 		document.querySelector('.inner_profile_bottom').classList.remove('default');
 		document.querySelector('.inner_profile_bottom').innerHTML = chatHTML;
 		initializeChat(data.pk, userInfo);
+		appState.currentCleanupFn = () => {
+			if (appState.chat_ws !== null)
+				appState.chat_ws.close();
+		};
 	}
 	else if (message.src == "https://localhost/assets/s-button-unmessage.svg") {
 		message.src = "/assets/s-button-message.svg"
 		document.querySelector('.inner_profile_bottom').innerHTML = "";
 		document.querySelector('.inner_profile_bottom').classList.add('default');
+		if (appState.chat_ws !== null)
+			appState.chat_ws.close();
+		appState.currentCleanupFn = null;
 		putGameLog(data);
 	}
 }
@@ -279,18 +301,77 @@ function initializeChat(others, userInfo) {
     if (messageInput) {
         messageInput.focus();
         messageInput.onkeyup = function(e) {
-            if (e.keyCode === 13 && messageInput.value.trim() !== '') {  // Enter 키 확인
-                const message = messageInput.value;
-                appState.chat_ws.send(JSON.stringify({
-                    'message': message,
-                    'sender': userInfo.username  // 사용자의 정보를 추가로 전송 가능
-                }));
-                messageInput.value = ''; // 입력 필드 초기화
-            }
+			fetch('/api/users/current/block/', {
+				method: 'GET',
+				headers: {
+					'Authorization': "Token " + appState.token
+				}
+			})
+			.then((response) => {
+				if (response.status === 200) {
+					return response.json();
+				}
+				else if (response.status === 401) {
+					console.log('response 401')
+					throw new Error('Bad Request');
+				}
+				else {
+					console.log('Other status: ');
+					throw new Error('Unexpected status code: ', response.status);
+				}
+			})
+			.then((responseData) => {
+				let isBlocked = responseData.blocked.some(user => {
+					return user.pk === Number(others);
+				});
+				let isBlocks = responseData.blocks.some(user => {
+					return user.pk === Number(others);
+				});
+
+				if (!isBlocks && !isBlocked && e.keyCode === 13 && messageInput.value.trim() !== '') {
+					const message = messageInput.value;
+					appState.chat_ws.send(JSON.stringify({
+						'message': message,
+						'sender': userInfo.username  // 사용자의 정보를 추가로 전송 가능
+					}));
+					messageInput.value = ''; // 입력 필드 초기화
+				}
+			})
+			.catch(error => {
+				console.log('Error: ', error);
+			});
         };
     } else {
         console.error("Element with id 'chat-message-input' not found.");
     }
+}
+
+function checkCanTalk() {
+	fetch('/api/users/current/block/', {
+		method: 'GET',
+		headers: {
+			'Authorization': "Token " + appState.token
+		}
+	})
+	.then((response) => {
+		if (response.status === 200) {
+			return response.json();
+		}
+		else if (response.status === 401) {
+			console.log('response 401')
+			throw new Error('Bad Request');
+		}
+		else {
+			console.log('Other status: ');
+			throw new Error('Unexpected status code: ', response.status);
+		}
+	})
+	.then((responseData) => {
+		console.log('responseData', responseData);
+	})
+	.catch(error => {
+		console.log('Error: ', error);
+	});
 }
 
 function blockHandler(data, userInfo) {

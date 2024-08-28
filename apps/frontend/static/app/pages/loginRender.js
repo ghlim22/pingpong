@@ -1,10 +1,10 @@
-import { appState, basePath, navigate, parseUrl } from '../../index.js';
+import { appState, basePath, navigate, parseUrl } from '/index.js';
 
 const pageHTML = `
 <span class="logo-big">PONG</span>
 <div class="m-button" id="start">
 	<span>start</span>
-	<img src="./assets/cloud-origin.svg">
+	<img src="/assets/cloud-origin.svg">
 </div>
 `;
 
@@ -12,11 +12,11 @@ const startHTML = `
 <span class="logo-big">PONG</span>
 <div class="m-button" id="join">
 	<span>join</span>
-	<img src="./assets/cloud-origin.svg">
+	<img src="/assets/cloud-origin.svg">
 </div>
 <div class="m-button" id="login">
 	<span>login</span>
-	<img src="./assets/cloud-origin.svg">
+	<img src="/assets/cloud-origin.svg">
 </div>
 `;
 
@@ -40,7 +40,7 @@ const joinHTML = `
 	</div>
 	<button type="submit" class="m-button" id="join-submit" data-join>
 		<span>join</span>
-		<img src="./assets/cloud-origin.svg">
+		<img src="/assets/cloud-origin.svg">
 	</button>
 </form>
 `;
@@ -52,7 +52,7 @@ export const loginHTML = `
 	<input required type="password" id="passwordInput" class="type-info" placeholder="Enter PW" autocomplete="off"></input>
 	<button type="submit" class="m-button" id="login-submit" data-login>
 		<span>login</span>
-		<img src="./assets/cloud-origin.svg">
+		<img src="/assets/cloud-origin.svg">
 	</button>
 </form>
 `;

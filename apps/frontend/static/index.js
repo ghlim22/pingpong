@@ -1,24 +1,24 @@
 //Object appState
 
-import { appState, loginUser } from './app/state.js';
-import { basePath } from './app/state.js';
+import { appState, loginUser } from '/app/state.js';
+import { basePath } from '/app/state.js';
 
 //class TUserInfo
-import { TUserInfo } from './components/tUserInfo.js';
-import { TInvite } from './components/tInvite.js';
-import { TFold } from './components/tFold.js';
-import { TBlock } from './components/tBlock.js';
+import { TUserInfo } from '/components/tUserInfo.js';
+import { TInvite } from '/components/tInvite.js';
+import { TFold } from '/components/tFold.js';
+import { TBlock } from '/components/tBlock.js';
 
 //function
-import { navigate, parseUrl } from './app/router.js';
-import { loginPage } from './app/pages/loginRender.js';
-import { submitJoin, submitLogin } from './app/pages/loginOperation.js';
-import { homePage } from './app/pages/home.js';
-import { pong1VS1Page } from './app/pages/1vs1Render.js';
-import { pongMultiPage } from './app/pages/multiRender.js';
-import { tournamentPage } from './app/pages/tournamentRender.js';
-import { settingPage, submitPicture, submitNickname } from './app/pages/setting.js';
-import { profileUserPage } from './app/pages/profileUser.js';
+import { navigate, parseUrl } from '/app/router.js';
+import { loginPage } from '/app/pages/loginRender.js';
+import { submitJoin, submitLogin } from '/app/pages/loginOperation.js';
+import { homePage } from '/app/pages/home.js';
+import { pong1VS1Page } from '/app/pages/1vs1Render.js';
+import { pongMultiPage } from '/app/pages/multiRender.js';
+import { tournamentPage } from '/app/pages/tournamentRender.js';
+import { settingPage, submitPicture, submitNickname } from '/app/pages/setting.js';
+import { profileUserPage } from '/app/pages/profileUser.js';
 
 export {
     appState,
@@ -44,18 +44,18 @@ export {
 };
 
 
-window.onpopstate = () => {
+window.onpopstate = (event) => {
 	if (appState.currentCleanupFn !== null) {
         appState.currentCleanupFn();
     }
-	navigate(parseUrl(window.location.pathname));
+	navigate(parseUrl(window.location.pathname), event.state);
 };
 
 if (document.readyState !== 'loading') {
-	navigate(parseUrl(basePath));
+	navigate(parseUrl(window.location.pathname));
 } else {
 	document.addEventListener('DOMContentLoaded', () => {
-		navigate(parseUrl(basePath));
+		navigate(parseUrl(window.location.pathname));
 	});
 }
 
