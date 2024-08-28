@@ -55,11 +55,13 @@ export function profileUserPage(data) {
 	putGameLog(data);
 
 	document.querySelector('.p-button-setting').addEventListener('click', () => {
-		appState.chat_ws.close();
+		if (appState.chat_ws !== null)
+			appState.chat_ws.close();
 		navigate(parseUrl(basePath + 'setting'))
 	});
 	document.querySelector('.logo-small').addEventListener('click', () => {
-		appState.chat_ws.close();
+		if (appState.chat_ws !== null)
+			appState.chat_ws.close();
 		navigate(parseUrl(basePath));
 	});
 }
@@ -263,9 +265,11 @@ function initializeChat(others, userInfo) {
     appState.chat_ws.onclose = function(e) {
 		if (e.wasClean) {
 			// 연결이 정상적으로 종료된 경우
+			appState.chat_ws = null;
 			console.log(`Chat socket closed cleanly, code=${e.code}, reason=${e.reason}`);
 		} else {
 			// 연결이 비정상적으로 종료된 경우
+			appState.chat_ws = null;
 			console.error(`Chat socket closed unexpectedly, code=${e.code}`);
 		}
     };

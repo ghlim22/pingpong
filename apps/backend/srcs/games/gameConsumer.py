@@ -46,7 +46,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.position = 'down'
             
         if self.type == "tournament" or self.type == "4P" or self.type == "2P":
-            asyncio.create_task(self._start_timeout(group_size, max_players))
+            asyncio.create_task(self._start_timeout(self.game_group, max_players))
 
         if self.user.is_authenticated:
             await self.save_user_info(self.user)
@@ -127,8 +127,9 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def _start_timeout(self, group_size, max_players):
         await asyncio.sleep(self.timeout)
 
+        size = await self._get_group_size(group_size)
         # 타임아웃 시간 경과 후 그룹 크기 확인
-        if self._get_group_size(group_size) < max_players:
+        if size < max_players:
             await self.channel_layer.group_send(
                 self.game_group,
                 {
