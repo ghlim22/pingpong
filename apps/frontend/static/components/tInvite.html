@@ -3,11 +3,18 @@
         @import url("/components/template.css");
     </style>
 	<div class="t-invite__container">
-		<t-user-info></t-user-info>
+		<div class="t-user-info__container">
+			<div class="image-profile-small">
+				<img src="/assets/default-picture.png">
+			</div>
+			<div>
+				<span class="t-user-info__nickname">nickname</span>
+			</div>
+		</div>
 		<span>invites you</span>
 		<div>
-			<button>yes</button>
-			<button>no</button>
+			<button class="invite_yes">yes</button>
+			<button class="invite_no">no</button>
 		</div>
 	</div>
 </template>

@@ -128,6 +128,16 @@ body {
 	height: 100vh;
 }
 
+#above.not_found {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	z-index: 999;
+	background-color: #FFFFFF;
+}
+
 #above.above-on {
 	display: flex;
 	position: absolute;

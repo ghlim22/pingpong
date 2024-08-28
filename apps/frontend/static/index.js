@@ -44,20 +44,17 @@ export {
 };
 
 
-window.onpopstate = () => {
+window.onpopstate = (event) => {
 	if (appState.currentCleanupFn !== null) {
         appState.currentCleanupFn();
     }
-console.log("index.j 0", 'window.location.pathname', window.location.pathname);//here!!
-	navigate(parseUrl(window.location.pathname));
+	navigate(parseUrl(window.location.pathname), event.state);
 };
 
 if (document.readyState !== 'loading') {
-console.log("index.js 1", 'navigate(parseUrl(window.location.pathname))', window.location.pathname);//here!!
 	navigate(parseUrl(window.location.pathname));
 } else {
 	document.addEventListener('DOMContentLoaded', () => {
-console.log("index.js 2", 'navigate(parseUrl(window.location.pathname))', window.location.pathname);//here!!
 		navigate(parseUrl(window.location.pathname));
 	});
 }

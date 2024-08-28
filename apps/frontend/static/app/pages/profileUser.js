@@ -39,11 +39,17 @@ export function profileUserPage(data) {
 		navigate(parseUrl(basePath + 'login'));
 		return;
 	}
+	if (data.pk === undefined) {
+		navigate(parseUrl(basePath + '404'));
+		return;
+	}
 	const leftSideHTML = `
 	<t-user-info class="p-button-current" data-nick="${appState.nickname}" data-img="${appState.picture}" data-id="${appState.token}" data-isloggedin="true"></t-user-info>
 	<t-invite class="receive-invitation"></t-invite>
 	<t-fold class="connect"></t-fold>
 	`;
+
+	console.log('data.pk', data.pk);
 
 	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('bottom').innerHTML = "";
@@ -168,12 +174,12 @@ async function appendField(data) {
 	if (data.nickname === appState.nickname) {
 		userInfo = await getMyInfo(data);
 		if (userInfo === null)
-			return;
+			return false;
 	}
 	else {
 		userInfo = await getUserInfo(data);
 		if (userInfo === null)
-			return;
+			return false;
 		appendButtons(data, userInfo);
 	}
 	let quit = document.createElement('span');
@@ -183,6 +189,7 @@ async function appendField(data) {
 
 	document.querySelector('.inner_profile_win').innerText = userInfo.win;
 	document.querySelector('.inner_profile_lose').innerText = userInfo.lose;
+	return true;
 }
 
 function appendButtons(data, userInfo) {
