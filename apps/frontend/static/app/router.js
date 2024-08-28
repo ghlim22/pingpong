@@ -1,4 +1,4 @@
-import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState } from '../index.js';
+import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState } from '/index.js';
 
 const routes = {
 	[basePath + 'login']:			loginPage,
@@ -146,7 +146,7 @@ function main_ws(token) {
 						const user = document.createElement('t-user-info');
 						user.classList.add("p-button-user");
 						user.setAttribute('data-nick', userInfo.nick || 'Unknown');
-						user.setAttribute('data-img', userInfo.img || '../assets/default.png');
+						user.setAttribute('data-img', userInfo.img || '/assets/default.png');
 						user.setAttribute('data-id', userInfo.id || '0000');
 						user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
 						connect.addUserInfo(user);
@@ -156,7 +156,7 @@ function main_ws(token) {
 						const user = document.createElement('t-user-info');
 						user.classList.add("p-button-user");
 						user.setAttribute('data-nick', userInfo.nick || 'Unknown');
-						user.setAttribute('data-img', userInfo.img || '../assets/default.png');
+						user.setAttribute('data-img', userInfo.img || '/assets/default.png');
 						user.setAttribute('data-id', userInfo.id || '0000');
 						user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
 						friend.addUserInfo(user);

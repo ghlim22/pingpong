@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
 const topHTML = `
 <span class="logo-small">PONG</span>
 `;
@@ -15,7 +15,7 @@ const leftSideHTML = `
 
 const rightSideHTML = `
 <div class="p-button-setting">
-	<img src="./assets/s-button-message.svg">
+	<img src="/assets/s-button-message.svg">
 	<span>setting</span>
 </div>
 <t-fold class="friend"></t-fold>

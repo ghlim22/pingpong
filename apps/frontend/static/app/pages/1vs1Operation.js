@@ -1,5 +1,5 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
-import OnlineGame from "./game.js";
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+import OnlineGame from "/app/pages/game.js";
 
 export function game_queue(type, token) {
   return new Promise((resolve, reject) => {

@@ -1,6 +1,6 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
-import { tournament_game_queue, populateUserInfo } from './tournamentOperation.js'
-import { game1vs1Page } from './1vs1Render.js'
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+import { tournament_game_queue, populateUserInfo } from '/app/pages/tournamentOperation.js'
+import { game1vs1Page } from '/app/pages/1vs1Render.js'
 const topHTML = `
 <span class="logo-small">PONG</span>
 `;
