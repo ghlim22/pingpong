@@ -1,6 +1,6 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
-import { tournament_game_queue, populateUserInfo } from './tournamentOperation.js'
-import { game1vs1Page } from './1vs1Render.js'
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+import { tournament_game_queue, populateUserInfo } from '/app/pages/tournamentOperation.js'
+import { game1vs1Page } from '/app/pages/1vs1Render.js'
 const topHTML = `
 <span class="logo-small">PONG</span>
 `;
@@ -65,7 +65,11 @@ function tournamentGame(info) {
 	info.user_info.forEach((user_info, index) => {
 		if (user_info.nickname === appState.nickname) {
 			if (index > 1)
-				info.game_id = info.game_id2
+			{
+				let temp = info.game_id;
+				info.game_id = info.game_id2;
+				info.game_id2 = temp;
+			}
 			setTimeout(() => { game1vs1Page(info) } , 5000);
 		}
 	});

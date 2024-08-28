@@ -5,7 +5,7 @@ export let appState = {
 	nickname:			null,
 	picture:			null,
 	id:					null,
-	invitation:			3,
+	invitation:			0,
 	connect:			8,
 	friend:				4,
 	currentCleanupFn:	null,

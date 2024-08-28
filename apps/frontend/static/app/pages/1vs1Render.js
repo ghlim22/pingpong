@@ -1,16 +1,16 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
-import { game_queue, play_game } from './1vs1Operation.js'
-import { matchOrderPage } from './tournamentRender.js'
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+import { game_queue, play_game } from '/app/pages/1vs1Operation.js'
+import { matchOrderPage } from '/app/pages/tournamentRender.js'
 const matchHTML = `
 <div class="match-1vs1">
 	<div class="image-profile-middle" id="mine">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span id="mySpan">nickname</span>
 </div>
 <div class="match-1vs1">
 	<div class="image-profile-middle" id="opponent">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span id="opponentSpan">Wait Please</span>
 </div>
@@ -31,7 +31,7 @@ const leftSideHTML = `
 const rightSideHTML = `
 <div></div>
 <div>
-	<img src="./assets/g-button-quit.svg">
+	<img src="/assets/g-button-quit.svg">
 </div>
 <div></div>
 `;
@@ -40,12 +40,12 @@ const topHTML = `
 <div class="user-profile-1p">
 	<span>nickname</span>
 	<div class="image-profile-small">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 </div>
 <div class="user-profile-2p">
 	<div class="image-profile-small">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 </div>
@@ -60,7 +60,7 @@ const resultHTML = `
 <div class="result-1vs1">
 	<span>WINNER</span>
 	<div class="image-profile-large">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 </div>
@@ -128,8 +128,13 @@ export function game1vs1Page(info) {
 	console.log('Received info:', info);
 	play_game(info, "2P", appState.token)
     .then((data) => {
-      console.log('Received data:', data);
-	  if (info.game_id2 === "false" || appState.nickname !== data.nickname)
+      console.log('Received data:', data.data);
+	  if (data.type === "disconnect_all")
+	  {
+		navigate(parseUrl(basePath));
+		alert("Someone has disconnected");
+	  }
+	  else if (info.game_id2 === "false" || appState.nickname !== data.nickname)
       	gameResultPage(data);
 	  else
 	  {

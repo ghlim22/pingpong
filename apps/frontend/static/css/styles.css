@@ -1,4 +1,4 @@
-@import "reset.css";
+@import "/css/reset.css";
 
 html {
 	/*font-size: 16px;*/
@@ -37,6 +37,8 @@ body {
 #app {
 	display: flex;
 	flex-direction: row;
+
+	justify-content: center;
 }
 
 #left-side {
@@ -124,11 +126,23 @@ body {
 
 #above {
 	display: none;
+}
+
+#above.not_found {
 	width: 100vw;
 	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	z-index: 999;
+	background-color: #FFFFFF;
 }
 
 #above.above-on {
+	width: 100vw;
+	height: 100vh;
 	display: flex;
 	position: absolute;
 	z-index: 999;
@@ -144,6 +158,18 @@ body {
 	align-items: center;
 	font-size: 4rem;
 	color: blue;
+}
+
+#above.outter_setting {
+	width: 100vh;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	z-index: 999;
+	background-color: rgba(0, 0, 0, 0);
 }
 
 .result-multi-team {
@@ -622,8 +648,9 @@ body {
 }
 
 .inner_setting_window > span:first-child {
-	position: absolute;
-	left: 72rem;
+	position: relative;
+	left: 45.8rem;
+	top: 1rem;
 }
 
 .inner_setting_window label {

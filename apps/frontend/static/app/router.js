@@ -1,4 +1,4 @@
-import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState } from '../index.js';
+import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState } from '/index.js';
 
 const routes = {
 	[basePath + 'login']:			loginPage,
@@ -6,8 +6,9 @@ const routes = {
 	[basePath + '1vs1']:			pong1VS1Page,
 	[basePath + 'multi']:			pongMultiPage,
 	[basePath + 'tournament']:		tournamentPage,
-	[basePath + 'setting']:			settingPage,
-	[basePath + 'profile/:nick']:	profileUserPage,
+	//[basePath + 'setting']:			settingPage,
+	//[basePath + 'profile/:nick']:	profileUserPage,
+	[basePath + '404']:				notFoundPage,
 	//'/profile/edit-profile':		profileEditPage,
 	//'/profile/:nick':				profileUserPage,
 	//'/setting/:nick':					settingUserPage,
@@ -18,6 +19,8 @@ export function parseUrl(url) {
 	const params = {};
 	const pathParts = url.split('/');
 	const routeParts = Object.keys(routes).map(r => r.split('/'));
+	console.log('pathParts', pathParts);
+	console.log('routeParts', routeParts);
 
 	for (let i = 0; i < routeParts.length; i++) {
 		if (routeParts[i].length === pathParts.length) {
@@ -25,6 +28,10 @@ export function parseUrl(url) {
 			for (let j = 0; j < routeParts[i].length; j++) {
 				if (routeParts[i][j].startsWith(':')) {
 					const paramName = routeParts[i][j].substring(1);
+					if (pathParts[j].length === 0) {
+						isMatch = false;
+						break;
+					}
 					params[paramName] = pathParts[j];
 				} else if (routeParts[i][j] !== pathParts[j]) {
 					isMatch = false;
@@ -42,21 +49,21 @@ export function parseUrl(url) {
 export function navigate(parsed, data = null) {
 	const currentPath = window.location.pathname;
 	const page = routes[parsed.route] || notFoundPage;
-	if (currentPath !== parsed.path) {
-		window.history.pushState({}, parsed.path, window.location.origin + parsed.path);
-	}
+	//if (currentPath !== parsed.path) {
+		window.history.pushState(data, parsed.path, window.location.origin + parsed.path);
+	//}
 	appState.currentCleanupFn = null;
 	setClaslistDefault();
-	if (data !== null) {
-		profileUserPage(data);
-	}
-	else if (parsed.isParams) {
-		page(parsed.params);
-	}
-	else {
+	//if (data !== null) {
+	//	profileUserPage(data);
+	//}
+	//else if (parsed.isParams) {
+	//	page(parsed.params);
+	//}
+	//else {
 		page();
-	}
-	if (appState.token !== null)
+	//}
+	if (page !== notFoundPage && appState.token !== null)
 	{
 		main_ws(appState.token);
 	}
@@ -64,21 +71,21 @@ export function navigate(parsed, data = null) {
 
 function notFoundPage() {
 	const above = document.getElementById('above');
-	const left = document.getElementById('left-side');
-	const right = document.getElementById('right-side');
-	const top = document.getElementById('top');
-	const main = document.getElementById('main');
-	const bottom = document.getElementById('bottom');
 
-	above.innerHTML = "";
-	left.innerHTML = "";
-	right.innerHTML = "";
-	top.innerHTML = "";
-	main.innerHTML = "<h1>404: not found</h1>";
-	bottom.innerHTML = "";
+	above.innerHTML = `
+		<span class="logo-big">404</span>
+		<h1>page not found</h1>
+		<h2 id="above_404">Click to go back</h2>
+	`;;
+	document.getElementById('above').classList.add('not_found');
+	document.getElementById('above_404').addEventListener('click', () => {
+		navigate(parseUrl(basePath));
+	});
 }
 
 function setClaslistDefault() {
+	document.getElementById('above').classList.remove('outter_setting');
+	document.getElementById('above').classList.remove('not_found');
 	document.getElementById('above').classList.remove('above-on');
 	document.getElementById('left-side').classList.remove('ingame');
 	document.getElementById('right-side').classList.remove('ingame');
@@ -94,20 +101,30 @@ function setClaslistDefault() {
 }
 
 function main_ws(token) {
-	if (appState.ws === null)
+	console.log("before", appState.ws)
+	if (!appState.ws || !(appState.ws instanceof WebSocket))
+	{
+		console.log("11")
 		appState.ws = new WebSocket(`wss://localhost/wss/games/main/?token=${token}`);
+	}
 	else
+	{
 		appState.ws.send(JSON.stringify({ type: "updateMine"}));
+		console.log("22")
+	}
+	console.log("after", appState.ws)
 	const connect = document.querySelector('.connect');
 	const friend = document.querySelector('.friend');
+	const myprofile = document.querySelector('.p-button-current');
 
 	appState.ws.onmessage = (event) => {
 		const data = JSON.parse(event.data);
-		console.log(data);
-
+		console.log("app.ws.on", data);
+		
     	if (data.type === 'update') {
 			const userInfoList = data.users;
 			appState.id = data.my_id;
+			myprofile.setImageNick(appState.picture, appState.nickname);
 			connect.removeAll();
 			friend.removeAll();
 			
@@ -146,7 +163,7 @@ function main_ws(token) {
 						const user = document.createElement('t-user-info');
 						user.classList.add("p-button-user");
 						user.setAttribute('data-nick', userInfo.nick || 'Unknown');
-						user.setAttribute('data-img', userInfo.img || '../assets/default.png');
+						user.setAttribute('data-img', userInfo.img || '/assets/default.png');
 						user.setAttribute('data-id', userInfo.id || '0000');
 						user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
 						connect.addUserInfo(user);
@@ -156,7 +173,7 @@ function main_ws(token) {
 						const user = document.createElement('t-user-info');
 						user.classList.add("p-button-user");
 						user.setAttribute('data-nick', userInfo.nick || 'Unknown');
-						user.setAttribute('data-img', userInfo.img || '../assets/default.png');
+						user.setAttribute('data-img', userInfo.img || '/assets/default.png');
 						user.setAttribute('data-id', userInfo.id || '0000');
 						user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
 						friend.addUserInfo(user);

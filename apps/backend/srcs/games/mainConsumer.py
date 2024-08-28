@@ -52,12 +52,11 @@ class mainConsumer(AsyncWebsocketConsumer):
                 for channel_name in user_info_dict
             ]
             await self.channel_layer.send(self.channel_name, {"type": "update", "users": user_info_list, "my_id": self.user.id})
-        elif data.get("type") == 'invite':  # 게임 초대 로직
+        elif data.get("type") == 'invite':
             await self.invite_user(data)
         elif data.get("type") == 'update_user_info':
             field = data.get("field")
             new_value = data.get("value")
-            
             if field and new_value:
                 await self.update_user_info(field, new_value)
                 await self._send()

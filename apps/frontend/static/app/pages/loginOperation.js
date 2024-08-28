@@ -1,5 +1,5 @@
-import { appState, loginUser, basePath, navigate, parseUrl, TUserInfo } from '../../index.js';
-import { loginHTML } from './loginRender.js';
+import { appState, loginUser, basePath, navigate, parseUrl, TUserInfo } from '/index.js';
+import { loginHTML } from '/app/pages/loginRender.js';
 
 export function submitJoin(event) {
 	if (!(event.target.matches('[data-join]'))) {

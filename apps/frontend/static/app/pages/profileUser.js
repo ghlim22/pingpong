@@ -1,8 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
-
-const topHTML = `
-<span class="logo-small">PONG</span>
-`;
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage } from '/index.js';
 
 const mainHTML = `
 <div class="inner_setting">
@@ -26,44 +22,15 @@ const mainHTML = `
 </div>
 `;
 
-const rightSideHTML = `
-<div class="p-button-setting">
-	<img src="/assets/s-button-cog.svg">
-	<span>setting</span>
-</div>
-<t-fold class="friend"></t-fold>
-`;
-
 export function profileUserPage(data) {
-	if (!appState.isLoggedIn) {
-		navigate(parseUrl(basePath + 'login'));
-		return;
-	}
-	const leftSideHTML = `
-	<t-user-info class="p-button-current" data-nick="${appState.nickname}" data-img="${appState.picture}" data-id="${appState.token}" data-isloggedin="true"></t-user-info>
-	<t-invite class="receive-invitation"></t-invite>
-	<t-fold class="connect"></t-fold>
-	`;
-
-	document.getElementById('top').innerHTML = topHTML;
-	document.getElementById('bottom').innerHTML = "";
-	document.getElementById('main').innerHTML = mainHTML;
-	document.getElementById('left-side').innerHTML = leftSideHTML;
-	document.getElementById('right-side').innerHTML = rightSideHTML;
+	const above = document.getElementById('above');
+	above.innerHTML = mainHTML;
 
 	appendField(data);
 	putGameLog(data);
 
-	document.querySelector('.p-button-setting').addEventListener('click', () => {
-		if (appState.chat_ws !== null)
-			appState.chat_ws.close();
-		navigate(parseUrl(basePath + 'setting'))
-	});
-	document.querySelector('.logo-small').addEventListener('click', () => {
-		if (appState.chat_ws !== null)
-			appState.chat_ws.close();
-		navigate(parseUrl(basePath));
-	});
+	document.getElementById('above').classList.add('above-on');
+	document.getElementById('above').classList.add('outter_setting');
 }
 
 function putGameLog(data) {
@@ -168,21 +135,27 @@ async function appendField(data) {
 	if (data.nickname === appState.nickname) {
 		userInfo = await getMyInfo(data);
 		if (userInfo === null)
-			return;
+			return false;
 	}
 	else {
 		userInfo = await getUserInfo(data);
 		if (userInfo === null)
-			return;
+			return false;
 		appendButtons(data, userInfo);
 	}
 	let quit = document.createElement('span');
 	quit.classList.add('t-button');
+	quit.classList.add('profile_user_quit');
 	quit.innerText = 'x';
 	document.querySelector('.user-button-field').appendChild(quit);
 
 	document.querySelector('.inner_profile_win').innerText = userInfo.win;
 	document.querySelector('.inner_profile_lose').innerText = userInfo.lose;
+	document.querySelector('.profile_user_quit').addEventListener('click', () => {
+		document.getElementById('above').classList.remove('above-on');
+		document.getElementById('above').classList.remove('outter_setting');
+    });
+	return true;
 }
 
 function appendButtons(data, userInfo) {
@@ -280,9 +253,11 @@ function initializeChat(others, userInfo) {
     appState.chat_ws.onclose = function(e) {
 		if (e.wasClean) {
 			// 연결이 정상적으로 종료된 경우
+			appState.chat_ws = null;
 			console.log(`Chat socket closed cleanly, code=${e.code}, reason=${e.reason}`);
 		} else {
 			// 연결이 비정상적으로 종료된 경우
+			appState.chat_ws = null;
 			console.error(`Chat socket closed unexpectedly, code=${e.code}`);
 		}
     };
@@ -391,7 +366,7 @@ function blockHandler(data, userInfo) {
 		else {
 			document.querySelector('.s-button-block').src = "/assets/s-button-unblock.svg";
 		}
-		navigate(parseUrl(basePath + 'profile/:' + data.nickname), data);
+		profileUserPage(data);
 	})
 	.catch(error => {
 		console.log('Error: ', error);
@@ -424,7 +399,7 @@ function friendHandler(data, userInfo) {
 		else {
 			document.querySelector('.s-button-friend').src = "/assets/s-button-unfollow.svg";
 		}
-		navigate(parseUrl(basePath + 'profile/:' + data.nickname), data);
+		profileUserPage(data);
 	})
 	.catch(error => {
 		console.log('Error: ', error);

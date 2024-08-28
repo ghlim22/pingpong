@@ -1,9 +1,11 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '../../index.js';
-import OnlineGame from "./game.js";
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+import OnlineGame from "/app/pages/game.js";
 
 export function game_queue(type, token) {
   return new Promise((resolve, reject) => {
     console.log(type);
+    console.log("token", token);
+
     let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
     
     appState.currentCleanupFn = () => {
@@ -37,7 +39,7 @@ export function play_game(info, type, token) {
     };
     OnlineGame(ws, type)
     .then((data) => {
-      console.log('Received data:', data);
+      console.log('Received data:', data.data);
       resolve(data)
     })
     .catch((error) => {
