@@ -128,8 +128,13 @@ export function game1vs1Page(info) {
 	console.log('Received info:', info);
 	play_game(info, "2P", appState.token)
     .then((data) => {
-      console.log('Received data:', data);
-	  if (info.game_id2 === "false" || appState.nickname !== data.nickname)
+      console.log('Received data:', data.data);
+	  if (data.type === "disconnect_all")
+	  {
+		navigate(parseUrl(basePath));
+		alert("Someone has disconnected");
+	  }
+	  else if (info.game_id2 === "false" || appState.nickname !== data.nickname)
       	gameResultPage(data);
 	  else
 	  {

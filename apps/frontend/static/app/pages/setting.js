@@ -99,13 +99,11 @@ export function submitPicture(event) {
 		console.log('edit success');
 		alert('edit success');
 		appState.picture = data['picture'];
-		sessionStorage.setItem('appState', JSON.stringify(appState));
-		appState.ws.send(JSON.stringify({
-			"type": "update_user_info",
-			"field": "img",
-			"value": data['picture'],
-		}));
+		if (appState.ws !== null)
+			appState.ws.close();
+		appState.ws = null;
 		navigate(parseUrl(basePath + 'setting'));
+		sessionStorage.setItem('appState', JSON.stringify(appState));
 	})
 	.catch(error => {
 		console.log('Error: ', error);
@@ -151,13 +149,11 @@ export function submitNickname(event) {
 		console.log('edit success');
 		alert('edit success');
 		appState.nickname = nickname;
-		sessionStorage.setItem('appState', JSON.stringify(appState));
-		appState.ws.send(JSON.stringify({
-			"type": "update_user_info",
-			"field": "nick",
-			"value": nickname,
-		}));
+		if (appState.ws !== null)
+			appState.ws.close();
+		appState.ws = null;
 		navigate(parseUrl(basePath + 'setting'));
+		sessionStorage.setItem('appState', JSON.stringify(appState));
 	})
 	.catch(error => {
 		console.log('Error: ', error);
