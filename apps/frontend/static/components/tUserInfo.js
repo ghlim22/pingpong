@@ -31,6 +31,13 @@ export class TUserInfo extends HTMLElement {
         this.render();
     }
     
+    // static isUserInFolder(folder, user) {
+    //     return Array.from(folder.children).some(child => {
+    //         const userId = child.getAttribute('data-id');
+    //         return userId === user.id;
+    //     });
+    // }
+
     render() {
         const border = this.shadowRoot.querySelector('.t-user-info__container div');
         const img = this.shadowRoot.querySelector('.image-profile-small img');

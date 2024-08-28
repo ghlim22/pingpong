@@ -65,7 +65,11 @@ function tournamentGame(info) {
 	info.user_info.forEach((user_info, index) => {
 		if (user_info.nickname === appState.nickname) {
 			if (index > 1)
-				info.game_id = info.game_id2
+			{
+				let temp = info.game_id;
+				info.game_id = info.game_id2;
+				info.game_id2 = temp;
+			}
 			setTimeout(() => { game1vs1Page(info) } , 5000);
 		}
 	});

@@ -30,8 +30,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         else:
             max_players = 2
 
-        await self.channel_layer.group_add(self.game_group, self.channel_name)
         await self.accept()
+        await self.channel_layer.group_add(self.game_group, self.channel_name)
 
         self.user = self.scope["user"]
         group_size = await self._increment_and_get_group_size(self.game_group)
@@ -44,8 +44,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.position = 'up'
         elif group_size == 3:
             self.position = 'down'
-
-        asyncio.create_task(self._start_timeout(group_size, max_players))
+            
+        if self.type == "tournament" or self.type == "4P" or self.type == "2P":
+            asyncio.create_task(self._start_timeout(group_size, max_players))
 
         if self.user.is_authenticated:
             await self.save_user_info(self.user)
@@ -113,6 +114,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         group_size = await self.redis.eval(lua_script, 1, group_name)
         return group_size
 
+    async def _get_group_size(self, group_name):
+        group_size = await self.redis.get(group_name)
+        
+        if group_size is None:
+            return 0
+        return int(group_size)
+    
     async def _decrement_group_size(self, group_name):
         await self.redis.decr(group_name)
 
@@ -120,7 +128,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await asyncio.sleep(self.timeout)
 
         # 타임아웃 시간 경과 후 그룹 크기 확인
-        if group_size < max_players:
+        if self._get_group_size(group_size) < max_players:
             await self.channel_layer.group_send(
                 self.game_group,
                 {

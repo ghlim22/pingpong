@@ -25,7 +25,11 @@ export class TFold extends HTMLElement {
 
 	addUserInfo(user) {
         const folder = this.shadowRoot.querySelector('.t-fold__users');
-		folder.appendChild(user);
+
+		// if (!TUserInfo.isUserInFolder(folder, user)) {
+            folder.appendChild(user);
+        // }
+		// folder.appendChild(user);
 	}
 
 	removeAll() {

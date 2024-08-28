@@ -4,6 +4,8 @@ import OnlineGame from "./game.js";
 export function game_queue(type, token) {
   return new Promise((resolve, reject) => {
     console.log(type);
+    console.log("token", token);
+
     let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
     
     appState.currentCleanupFn = () => {

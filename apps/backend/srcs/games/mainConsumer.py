@@ -54,26 +54,6 @@ class mainConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.send(self.channel_name, {"type": "update", "users": user_info_list})
         elif data.get("type") == 'invite':  # 게임 초대 로직
             await self.invite_user(data)
-        elif data.get("type") == 'update_user_info':
-            field = data.get("field")
-            new_value = data.get("value")
-            
-            if field and new_value:
-                await self.update_user_info(field, new_value)
-                await self._send()
-
-    async def update_user_info(self, field, new_value):
-        # Redis에서 현재 사용자 정보 가져오기
-        user_info = await self.redis.hget("main", self.user.id)
-        user_info = json.loads(user_info)
-        # 필드 업데이트
-        if field == "nick":
-            user_info["nick"] = new_value
-        elif field == "img":
-            user_info["img"] = new_value
-        # 업데이트된 정보를 Redis에 저장
-        await self.redis.hset("main", self.user.id, json.dumps(user_info))
-        logger.info(f"User {self.user.id} updated {field} to {new_value}")
     
     async def invite_user(self, data):
         target_user_id = data.get("target_user_id")

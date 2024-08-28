@@ -94,16 +94,24 @@ function setClaslistDefault() {
 }
 
 function main_ws(token) {
-	if (appState.ws === null)
+	console.log("before", appState.ws)
+	if (!appState.ws || !(appState.ws instanceof WebSocket))
+	{
+		console.log("11")
 		appState.ws = new WebSocket(`wss://localhost/wss/games/main/?token=${token}`);
+	}
 	else
+	{
 		appState.ws.send(JSON.stringify({ type: "updateMine"}));
+		console.log("22")
+	}
+	console.log("after", appState.ws)
 	const connect = document.querySelector('.connect');
 	const friend = document.querySelector('.friend');
 
 	appState.ws.onmessage = (event) => {
 		const data = JSON.parse(event.data);
-		console.log(data);
+		console.log("app.ws.on", data);
 
     	if (data.type === 'update') {
 			const userInfoList = data.users;

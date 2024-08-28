@@ -6,11 +6,14 @@ import redis.asyncio as redis
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 logger = logging.getLogger("django")
+connected_clients = {}
+
 
 class GameQueueConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.game_type = self.scope["url_route"]["kwargs"]["type"]
         self.room_group_name = self.game_type
+        self.token = self.scope['query_string'].decode('utf-8').split('=')[1]
         self.redis = redis.from_url("redis://redis")
         self.game_id = str(uuid.uuid4())  # 고유한 game_id 생성
         if self.game_type == 'tournament':
@@ -21,11 +24,17 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
             self.game_id3 = "false"
 
         # 방 그룹에 추가
+        if self.token in connected_clients:
+            old_websocket = connected_clients[self.token]
+            await old_websocket.close()
+
+        connected_clients[self.token] = self
+        await self.accept()
+
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name,
         )
-        await self.accept()
 
         # Save user information in Redis
         self.user = self.scope["user"]
@@ -48,12 +57,15 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
         await self.redis.hset(f"{self.game_type}_game", self.channel_name, json.dumps(user_info))
 
     async def disconnect(self, close_code):
+        if self.token in connected_clients:
+            del connected_clients[self.token]
         if self.user and self.user.id:
             await self.decrement_group_size(self.room_group_name)
             await self.redis.hdel(f"{self.game_type}_game", self.channel_name)
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         if self.game_type == 'tournament':
             await self._send()
+            
 
         logger.info(f"queue 사용자 연결 해제됨: {self.channel_name}")
 
