@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage } from '/index.js';
 const topHTML = `
 <span class="logo-small">PONG</span>
 `;
@@ -33,7 +33,7 @@ export function tournamentPage() {
 	document.getElementById('right-side').innerHTML = rightSideHTML;
 
 	document.querySelector('.p-button-setting').addEventListener('click', () => {
-		navigate(parseUrl(basePath + 'setting'))
+		settingPage();
 	});
 	document.querySelector('.logo-small').addEventListener('click', () => {
 		navigate(parseUrl(basePath));

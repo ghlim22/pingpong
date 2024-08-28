@@ -38,6 +38,14 @@ export class TUserInfo extends HTMLElement {
     //     });
     // }
 
+	setImageNick(pic, nick) {
+        const img = this.shadowRoot.querySelector('.image-profile-small img');
+        const nickname = this.shadowRoot.querySelector('.t-user-info__nickname');
+
+        nickname.innerHTML = nick;
+        img.src = pic;
+    }
+
     render() {
         const border = this.shadowRoot.querySelector('.t-user-info__container div');
         const img = this.shadowRoot.querySelector('.image-profile-small img');
@@ -49,7 +57,7 @@ export class TUserInfo extends HTMLElement {
 
 		this.addEventListener('click', () => {
 			if (this.classList.contains('p-button-user')) {
-				navigate(parseUrl(basePath + 'profile/:' + this.nick), {
+				profileUserPage({
 					nickname: this.nick,
 					picture: this.img,
 					pk: this.id

@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage } from '/index.js';
 const mainHTML = `
 <span class="logo-big">PONG</span>
 <div class="m-button" id="1vs1">
@@ -41,15 +41,15 @@ export function homePage() {
 	document.getElementById('right-side').innerHTML = rightSideHTML;
 
 	document.getElementById('1vs1').addEventListener('click', () => {
-		navigate(parseUrl(basePath + '1vs1'))
+		navigate(parseUrl(basePath + '1vs1'));
 	});
 	document.getElementById('multi').addEventListener('click', () => {
-		navigate(parseUrl(basePath + 'multi'))
+		navigate(parseUrl(basePath + 'multi'));
 	});
 	document.getElementById('tournament').addEventListener('click', () => {
-		navigate(parseUrl(basePath + 'tournament'))
+		navigate(parseUrl(basePath + 'tournament'));
 	});
 	document.querySelector('.p-button-setting').addEventListener('click', () => {
-		navigate(parseUrl(basePath + 'setting'))
+		settingPage();
 	});
 }

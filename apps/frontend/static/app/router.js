@@ -6,8 +6,8 @@ const routes = {
 	[basePath + '1vs1']:			pong1VS1Page,
 	[basePath + 'multi']:			pongMultiPage,
 	[basePath + 'tournament']:		tournamentPage,
-	[basePath + 'setting']:			settingPage,
-	[basePath + 'profile/:nick']:	profileUserPage,
+	//[basePath + 'setting']:			settingPage,
+	//[basePath + 'profile/:nick']:	profileUserPage,
 	[basePath + '404']:				notFoundPage,
 	//'/profile/edit-profile':		profileEditPage,
 	//'/profile/:nick':				profileUserPage,
@@ -54,15 +54,15 @@ export function navigate(parsed, data = null) {
 	//}
 	appState.currentCleanupFn = null;
 	setClaslistDefault();
-	if (data !== null) {
-		profileUserPage(data);
-	}
-	else if (parsed.isParams) {
-		page(parsed.params);
-	}
-	else {
+	//if (data !== null) {
+	//	profileUserPage(data);
+	//}
+	//else if (parsed.isParams) {
+	//	page(parsed.params);
+	//}
+	//else {
 		page();
-	}
+	//}
 	if (page !== notFoundPage && appState.token !== null)
 	{
 		main_ws(appState.token);
@@ -84,6 +84,7 @@ function notFoundPage() {
 }
 
 function setClaslistDefault() {
+	document.getElementById('above').classList.remove('outter_setting');
 	document.getElementById('above').classList.remove('not_found');
 	document.getElementById('above').classList.remove('above-on');
 	document.getElementById('left-side').classList.remove('ingame');
@@ -114,14 +115,16 @@ function main_ws(token) {
 	console.log("after", appState.ws)
 	const connect = document.querySelector('.connect');
 	const friend = document.querySelector('.friend');
+	const myprofile = document.querySelector('.p-button-current');
 
 	appState.ws.onmessage = (event) => {
 		const data = JSON.parse(event.data);
 		console.log("app.ws.on", data);
-
+		
     	if (data.type === 'update') {
 			const userInfoList = data.users;
 			appState.id = data.my_id;
+			myprofile.setImageNick(appState.picture, appState.nickname);
 			connect.removeAll();
 			friend.removeAll();
 			
