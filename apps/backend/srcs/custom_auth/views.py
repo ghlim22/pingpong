@@ -42,9 +42,10 @@ def redirect_to_oauth(request: Request) -> HttpResponse:
     if referer:
         request.session["referer"] = referer
         referer = quote(referer)
+    callback_url = settings.SERVER_HOST + "/api/auth/redirect"
     params: dict = {
         "client_id": settings.API_UID,
-        "redirect_uri": settings.API_REDIRECT,
+        "redirect_uri": callback_url,
         "response_type": "code",
     }
     url = "https://api.intra.42.fr/oauth/authorize?" + urlencode(params)

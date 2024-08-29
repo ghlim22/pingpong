@@ -26,13 +26,14 @@ def redirect_with_params(
 
 
 def redirect_params(params):
-    url = "https://localhost/login?"
+    url = settings.SERVER_HOST + "login?"
     url += urlencode(params)
     return redirect(to=url, permanent=True)
 
 
 def redirect_failure():
-    return redirect(to="https://localhost/login", permanent=True)
+    url = settings.SERVER_HOST + "login"
+    return redirect(to=url, permanent=True)
 
 
 def request_token(code: str) -> str | HttpResponse:
@@ -40,17 +41,17 @@ def request_token(code: str) -> str | HttpResponse:
     Request an access token to 42API.
     """
     url = "https://api.intra.42.fr/oauth/token"
+    callback_url = settings.SERVER_HOST + "api/auth/redirect"
     params = {
         "grant_type": "authorization_code",
         "client_id": settings.API_UID,
         "client_secret": settings.API_SECRET,
         "code": code,
-        "redirect_uri": settings.API_REDIRECT,
+        "redirect_uri": callback_url,
     }
 
     response = requests.post(url=url, data=params)
     if response.status_code != HTTP_200_OK:
-        # return Response(status=response.status_code)
         return redirect_failure()
     access_token = response.json().get("access_token")
 
@@ -66,7 +67,6 @@ def request_user(access_token: str) -> dict | HttpResponse:
     response = requests.get(url=url, headers=headers)
     if response.status_code != HTTP_200_OK:
         return redirect_failure()
-        # return Response(status=response.status_code)
 
     data = {
         "email": response.json().get("email"),
@@ -91,7 +91,6 @@ def login(email: str):
         "token": token.key,
     }
 
-    # return Response(data, HTTP_200_OK)
     return redirect_params(data)
 
 
@@ -121,5 +120,4 @@ def register(email: str, nickname: str, image: str) -> HttpResponse:
         "token": token.key,
     }
 
-    # return Response(data, HTTP_201_CREATED)
     return redirect_params(data)
