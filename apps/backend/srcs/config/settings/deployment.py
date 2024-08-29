@@ -33,6 +33,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "backend",
     "localhost",
+    SERVER_ADDR,
 ]
 
 CSRF_TRUSTED_ORIGINS = [

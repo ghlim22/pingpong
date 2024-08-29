@@ -1,12 +1,15 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
 import OnlineGame from "/app/pages/game.js";
+import config from "../../config/config.js";
+
+const { SERVER_ADDR } = config;
 
 export function game_queue(type, token) {
   return new Promise((resolve, reject) => {
     console.log(type);
     console.log("token", token);
 
-    let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
+    let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
     
     appState.currentCleanupFn = () => {
       if (ws.readyState === WebSocket.OPEN) {
@@ -30,7 +33,7 @@ export function game_queue(type, token) {
 
 export function play_game(info, type, token) {
   return new Promise((resolve, reject) => {
-    const ws = new WebSocket(`wss://localhost/wss/games/start/${info.game_id}/${type}/?token=${token}`);
+    const ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/start/${info.game_id}/${type}/?token=${token}`);
     appState.currentCleanupFn = () => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.close();

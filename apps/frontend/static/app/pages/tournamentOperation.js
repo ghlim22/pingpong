@@ -1,9 +1,12 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, TBlock } from '/index.js';
 import OnlineGame from "/app/pages/game.js";
+import config from "../../config/config.js";
+
+const { SERVER_ADDR } = config;
 
 export function play_tour_game(info, type, token) {
     return new Promise((resolve, reject) => {
-      const ws = new WebSocket(`wss://localhost/wss/games/start/${info.game_id}/${type}/?token=${token}`);
+      const ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/start/${info.game_id}/${type}/?token=${token}`);
       appState.currentCleanupFn = () => {
         if (ws.readyState === WebSocket.OPEN) {
           ws.close();
@@ -24,7 +27,7 @@ export function play_tour_game(info, type, token) {
 
 export function tournament_game_queue(type, token) {
     return new Promise((resolve, reject) => {
-      let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
+      let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
       
 	  document.querySelector('.logo-small').addEventListener('click', () => {
 		appState.inTournament = false;
@@ -70,7 +73,7 @@ export function tournament_game_queue(type, token) {
       };
     });
   }
-  // const sock = new WebSocket(`ws://localhost:8000/ws/games/start/${data.game_id}/${type}/`);
+  // const sock = new WebSocket(`ws://${SERVER_ADDR}:8000/ws/games/start/${data.game_id}/${type}/`);
   //       OnlineGame(sock, type);
   export function populateUserInfo(user_info_list, select_objects) {
       // 사용자 정보의 수에 따라 선택할 요소의 수를 결정합니다.
