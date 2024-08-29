@@ -2,7 +2,7 @@ from urllib.parse import quote, urlencode
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view, permission_classes
@@ -48,4 +48,4 @@ def redirect_to_oauth(request: Request) -> HttpResponse:
         "response_type": "code",
     }
     url = "https://api.intra.42.fr/oauth/authorize?" + urlencode(params)
-    return redirect(to=url)
+    return HttpResponseRedirect(url)
