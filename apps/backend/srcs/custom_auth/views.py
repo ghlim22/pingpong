@@ -42,7 +42,7 @@ def redirect_to_oauth(request: Request) -> HttpResponse:
     if referer:
         request.session["referer"] = referer
         referer = quote(referer)
-    callback_url = settings.SERVER_HOST + "/api/auth/redirect"
+    callback_url = "https://" + settings.SERVER_ADDR + "/api/auth/redirect"
     params: dict = {
         "client_id": settings.API_UID,
         "redirect_uri": callback_url,

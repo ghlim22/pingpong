@@ -26,13 +26,13 @@ def redirect_with_params(
 
 
 def redirect_params(params):
-    url = settings.SERVER_HOST + "login?"
+    url = "https://" + settings.SERVER_ADDR + "/login?"
     url += urlencode(params)
     return redirect(to=url, permanent=True)
 
 
 def redirect_failure():
-    url = settings.SERVER_HOST + "login"
+    url = "https://" + settings.SERVER_ADDR + "/login"
     return redirect(to=url, permanent=True)
 
 
@@ -41,7 +41,7 @@ def request_token(code: str) -> str | HttpResponse:
     Request an access token to 42API.
     """
     url = "https://api.intra.42.fr/oauth/token"
-    callback_url = settings.SERVER_HOST + "api/auth/redirect"
+    callback_url = "https://" + settings.SERVER_ADDR + "/api/auth/redirect"
     params = {
         "grant_type": "authorization_code",
         "client_id": settings.API_UID,
