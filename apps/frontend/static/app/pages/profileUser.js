@@ -196,6 +196,8 @@ function appendButtons(data, userInfo) {
 	document.querySelector('.s-button-message').addEventListener('click', () => {messageHandler(data, userInfo);});
 	document.querySelector('.s-button-block').addEventListener('click', () => {blockHandler(data, userInfo);});
 	document.querySelector('.s-button-friend').addEventListener('click', () => {friendHandler(data, userInfo);});
+	if (appState.inTournament)
+		document.querySelector('.s-button-pong').addEventListener('click', () => {pongHandler(data);});
 }
 
 const chatHTML = `
@@ -371,6 +373,10 @@ function blockHandler(data, userInfo) {
 	.catch(error => {
 		console.log('Error: ', error);
 	});
+}
+
+function pongHandler(data) {
+	appState.ws.send(JSON.stringify({ type: "invite", target_user_id: data.pk}));
 }
 
 function friendHandler(data, userInfo) {

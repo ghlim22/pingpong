@@ -45,14 +45,13 @@ export class TInvite extends HTMLElement {
 		border.classList.add("receive-invitation");
 
 		yes.addEventListener('click', () => {
-			navigate(parseUrl(basePath + 'tournament'));
+            border.classList.remove("receive-invitation");
+            if (!appState.inTournament)
+			    navigate(parseUrl(basePath + 'tournament'));
 		})
-		no.addEventListener('click', this.displayOff);
-	}
-
-	displayOff() {
-        const border = this.shadowRoot.querySelector('.t-invite__container');
-		border.classList.remove("receive-invitation");
+		no.addEventListener('click', () => {
+            border.classList.remove("receive-invitation");
+        });
 	}
 }
 
