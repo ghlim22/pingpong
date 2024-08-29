@@ -1,4 +1,7 @@
 import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState, loginUser } from '/index.js';
+import config from "../config/config.js";
+
+const { SERVER_ADDR } = config;
 
 const routes = {
 	["/" + 'login']:			loginPage,
@@ -156,7 +159,7 @@ function main_ws(token) {
 	if (!appState.ws || !(appState.ws instanceof WebSocket))
 	{
 		console.log("11")
-		appState.ws = new WebSocket(`wss://localhost/wss/games/main/?token=${token}`);
+		appState.ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/main/?token=${token}`);
 	}
 	else
 	{
