@@ -24,7 +24,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 API_UID = os.environ.get("API_UID")
 API_SECRET = os.environ.get("API_SECRET")
-API_REDIRECT = os.environ.get("API_REDIRECT")
 SERVER_ADDR = os.environ.get("SERVER_ADDR")
 
 # SECURITY WARNING: don't run with debug turned on in production!
