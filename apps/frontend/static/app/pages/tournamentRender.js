@@ -87,7 +87,6 @@ export function matchOrderPage(data) {
         '.tournament-match-order #player3',
         '.tournament-match-order #player4',
       ];
-	console.log('on matchOrderPage', data);
 	populateUserInfo(data, objects);
 }
 

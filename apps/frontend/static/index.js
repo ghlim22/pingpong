@@ -48,6 +48,7 @@ window.onpopstate = (event) => {
 	if (appState.currentCleanupFn !== null) {
         appState.currentCleanupFn();
     }
+	console.log("onpop");
 	navigate(parseUrl(window.location.pathname), event.state);
 };
 

@@ -19,8 +19,6 @@ export function parseUrl(url) {
 	const params = {};
 	const pathParts = url.split('/');
 	const routeParts = Object.keys(routes).map(r => r.split('/'));
-	console.log('pathParts', pathParts);
-	console.log('routeParts', routeParts);
 
 	for (let i = 0; i < routeParts.length; i++) {
 		if (routeParts[i].length === pathParts.length) {
@@ -65,7 +63,7 @@ export function navigate(parsed, data = null) {
 	//}
 	if (page !== notFoundPage && appState.token !== null)
 	{
-		main_ws(appState.token);
+		setTimeout(() => { main_ws(appState.token) } , 200);
 	}
 }
 
@@ -116,7 +114,6 @@ function main_ws(token) {
 
 	appState.ws.onmessage = (event) => {
 		const data = JSON.parse(event.data);
-		console.log("app.ws.on", data);
 		
     	if (data.type === 'update') {
 			const userInfoList = data.users;

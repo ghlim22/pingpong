@@ -21,7 +21,6 @@ export default function OnlineGame(sock, game_type) {
   // Promise를 반환하여 비동기 동작을 처리
   return new Promise((resolve) => {
     ws.onmessage = (event) => {
-      console.log('Message received from server:', event.data);
       const data = JSON.parse(event.data);
       if (data.type === "two_player") {
         canvas.width = document.body.clientWidth;

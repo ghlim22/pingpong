@@ -377,6 +377,7 @@ function blockHandler(data, userInfo) {
 
 function pongHandler(data) {
 	appState.ws.send(JSON.stringify({ type: "invite", target_user_id: data.pk}));
+	alert("invite Success");
 }
 
 function friendHandler(data, userInfo) {
@@ -406,6 +407,11 @@ function friendHandler(data, userInfo) {
 			document.querySelector('.s-button-friend').src = "/assets/s-button-unfollow.svg";
 		}
 		profileUserPage(data);
+		appState.ws.send(JSON.stringify({
+            "type": "update_user_info",
+            "field": "nick",
+            "value": appState.nickname,
+        }));
 	})
 	.catch(error => {
 		console.log('Error: ', error);
