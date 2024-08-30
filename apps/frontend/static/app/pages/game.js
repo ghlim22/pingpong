@@ -21,7 +21,6 @@ export default function OnlineGame(sock, game_type) {
   // Promise를 반환하여 비동기 동작을 처리
   return new Promise((resolve) => {
     ws.onmessage = (event) => {
-      console.log('Message received from server:', event.data);
       const data = JSON.parse(event.data);
       if (data.type === "two_player") {
         canvas.width = document.body.clientWidth;
@@ -66,7 +65,7 @@ export default function OnlineGame(sock, game_type) {
         ball.y = gameData.ball.y * canvas.height;
         ball.radius = right.width * (2 / 3);
         draw_four(left, right, up, down, ball);
-      } else if (data.type === "game_end") {
+      } else if (data.type === "game_end" || data.type === "disconnect_all") {
         endGame(data, ws);
       } else if (data.type === "game_start") {
         startGame(ws, data);
@@ -297,7 +296,7 @@ export default function OnlineGame(sock, game_type) {
 
     function endGame(data, ws) {
 		if (ws) {
-		    resolve(data.data); // 게임 종료 후 Promise를 완료 상태로 설정
+		    resolve(data); // 게임 종료 후 Promise를 완료 상태로 설정
         ws.close();
       }
     }

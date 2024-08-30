@@ -1,9 +1,9 @@
-import { appState, navigate, parseUrl, basePath, profileUserPage } from '../index.js';
+import { appState, navigate, parseUrl, basePath, profileUserPage } from '/index.js';
 
 'use strict';
 
 async function fetchTUserInfo() {
-    const templateHTML = await fetch('./components/tUserInfo.html');
+    const templateHTML = await fetch('/components/tUserInfo.html');
     const textHTMLTemplate = await templateHTML.text();
     return new DOMParser().parseFromString(textHTMLTemplate, 'text/html').querySelector('template');
 }
@@ -31,6 +31,21 @@ export class TUserInfo extends HTMLElement {
         this.render();
     }
     
+    // static isUserInFolder(folder, user) {
+    //     return Array.from(folder.children).some(child => {
+    //         const userId = child.getAttribute('data-id');
+    //         return userId === user.id;
+    //     });
+    // }
+
+	setImageNick(pic, nick) {
+        const img = this.shadowRoot.querySelector('.image-profile-small img');
+        const nickname = this.shadowRoot.querySelector('.t-user-info__nickname');
+
+        nickname.innerHTML = nick;
+        img.src = pic;
+    }
+
     render() {
         const border = this.shadowRoot.querySelector('.t-user-info__container div');
         const img = this.shadowRoot.querySelector('.image-profile-small img');
@@ -42,7 +57,7 @@ export class TUserInfo extends HTMLElement {
 
 		this.addEventListener('click', () => {
 			if (this.classList.contains('p-button-user')) {
-				navigate(parseUrl(basePath + 'profile/:' + this.nick), {
+				profileUserPage({
 					nickname: this.nick,
 					picture: this.img,
 					pk: this.id

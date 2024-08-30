@@ -9,6 +9,7 @@ from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import generics, permissions, serializers, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
+from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -197,6 +198,42 @@ def OtherUserDetailView(request, pk):
     }
 
     return Response(data=data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def GameLogListView(request, pk):
+    """
+    List requesting user's game logs.
+    """
+    instance = get_object_or_404(CustomUser.objects.all(), pk=pk)
+    logs = instance.joined_games.all().order_by("-timestamp")
+    return_list = []
+    for log in logs:
+        if instance in log.winners.all():
+            won = True
+        else:
+            won = False
+
+        players = []
+
+        if won:
+            opponents = log.losers.all()
+        else:
+            opponents = log.winners.all()
+
+        for opponent in opponents:
+            players.append(opponent.nickname)
+
+        game = {
+            "timestamp": log.timestamp,
+            "type": log.game_type,
+            "won": won,
+            "players": players,
+        }
+        return_list.append(game)
+
+    return Response(data=return_list, status=status.HTTP_200_OK)
 
 
 class UserSignInAPIView(generics.GenericAPIView):

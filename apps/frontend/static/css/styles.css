@@ -1,4 +1,4 @@
-@import "reset.css";
+@import "/css/reset.css";
 
 html {
 	/*font-size: 16px;*/
@@ -37,6 +37,8 @@ body {
 #app {
 	display: flex;
 	flex-direction: row;
+
+	justify-content: center;
 }
 
 #left-side {
@@ -124,11 +126,23 @@ body {
 
 #above {
 	display: none;
+}
+
+#above.not_found {
 	width: 100vw;
 	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	z-index: 999;
+	background-color: #FFFFFF;
 }
 
 #above.above-on {
+	width: 100vw;
+	height: 100vh;
 	display: flex;
 	position: absolute;
 	z-index: 999;
@@ -144,6 +158,18 @@ body {
 	align-items: center;
 	font-size: 4rem;
 	color: blue;
+}
+
+#above.outter_setting {
+	width: 100vh;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	z-index: 999;
+	background-color: rgba(0, 0, 0, 0);
 }
 
 .result-multi-team {
@@ -622,8 +648,9 @@ body {
 }
 
 .inner_setting_window > span:first-child {
-	position: absolute;
-	left: 72rem;
+	position: relative;
+	left: 45.8rem;
+	top: 1rem;
 }
 
 .inner_setting_window label {
@@ -695,6 +722,8 @@ body {
 	width: inherit;
 	display: flex;
 	justify-content: start;
+	border-bottom: solid 0.5rem #eeeeff;
+	padding-bottom: 1rem;
 }
 
 .inner_profile_main div {
@@ -706,6 +735,181 @@ body {
 	margin-left: 1.5rem;
 	color: blue;
 	font-size: 2rem;
+}
+
+.inner_profile_log_404 {
+	width: inherit;
+	height: 24rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.inner_profile_log_404 img {
+	width: 10rem;
+	height: 10rem;
+}
+
+.inner_profile_bottom.default {
+
+    width: 100%;
+    height: 24rem;
+    display: flex;
+    /*justify-content: flex-start; div들을 가로로 정렬*/
+	justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    overflow-x: auto; /* 가로 스크롤바도 필요시 활성화 */
+    font-size: 1.8rem;
+    color: #444AFF;
+    /*gap: 1rem; div 간 간격 추가*/
+
+	/*width: inherit;
+	height: 24rem;
+	display: flex;
+	justify-content: center;
+	font-size: 1.8rem;
+	color: #444AFF;
+	overflow-y: auto;
+	overflow-x: hidden;*/
+}
+
+.inner_profile_bottom div {
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap;
+    overflow: hidden;
+
+	/*height: 24rem;
+	display: flex;
+	flex-direction: column;
+	white-space: nowrap;*/
+}
+
+.inner_profile_log_date {
+	width: 17rem;
+}
+
+.inner_profile_log_game,
+.inner_profile_log_result {
+	width: 8rem;
+	align-items: center;
+}
+
+.inner_profile_log_competitor {
+	width: 11rem;
+	align-items: center;
+}
+
+.inner_profile_bottom div span {
+    display: block;
+    padding: 0.5rem;
+    overflow-x: auto;
+    white-space: nowrap;
+
+	/*display: inline-block;
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+	padding: 0.5rem;*/
+}
+
+.inner_profile_bottom::-webkit-scrollbar {
+    width: 0;
+}
+
+.inner_profile_bottom:hover::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+.inner_profile_bottom::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+}
+
+.inner_profile_bottom::-webkit-scrollbar-thumb {
+	background-color: rgba(119, 119, 255, 0.2);
+}
+
+.inner_profile_bottom::-webkit-scrollbar {
+    height: 0;
+}
+
+.inner_profile_bottom div span:hover::-webkit-scrollbar {
+    height: 0.15rem;
+}
+
+.inner_profile_bottom div span::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+}
+
+.inner_profile_bottom div span::-webkit-scrollbar-thumb {
+	background-color: rgba(119, 119, 255, 0.2);
+}
+
+.inner_profile_log_head {
+	/*width: inherit;*/
+	display: inline-block;
+	font-size: 2rem;
+	color: black;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+	border-bottom: 0.15rem solid #ccccff;
+}
+
+#chat-log {
+	width: 46.2rem;
+	height: 21rem;
+	border: none;
+	padding: 1rem;
+	resize: none;
+	font-size: 1.5rem;
+	outline: none;
+	line-height: 1.5;
+}
+
+#chat-log::-webkit-scrollbar {
+    width: 0;
+}
+
+#chat-log:hover::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+#chat-log::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+}
+
+#chat-log::-webkit-scrollbar-thumb {
+	background-color: rgba(119, 119, 255, 0.2);
+}
+
+#chat-message-input {
+	width: 43.9rem;
+	height: 3rem;
+	border-radius: 5rem;
+	border: solid 0.15rem #9999FF;
+	font-size: 1.2rem;
+	padding-left: 2rem;
+	padding-right: 2rem;
+}
+
+#s-button-send,
+#s-button-pong {
+	width: 2.6rem;
+	height: 2.6rem;
+	position: absolute;
+	bottom: 13.1rem;
+}
+
+#s-button-send {
+	right: 27.5rem;
+}
+
+#s-button-pong {
+	/*right: 30.5rem;*/
+	right: 27.5rem;
 }
 
 .in-game {

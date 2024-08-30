@@ -1,9 +1,9 @@
-import { appState, TUserInfo } from '../index.js';
+import { appState, TUserInfo } from '/index.js';
 
 'use strict';
 
 async function fetchTFold() {
-    const templateHTML = await fetch('./components/tFold.html');
+    const templateHTML = await fetch('/components/tFold.html');
     const textHTMLTemplate = await templateHTML.text();
     return new DOMParser().parseFromString(textHTMLTemplate, 'text/html').querySelector('template');
 }
@@ -25,7 +25,11 @@ export class TFold extends HTMLElement {
 
 	addUserInfo(user) {
         const folder = this.shadowRoot.querySelector('.t-fold__users');
-		folder.appendChild(user);
+
+		// if (!TUserInfo.isUserInFolder(folder, user)) {
+            folder.appendChild(user);
+        // }
+		// folder.appendChild(user);
 	}
 
 	removeAll() {

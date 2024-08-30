@@ -1,13 +1,10 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, pong1VS1Page } from '../../index.js';
-
-const topHTML = `
-<span class="logo-small">PONG</span>
-`;
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, pong1VS1Page } from '/index.js';
 
 const mainHTML = `  
+<div class="outter_setting">
 <div class="inner_setting">
     <div class="inner_setting_window">
-		<span class="t-button">x</span>
+		<span id="setting_quit" class="t-button">x</span>
         <div class="inner_setting_top">
 			<span>Edit Profile</span>
         </div>
@@ -35,24 +32,18 @@ const mainHTML = `
         <div class="inner_setting_bottom"></div>
     </div>
 </div>
+</div>
 `;
 
 export function settingPage() {
-	const leftSideHTML = `
-	<t-user-info class="p-button-current" data-nick="${appState.nickname}" data-img="${appState.picture}" data-id="${appState.token}" data-isloggedin="true"></t-user-info>
-	<t-invite class="receive-invitation"></t-invite>
-	<t-fold class="connect"></t-fold>
-	`;
+	const above = document.getElementById('above');
+	above.innerHTML = mainHTML;
 
-	document.getElementById('top').innerHTML = topHTML;
-	document.getElementById('main').innerHTML = mainHTML;
-	document.getElementById('left-side').innerHTML = leftSideHTML;
-
-	document.querySelector('.logo-small').addEventListener('click', () => {
-		navigate(parseUrl(basePath));
-	});
-	document.querySelector('.t-button').addEventListener('click', () => {
-        navigate(parseUrl(basePath));
+	document.getElementById('above').classList.add('above-on');
+	document.getElementById('above').classList.add('outter_setting');
+	document.querySelector('#setting_quit').addEventListener('click', () => {
+		document.getElementById('above').classList.remove('above-on');
+		document.getElementById('above').classList.remove('outter_setting');
     });
 	document.getElementById('imgInput').addEventListener('change', (e) => {
 		let file = e.target.files[0];
@@ -64,12 +55,10 @@ export function submitPicture(event) {
 	if (!(event.target.matches('[data-picture]'))) {
 		return ;
 	}
-
 	const picture = event.target.querySelector('#imgInput').files[0];
-	
 	const formData = new FormData();
 	formData.append('picture', picture);
-
+	
 	fetch('api/users/current/', {
 		method: 'PATCH',
 		headers: {
@@ -102,8 +91,16 @@ export function submitPicture(event) {
 		console.log('edit success');
 		alert('edit success');
 		appState.picture = data['picture'];
+		appState.ws.send(JSON.stringify({
+            "type": "update_user_info",
+            "field": "img",
+            "value": data['picture'],
+        }));
+		//if (appState.ws !== null)
+		//	appState.ws.close();
+		//appState.ws = null;
+		//navigate(parseUrl(basePath + 'setting'));
 		sessionStorage.setItem('appState', JSON.stringify(appState));
-		navigate(parseUrl(basePath + 'setting'));
 	})
 	.catch(error => {
 		console.log('Error: ', error);
@@ -149,8 +146,16 @@ export function submitNickname(event) {
 		console.log('edit success');
 		alert('edit success');
 		appState.nickname = nickname;
+		appState.ws.send(JSON.stringify({
+            "type": "update_user_info",
+            "field": "nick",
+            "value": nickname,
+        }));
+		//if (appState.ws !== null)
+		//	appState.ws.close();
+		//appState.ws = null;
+		//navigate(parseUrl(basePath + 'setting'));
 		sessionStorage.setItem('appState', JSON.stringify(appState));
-		navigate(parseUrl(basePath + 'setting'));
 	})
 	.catch(error => {
 		console.log('Error: ', error);

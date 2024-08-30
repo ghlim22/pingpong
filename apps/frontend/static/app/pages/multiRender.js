@@ -1,27 +1,27 @@
-import { appState, TUserInfo, TInvite, TFold, navigate, parseUrl, basePath } from '../../index.js';
-import { game_queue, play_game } from './1vs1Operation.js'
+import { appState, TUserInfo, TInvite, TFold, navigate, parseUrl, basePath } from '/index.js';
+import { game_queue, play_game } from '/app/pages/1vs1Operation.js'
 const matchHTML = `
 <div class="match-multi">
 	<div class="image-profile-middle">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 </div>
 <div class="match-multi">
 	<div class="image-profile-middle" id="opponent1">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span id="opponentSpan1">Wait Please</span>
 </div>
 <div class="match-multi">
 	<div class="image-profile-middle" id="opponent2">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span id="opponentSpan2">Wait Please</span>
 </div>
 <div class="match-multi">
 	<div class="image-profile-middle" id="opponent3">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span id="opponentSpan3">Wait Please</span>
 </div>
@@ -30,7 +30,7 @@ const matchHTML = `
 const leftSideHTML = `
 <div class="user-profile-1p">
 	<div class="image-profile-small">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 	<span>♥♥♥♥♥</span>
@@ -38,7 +38,7 @@ const leftSideHTML = `
 <div></div>
 <div class="user-profile-4p">
 	<div class="image-profile-small">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 	<span>♥♥♥♥</span>
@@ -48,17 +48,17 @@ const leftSideHTML = `
 const rightSideHTML = `
 <div class="user-profile-3p">
 	<div class="image-profile-small">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 	<span>♥♥♥</span>
 </div>
 <div>
-	<img src="./assets/g-button-quit.svg">
+	<img src="/assets/g-button-quit.svg">
 </div>
 <div class="user-profile-2p">
 	<div class="image-profile-small">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
 	<span>♥♥</span>
@@ -81,11 +81,11 @@ const resultHTML = `
 <div class="result-multi">
 	<span>WINNER</span>
 	<div class="image-profile-large" id="winner">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span id="winnerNick">nickname</span>
 	<div class="image-profile-large" id="winner2">
-		<img src="./assets/default-picture.png">
+		<img src="/assets/default-picture.png">
 	</div>
 	<span id="winner2Nick">nickname</span>
 </div>
@@ -167,8 +167,13 @@ function gameMultiPage(data) {
 	play_game(data, '4P', appState.token)
     .then((data) => {
       console.log('Received data:', data);
-
-      gameResultPage(data);
+	  if (data.type === "disconnect_all")
+	  {
+		alert("Someone has disconnected");
+		navigate(parseUrl(basePath));
+	  }
+	  else
+		gameResultPage(data.data);
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);
@@ -206,3 +211,4 @@ function gameResultPage(data) {
 	nickname2.innerHTML = data.nickname2;
 	setTimeout(handleQuitGame, 2500);
 }
+

@@ -1,9 +1,9 @@
-import { appState } from '../index.js';
+import { appState } from '/index.js';
 
 'use strict';
 
 async function fetchTBlock() {
-    const templateHTML = await fetch('./components/tBlock.html');
+    const templateHTML = await fetch('/components/tBlock.html');
     const textHTMLTemplate = await templateHTML.text();
     return new DOMParser().parseFromString(textHTMLTemplate, 'text/html').querySelector('template');
 }
@@ -22,6 +22,22 @@ export class TBlock extends HTMLElement {
         shadowRoot.appendChild(instance);
         //const id = this.getAttribute('data-id');
 		this.render();
+    }
+
+    setImageNick(pic, nick) {
+        const img = this.shadowRoot.querySelector('.image-profile-small img');
+        const nickname = this.shadowRoot.querySelector('.t-block__nickname');
+
+        nickname.innerHTML = nick;
+        img.src =   pic;
+    }
+
+    resetImageNick() {
+        const img = this.shadowRoot.querySelector('.image-profile-small img');
+        const nickname = this.shadowRoot.querySelector('.t-block__nickname');
+        
+        img.src="/assets/default-picture.png"
+        nickname.innerHTML = '?';
     }
 
     render() {

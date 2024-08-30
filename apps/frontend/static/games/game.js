@@ -15,7 +15,6 @@ export default function OnlineGame(sock, game_type) {
   };
 
   wss.onmessage = (event) => {
-    console.log('Message received from server:', event.data);
     const data = JSON.parse(event.data);
     if (data.type === "two_player") {
       canvas.width = document.body.clientWidth;
