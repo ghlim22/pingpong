@@ -49,3 +49,5 @@ class TourConsumer(AsyncWebsocketConsumer):
         if group_size is None:
             return 0
         return int(group_size)
+    
+    
