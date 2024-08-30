@@ -315,7 +315,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self._update_game_four(match)
             await self._send_state_four(match)
             await asyncio.sleep(0.04)
-        await self._game_end(match)
+        size = await self._get_group_size(self.game_group)
+        if (size == self.max_players):
+            await self._game_end(match)
 
     async def _update_game_four(self, match):
         if match.is_left_win():
@@ -370,7 +372,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self._update_game(match)
             await self._send_state(match)
             await asyncio.sleep(0.05)
-        await self._game_end(match)
+        size = await self._get_group_size(self.game_group)
+        if (size == self.max_players):
+            await self._game_end(match)
 
     async def _init_object(self, message_data):
         map_width = message_data["map_width"]

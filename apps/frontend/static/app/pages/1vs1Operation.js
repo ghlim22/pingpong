@@ -22,8 +22,8 @@ export function game_queue(type, token) {
             if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
               appState.tour_ws.close();
               appState.tour_ws = null;
-              appState.inQueue = false;
             }
+            appState.inQueue = false;
           }
         }
       }
@@ -69,17 +69,13 @@ export function play_game(info, type, token) {
     console.log("appState.inQueue", appState.inQueue)
     const ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/start/${info.game_id}/${type}/?token=${token}`);
 
-    if (info.game_id2 !== "false"){
-      appState.tour_ws = new WebSocket(`wss://${SERVER_ADDR}wss/games/tour/${info.game_id}/?token=${token}`);
-    }
-
     appState.currentCleanupFn = () => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.close();
-        if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
-          appState.tour_ws.close();
-          appState.tour_ws = null;
-        }
+      }
+      if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
+        appState.tour_ws.close();
+        appState.tour_ws = null;
       }
       // navigate(parseUrl(basePath));
     };
