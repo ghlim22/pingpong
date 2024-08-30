@@ -7,6 +7,8 @@ pyvenv.cfg
 db.sqlite3
 general.log
 django/
+mediafiles/
+staticfiles/
 
 # credentials
 .env
@@ -15,6 +17,8 @@ django/
 config.js
 
 mediafiles/
+frontend/media/
+frontend/static/django
 
 # mac
 .DS_Store
