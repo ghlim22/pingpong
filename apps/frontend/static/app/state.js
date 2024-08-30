@@ -11,6 +11,7 @@ export let appState = {
 	chat_ws:			null,
 	tour_ws:			null,
 	inTournament:		false,
+	inQueue:			false,
 };
 // 나중에는 export 지우기
 

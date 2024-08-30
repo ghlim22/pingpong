@@ -85,6 +85,11 @@ export function tournamentPage() {
 
 
 function tournamentGame(info) {
+	if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
+		appState.chat_ws.close();
+		appState.chat_ws = null;
+	}
+	
 	matchOrderPage(info.user_info);
 
 

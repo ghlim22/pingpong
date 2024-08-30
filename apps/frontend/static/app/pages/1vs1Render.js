@@ -107,6 +107,9 @@ export function pong1VS1Page() {
 }
 
 export function game1vs1Page(info) {
+	if (appState.inQueue === false){
+		return ;
+	}
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -129,7 +132,11 @@ export function game1vs1Page(info) {
 	play_game(info, "2P", appState.token)
     .then((data) => {
       console.log('Received data:', data.data);
-	  if (data.type === "disconnect_all")
+	  if (data === null)
+	  {
+		return ;
+	  }
+	  else if (data.type === "disconnect_all")
 	  {
 		console.log("11111111111111111111");
 		navigate(parseUrl(basePath));
