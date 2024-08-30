@@ -19,8 +19,7 @@ from . import oauth
 def authenticate(request):
     code = request.GET.get("code")
     if not code:
-        return Response(data={"error": "code is missing."}, status=status.HTTP_401_UNAUTHORIZED)
-        # return redirect_failure()
+        return oauth.redirect_failure()
 
     access_token = oauth.request_token(code)
     user = oauth.request_user(access_token)
