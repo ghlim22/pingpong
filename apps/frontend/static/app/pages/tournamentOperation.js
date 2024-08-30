@@ -19,9 +19,16 @@ export function tournament_game_queue(type, token) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.close();
       }
+
+      if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
+        appState.tour_ws.close();
+        appState.tour_ws = null;
+      }
+
       appState.inTournament = false;
       // navigate(parseUrl(basePath));
     };
+
 
 	document.querySelector('.logo-small').addEventListener('click', () => {
 		if (ws.readyState === WebSocket.OPEN) {
@@ -33,6 +40,7 @@ export function tournament_game_queue(type, token) {
 			search: ""
 		}));
 	});
+
 
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
@@ -122,5 +130,3 @@ export function tournament_game_queue(type, token) {
         }
     });
   }
-
-

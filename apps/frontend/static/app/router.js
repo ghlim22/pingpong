@@ -1,3 +1,4 @@
+
 import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState, loginUser} from '/index.js';
 import config from "/config/config.js";
 
@@ -84,6 +85,7 @@ function parseQueryString(queryString) {
 
 export function navigate(parsed, data = null) {
 	const currentPath = window.location.pathname;
+
 	let page = routes[parsed.route] || notFoundPage;
 	if (currentPath !== parsed.path) {
 		window.history.pushState(data, parsed.path, window.location.origin + parsed.path);
@@ -105,6 +107,7 @@ export function navigate(parsed, data = null) {
 		console.error("Error parsing query string:", error.message);
 		page = notFoundPage;
 	}
+
 	//if (data !== null) {
 	//	profileUserPage(data);
 	//}
@@ -134,7 +137,9 @@ export function notFoundPage() {
 	});
 }
 
+
 export function setClaslistDefault() {
+
 	document.getElementById('above').classList.remove('outter_setting');
 	document.getElementById('above').classList.remove('not_found');
 	document.getElementById('above').classList.remove('above-on');
@@ -150,6 +155,7 @@ export function setClaslistDefault() {
 	document.getElementById('main').classList.remove('multi');
 	document.getElementById('bottom').classList.remove('multi');
 }
+
 
 export function main_ws(token) {
 	if (!appState.ws || !(appState.ws instanceof WebSocket))

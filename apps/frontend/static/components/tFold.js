@@ -1,4 +1,4 @@
-import { appState, TUserInfo} from '/index.js';
+import { appState, TUserInfo } from '/index.js';
 
 'use strict';
 

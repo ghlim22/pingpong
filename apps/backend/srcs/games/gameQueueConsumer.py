@@ -39,7 +39,6 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
             await self._send()
         await self.increment_and_check_group_size(self.room_group_name)
 
-        logger.info(f"queue 사용자 연결됨: {self.channel_name}, Game ID: {self.game_id}")
 
     async def save_user_info(self, user):
         user_info = {
@@ -56,7 +55,7 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
         if self.game_type == 'tournament':
             await self._send()
 
-        logger.info(f"queue 사용자 연결 해제됨: {self.channel_name}")
+
 
     async def receive(self, text_data):
             data = json.loads(text_data)
@@ -76,7 +75,7 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
         return size
         """
         group_size = await self.redis.eval(lua_script, 1, group_name)
-        logger.info(f"queue group 사용자 연결됨: {group_size}")
+
         num = 2
         if self.game_type == 'tournament' or self.game_type == '4P':
             num = 4

@@ -1,4 +1,5 @@
-import { appState, TUserInfo, TInvite, TFold, navigate, parseUrl, basePath} from '/index.js';
+import { appState, TUserInfo, TInvite, TFold, navigate, parseUrl, basePath } from '/index.js';
+
 import { game_queue, play_game } from '/app/pages/1vs1Operation.js'
 const matchHTML = `
 <div class="match-multi">
@@ -169,7 +170,9 @@ function gameMultiPage(data) {
       console.log('Received data:', data);
 	  if (data.type === "disconnect_all")
 	  {
-		alert("iii");
+
+		alert("Someone has disconnected");
+
 		navigate(parseUrl(basePath));
 	  }
 	  else

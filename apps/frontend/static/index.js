@@ -10,7 +10,9 @@ import { TFold } from '/components/tFold.js';
 import { TBlock } from '/components/tBlock.js';
 
 //function
+
 import { navigate, parseUrl, setClaslistDefault, notFoundPage, main_ws } from '/app/router.js';
+
 import { loginPage } from '/app/pages/loginRender.js';
 import { submitJoin, submitLogin } from '/app/pages/loginOperation.js';
 import { homePage } from '/app/pages/home.js';
@@ -20,6 +22,7 @@ import { tournamentPage } from '/app/pages/tournamentRender.js';
 import { settingPage, submitPicture, submitNickname } from '/app/pages/setting.js';
 import { profileUserPage } from '/app/pages/profileUser.js';
 import config from "/config/config.js";
+
 
 export {
     appState,
@@ -52,6 +55,7 @@ window.onpopstate = (event) => {
 	if (appState.currentCleanupFn !== null) {
         appState.currentCleanupFn();
     }
+
 	navigate(parseUrl(window.location), event.state);
 };
 

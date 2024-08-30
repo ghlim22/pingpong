@@ -1,4 +1,5 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage} from '/index.js';
+
 import { tournament_game_queue, populateUserInfo } from '/app/pages/tournamentOperation.js'
 import { game1vs1Page } from '/app/pages/1vs1Render.js'
 const topHTML = `
@@ -51,6 +52,7 @@ export function tournamentPage() {
 		}));
 		return;
 	}
+
 	const leftSideHTML = `
 	<t-user-info class="p-button-current" data-nick="${appState.nickname}" data-img="${appState.picture}" data-id="${appState.token}" data-isloggedin="true"></t-user-info>
 	<t-invite class="receive-invitation"></t-invite>
@@ -60,6 +62,7 @@ export function tournamentPage() {
 	document.getElementById('bottom').innerHTML = "";
 	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('main').innerHTML = tournamentRoomHTML;
+
 	document.getElementById('left-side').innerHTML = leftSideHTML;
 	document.getElementById('right-side').innerHTML = rightSideHTML;
 	//document.querySelector('.logo-small').addEventListener('click', () => {
@@ -80,8 +83,10 @@ export function tournamentPage() {
 	//setTimeout(() => { tournamentGame(data) } , 5000); //시간 설정이 안됨
 }
 
+
 function tournamentGame(info) {
 	matchOrderPage(info.user_info);
+
 
 	info.user_info.forEach((user_info, index) => {
 		if (user_info.nickname === appState.nickname) {
