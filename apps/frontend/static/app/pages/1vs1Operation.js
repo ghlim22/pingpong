@@ -10,10 +10,11 @@ export function game_queue(type, token) {
 
     let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
     appState.inQueue = true;
-
+    console.log("appState.tour_ws", appState.tour_ws);
     if (type !== "2P" && type !== "4P" && appState.tour_ws !== null){
       appState.tour_ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        console.log("data.count", data.count);
         if (data.type === 'client_count')
         {
           if (data.count == 1)

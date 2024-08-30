@@ -51,8 +51,9 @@ export function tournament_game_queue(type, token) {
         else if (data.type === "create")
         {
           ws.close();
-          if (info.game_id2 !== "false"){
-            appState.tour_ws = new WebSocket(`wss://${SERVER_ADDR}wss/games/tour/${info.game_id}/?token=${token}`);
+          if (data.data.game_id2 !== "false"){
+              console.log("hi");
+              appState.tour_ws = new WebSocket(`wss://${SERVER_ADDR}wss/games/tour/${data.data.game_id}/?token=${token}`);
           }
           resolve(data.data);
         }
