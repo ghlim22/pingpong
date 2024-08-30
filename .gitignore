@@ -16,7 +16,6 @@ staticfiles/
 *.key
 config.js
 
-mediafiles/
 frontend/media/
 frontend/static/django
 
