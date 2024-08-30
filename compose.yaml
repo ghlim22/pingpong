@@ -13,8 +13,9 @@ services:
       - back-tier
     restart: on-failure
     volumes:
-      - ./apps/frontend/static/django:/usr/src/app/staticfiles
-      - ./apps/frontend/media/django:/usr/src/app/mediafiles
+      - ./apps/frontend/static/django:/usr/src/app/srcs/staticfiles
+      - ./apps/frontend/media/django:/usr/src/app/srcs/mediafiles
+      - ./apps/backend/srcs:/usr/src/app/srcs
 
   postgres:
     build: ./apps/postgres
