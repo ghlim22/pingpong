@@ -119,7 +119,7 @@ def register(email: str, nickname: str, image: str) -> HttpResponse:
         "email": user.email,
         "nickname": user.nickname,
         "picture": user.picture.url,
-        "token": token.key,
+        "token": token,
     }
 
     return redirect_params(data)

@@ -38,6 +38,7 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://backend",
     "https://localhost",
+    "https://" + SERVER_ADDR,
 ]
 
 # Application definition
