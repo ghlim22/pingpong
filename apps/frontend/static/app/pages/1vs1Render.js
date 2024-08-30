@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl} from '/index.js';
 import { game_queue, play_game } from '/app/pages/1vs1Operation.js'
 import { matchOrderPage } from '/app/pages/tournamentRender.js'
 const matchHTML = `

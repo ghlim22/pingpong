@@ -46,8 +46,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 17.5rem;
-	height: 5rem;
+	/*width: 17.5rem;*/
+	/*height: 5rem;*/
 }
 
 .t-invite__container div button{
@@ -55,6 +55,7 @@
 	color: #7777FF;
 	background-color: rgba(0, 0, 0, 0);
 	cursor: pointer;
+	padding: 1rem;
 }
 
 .t-invite__container div button:hover{

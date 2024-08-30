@@ -1,17 +1,18 @@
-import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState, loginUser } from '/index.js';
-import config from "../config/config.js";
+import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState, loginUser} from '/index.js';
+import config from "/config/config.js";
 
 const { SERVER_ADDR } = config;
+
 
 const routes = {
 	["/" + 'login']:			loginPage,
 	["/"]:						homePage,
-	["/" + '1vs1']:			pong1VS1Page,
-	["/" + 'multi']:			pongMultiPage,
-	["/" + 'tournament']:		tournamentPage,
+	//["/" + '1vs1']:			pong1VS1Page,
+	//["/" + 'multi']:			pongMultiPage,
+	//["/" + 'tournament']:		tournamentPage,
 	//["/" + 'setting']:			settingPage,
 	//["/" + 'profile/:nick']:	profileUserPage,
-	["/" + '404']:				notFoundPage,
+	//["/" + '404']:				notFoundPage,
 	//'/profile/edit-profile':		profileEditPage,
 	//'/profile/:nick':				profileUserPage,
 	//'/setting/:nick':					settingUserPage,
@@ -84,8 +85,6 @@ function parseQueryString(queryString) {
 export function navigate(parsed, data = null) {
 	const currentPath = window.location.pathname;
 	let page = routes[parsed.route] || notFoundPage;
-	console.log('parsed.path', parsed.path);
-	console.log("window.location.origin + parsed.path", window.location.origin + parsed.path);
 	if (currentPath !== parsed.path) {
 		window.history.pushState(data, parsed.path, window.location.origin + parsed.path);
 	}//test
@@ -93,8 +92,6 @@ export function navigate(parsed, data = null) {
 	setClaslistDefault();
 
 	try {
-			console.log('parsed.route', parsed.route);
-			console.log('parsed.search !== ""', parsed.search !== "");
 		if (parsed.search !== "") {
 			const parsedData = parseQueryString(parsed.search);
 			console.log(parsedData);
@@ -123,7 +120,7 @@ export function navigate(parsed, data = null) {
 	}
 }
 
-function notFoundPage() {
+export function notFoundPage() {
 	const above = document.getElementById('above');
 
 	above.innerHTML = `
@@ -137,7 +134,7 @@ function notFoundPage() {
 	});
 }
 
-function setClaslistDefault() {
+export function setClaslistDefault() {
 	document.getElementById('above').classList.remove('outter_setting');
 	document.getElementById('above').classList.remove('not_found');
 	document.getElementById('above').classList.remove('above-on');
@@ -154,10 +151,9 @@ function setClaslistDefault() {
 	document.getElementById('bottom').classList.remove('multi');
 }
 
-function main_ws(token) {
+export function main_ws(token) {
 	if (!appState.ws || !(appState.ws instanceof WebSocket))
 	{
-		console.log("11")
 		appState.ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/main/?token=${token}`);
 	}
 	else

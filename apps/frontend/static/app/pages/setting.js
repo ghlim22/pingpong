@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, pong1VS1Page } from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, pong1VS1Page} from '/index.js';
 
 const mainHTML = `  
 <div class="outter_setting">
@@ -36,6 +36,9 @@ const mainHTML = `
 `;
 
 export function settingPage() {
+	if (appState.chat_ws !== null)
+		appState.chat_ws.close();
+	//appState.currentCleanupFn = null;
 	const above = document.getElementById('above');
 	above.innerHTML = mainHTML;
 

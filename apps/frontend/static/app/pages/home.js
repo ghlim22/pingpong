@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage } from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage, setClaslistDefault, pong1VS1Page, pongMultiPage, tournamentPage, main_ws } from '/index.js';
 const mainHTML = `
 <span class="logo-big">PONG</span>
 <div class="m-button" id="1vs1">
@@ -44,22 +44,46 @@ export function homePage() {
 	document.getElementById('right-side').innerHTML = rightSideHTML;
 
 	document.getElementById('1vs1').addEventListener('click', () => {
-		navigate(parseUrl({
-			pathname: '/1vs1',
-			search: ""
-		}));
+		//navigate(parseUrl({
+		//	pathname: '/1vs1',
+		//	search: ""
+		//}));
+		appState.currentCleanupFn = null;
+		setClaslistDefault();
+		window.history.pushState({}, '/', window.location.origin + '/');
+		pong1VS1Page();
+		if (appState.token !== null)
+		{
+			setTimeout(() => { main_ws(appState.token) } , 200);
+		}
 	});
 	document.getElementById('multi').addEventListener('click', () => {
-		navigate(parseUrl({
-			pathname: '/multi',
-			search: ""
-		}));
+		//navigate(parseUrl({
+		//	pathname: '/multi',
+		//	search: ""
+		//}));
+		appState.currentCleanupFn = null;
+		setClaslistDefault();
+		window.history.pushState({}, '/', window.location.origin + '/');
+		pongMultiPage();
+		if (appState.token !== null)
+		{
+			setTimeout(() => { main_ws(appState.token) } , 200);
+		}
 	});
 	document.getElementById('tournament').addEventListener('click', () => {
-		navigate(parseUrl({
-			pathname: '/tournament',
-			search: ""
-		}));
+		//navigate(parseUrl({
+		//	pathname: '/tournament',
+		//	search: ""
+		//}));
+		appState.currentCleanupFn = null;
+		setClaslistDefault();
+		window.history.pushState({}, '/', window.location.origin + '/');
+		tournamentPage();
+		if (appState.token !== null)
+		{
+			setTimeout(() => { main_ws(appState.token) } , 200);
+		}
 	});
 	document.querySelector('.p-button-setting').addEventListener('click', () => {
 		settingPage();

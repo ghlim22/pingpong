@@ -1,4 +1,4 @@
-import { appState, basePath, navigate, parseUrl } from '/index.js';
+import { appState, basePath, navigate, parseUrl} from '/index.js';
 
 const pageHTML = `
 <span class="logo-big">PONG</span>

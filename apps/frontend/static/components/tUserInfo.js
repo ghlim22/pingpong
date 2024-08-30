@@ -1,4 +1,4 @@
-import { appState, navigate, parseUrl, basePath, profileUserPage } from '/index.js';
+import { appState, navigate, parseUrl, basePath, profileUserPage} from '/index.js';
 
 'use strict';
 

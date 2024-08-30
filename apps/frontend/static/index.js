@@ -10,7 +10,7 @@ import { TFold } from '/components/tFold.js';
 import { TBlock } from '/components/tBlock.js';
 
 //function
-import { navigate, parseUrl } from '/app/router.js';
+import { navigate, parseUrl, setClaslistDefault, notFoundPage, main_ws } from '/app/router.js';
 import { loginPage } from '/app/pages/loginRender.js';
 import { submitJoin, submitLogin } from '/app/pages/loginOperation.js';
 import { homePage } from '/app/pages/home.js';
@@ -19,7 +19,7 @@ import { pongMultiPage } from '/app/pages/multiRender.js';
 import { tournamentPage } from '/app/pages/tournamentRender.js';
 import { settingPage, submitPicture, submitNickname } from '/app/pages/setting.js';
 import { profileUserPage } from '/app/pages/profileUser.js';
-
+import config from "/config/config.js";
 
 export {
     appState,
@@ -42,6 +42,9 @@ export {
 	submitPicture,
 	submitNickname,
 	profileUserPage,
+	setClaslistDefault,
+	notFoundPage,
+	main_ws,
 };
 
 
@@ -54,7 +57,6 @@ window.onpopstate = (event) => {
 
 if (document.readyState !== 'loading') {
 	navigate(parseUrl(window.location));
-	
 } else {
 	document.addEventListener('DOMContentLoaded', () => {
 		navigate(parseUrl(window.location));
