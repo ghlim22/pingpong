@@ -76,7 +76,6 @@ class mainConsumer(AsyncWebsocketConsumer):
     
     async def invite_user(self, data):
         target_user_id = data.get("target_user_id")
-        invitation_message = data.get("message")
 
         target_user_info = await self.redis.hget("main", target_user_id)
         if target_user_info:

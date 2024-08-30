@@ -6,7 +6,6 @@ import redis.asyncio as redis
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 logger = logging.getLogger("django")
-connected_clients = {}
 
 
 class GameQueueConsumer(AsyncWebsocketConsumer):
@@ -23,14 +22,7 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
             self.game_id2 = "false"
             self.game_id3 = "false"
 
-        # 방 그룹에 추가
-        if self.token in connected_clients:
-            old_websocket = connected_clients[self.token]
-            await old_websocket.close()
-
-        connected_clients[self.token] = self
         await self.accept()
-
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name,
@@ -57,17 +49,25 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
         await self.redis.hset(f"{self.game_type}_game", self.channel_name, json.dumps(user_info))
 
     async def disconnect(self, close_code):
-        if self.token in connected_clients:
-            del connected_clients[self.token]
         if self.user and self.user.id:
             await self.decrement_group_size(self.room_group_name)
             await self.redis.hdel(f"{self.game_type}_game", self.channel_name)
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         if self.game_type == 'tournament':
             await self._send()
-            
 
         logger.info(f"queue 사용자 연결 해제됨: {self.channel_name}")
+
+    async def receive(self, text_data):
+            data = json.loads(text_data)
+            type = data.get("type")
+            if type == "disconnect":
+                await self.channel_layer.group_send(
+                    self.game_group,
+                    {
+                        'type': 'disconnect_all'
+                    }
+                )
 
 
     async def increment_and_check_group_size(self, group_name):
@@ -120,4 +120,7 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
 
     async def update(self, event):
         # Send the data to WebSocket
+        await self.send(text_data=json.dumps(event))
+
+    async def disconnect_all(self, event):
         await self.send(text_data=json.dumps(event))

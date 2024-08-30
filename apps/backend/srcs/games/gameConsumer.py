@@ -19,6 +19,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.position = None
+        self.isStart = False
         self.game_id = self.scope["url_route"]["kwargs"]["game_id"]
         self.type = self.scope["url_route"]["kwargs"]["type"]
         self.game_group = f"game_{self.game_id}"
@@ -46,7 +47,10 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.position = 'down'
             
         if self.type == "tournament" or self.type == "4P" or self.type == "2P":
-            asyncio.create_task(self._start_timeout(self.game_group, max_players))
+            asyncio.create_task(self._start_timeout())
+        else:
+            asyncio.create_task(self._start_opposite_check())
+
 
         if self.user.is_authenticated:
             await self.save_user_info(self.user)
@@ -81,8 +85,10 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         type = data.get("type")
-        if type == "start" and self.position == 'left':
-            asyncio.create_task(self._game_start(data.get("data", {})))
+        if type == "start":
+            self.isStart = True
+            if self.position == 'left':
+                asyncio.create_task(self._game_start(data.get("data", {})))
         elif type == "keyboard":
             asyncio.create_task(self._accept_key(data.get("data", {})))
 
@@ -124,12 +130,10 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def _decrement_group_size(self, group_name):
         await self.redis.decr(group_name)
 
-    async def _start_timeout(self, group_size, max_players):
+    async def _start_timeout(self):
         await asyncio.sleep(self.timeout)
 
-        size = await self._get_group_size(group_size)
-        # 타임아웃 시간 경과 후 그룹 크기 확인
-        if size < max_players:
+        if self.isStart == False:
             await self.channel_layer.group_send(
                 self.game_group,
                 {

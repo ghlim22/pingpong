@@ -173,7 +173,7 @@ function gameMultiPage(data) {
 		navigate(parseUrl(basePath));
 	  }
 	  else
-		gameResultPage(data);
+		gameResultPage(data.data);
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);
@@ -211,3 +211,4 @@ function gameResultPage(data) {
 	nickname2.innerHTML = data.nickname2;
 	setTimeout(handleQuitGame, 2500);
 }
+

@@ -119,7 +119,7 @@ export function navigate(parsed, data = null) {
 	//}
 	if (page !== notFoundPage && appState.token !== null)
 	{
-		main_ws(appState.token);
+		setTimeout(() => { main_ws(appState.token) } , 200);
 	}
 }
 
@@ -155,7 +155,6 @@ function setClaslistDefault() {
 }
 
 function main_ws(token) {
-	console.log("before", appState.ws)
 	if (!appState.ws || !(appState.ws instanceof WebSocket))
 	{
 		console.log("11")
@@ -164,16 +163,14 @@ function main_ws(token) {
 	else
 	{
 		appState.ws.send(JSON.stringify({ type: "updateMine"}));
-		console.log("22")
 	}
-	console.log("after", appState.ws)
 	const connect = document.querySelector('.connect');
 	const friend = document.querySelector('.friend');
+	const invitation = document.querySelector('.receive-invitation');
 	const myprofile = document.querySelector('.p-button-current');
 
 	appState.ws.onmessage = (event) => {
 		const data = JSON.parse(event.data);
-		console.log("app.ws.on", data);
 		
     	if (data.type === 'update') {
 			const userInfoList = data.users;
@@ -235,10 +232,8 @@ function main_ws(token) {
 				});
 			});
 		}
-		else if (data.type === 'invite') {
-			// 게임 초대 메시지를 받았을 때 처리하는 로직
-			// data.nick
-			// data.img
+		else if (data.type === 'game_invitation') {
+			invitation.setInvitation(data.nick, data.img);
 		}
 	}
 		// const info = JSON.parse(event.data);

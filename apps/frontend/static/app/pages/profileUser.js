@@ -196,6 +196,8 @@ function appendButtons(data, userInfo) {
 	document.querySelector('.s-button-message').addEventListener('click', () => {messageHandler(data, userInfo);});
 	document.querySelector('.s-button-block').addEventListener('click', () => {blockHandler(data, userInfo);});
 	document.querySelector('.s-button-friend').addEventListener('click', () => {friendHandler(data, userInfo);});
+	if (appState.inTournament)
+		document.querySelector('.s-button-pong').addEventListener('click', () => {pongHandler(data);});
 }
 
 const chatHTML = `
@@ -373,6 +375,11 @@ function blockHandler(data, userInfo) {
 	});
 }
 
+function pongHandler(data) {
+	appState.ws.send(JSON.stringify({ type: "invite", target_user_id: data.pk}));
+	alert("invite Success");
+}
+
 function friendHandler(data, userInfo) {
 	fetch('/api/users/current/follow/' + data.pk + '/', {
 		method: 'POST',
@@ -400,6 +407,11 @@ function friendHandler(data, userInfo) {
 			document.querySelector('.s-button-friend').src = "/assets/s-button-unfollow.svg";
 		}
 		profileUserPage(data);
+		appState.ws.send(JSON.stringify({
+            "type": "update_user_info",
+            "field": "nick",
+            "value": appState.nickname,
+        }));
 	})
 	.catch(error => {
 		console.log('Error: ', error);
