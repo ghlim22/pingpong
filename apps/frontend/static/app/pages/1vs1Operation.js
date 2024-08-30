@@ -35,6 +35,10 @@ export function game_queue(type, token) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.close();
       }
+	  if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
+        appState.tour_ws.close();
+        appState.tour_ws = null;
+      }
       appState.inQueue = false;
       // navigate(parseUrl(basePath));
     };

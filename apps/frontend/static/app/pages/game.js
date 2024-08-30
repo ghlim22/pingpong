@@ -241,7 +241,8 @@ export default function OnlineGame(sock, game_type) {
       ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
       ctx.fillStyle = "#000000";
       ctx.fill();
-
+	  console.log("left.score + up.score", left.score);
+	  console.log("left.score + up.score", up.score);
       $leftScore.innerText = left.score + up.score;
       $rightScore.innerText = right.score + down.score;
     //  ctx.strokeStyle = 'black';
