@@ -1,4 +1,9 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage } from '/index.js';
+
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage} from '/index.js';
+import config from "/config/config.js";
+
+const { SERVER_ADDR } = config;
+
 
 const mainHTML = `
 <div class="inner_setting">
@@ -154,6 +159,10 @@ async function appendField(data) {
 	document.querySelector('.profile_user_quit').addEventListener('click', () => {
 		document.getElementById('above').classList.remove('above-on');
 		document.getElementById('above').classList.remove('outter_setting');
+
+		if (appState.chat_ws !== null)
+			appState.chat_ws.close();
+		//appState.currentCleanupFn = null;
     });
 	return true;
 }
@@ -196,6 +205,8 @@ function appendButtons(data, userInfo) {
 	document.querySelector('.s-button-message').addEventListener('click', () => {messageHandler(data, userInfo);});
 	document.querySelector('.s-button-block').addEventListener('click', () => {blockHandler(data, userInfo);});
 	document.querySelector('.s-button-friend').addEventListener('click', () => {friendHandler(data, userInfo);});
+	if (appState.inTournament)
+		document.querySelector('.s-button-pong').addEventListener('click', () => {pongHandler(data);});
 }
 
 const chatHTML = `
@@ -207,28 +218,34 @@ const chatHTML = `
 function messageHandler(data, userInfo) {
 	const message = document.querySelector('.s-button-message');
 
-	if (message.src == "https://${SERVER_ADDR}/assets/s-button-message.svg") {
+
+	console.log('message.src', message.src);
+	console.log("`https://${SERVER_ADDR}/assets/s-button-message.svg`", `https://${SERVER_ADDR}/assets/s-button-message.svg`);
+	if (message.src == `https://${SERVER_ADDR}/assets/s-button-message.svg`) {
 		message.src = "/assets/s-button-unmessage.svg"
 		document.querySelector('.inner_profile_bottom').classList.remove('default');
 		document.querySelector('.inner_profile_bottom').innerHTML = chatHTML;
 		initializeChat(data.pk, userInfo);
-		appState.currentCleanupFn = () => {
-			if (appState.chat_ws !== null)
-				appState.chat_ws.close();
-		};
+
+		//appState.currentCleanupFn = () => {
+		//	if (appState.chat_ws !== null)
+		//		appState.chat_ws.close();
+		//};
 	}
-	else if (message.src == "https://${SERVER_ADDR}/assets/s-button-unmessage.svg") {
+	else if (message.src == `https://${SERVER_ADDR}/assets/s-button-unmessage.svg`) {
 		message.src = "/assets/s-button-message.svg"
 		document.querySelector('.inner_profile_bottom').innerHTML = "";
 		document.querySelector('.inner_profile_bottom').classList.add('default');
 		if (appState.chat_ws !== null)
 			appState.chat_ws.close();
-		appState.currentCleanupFn = null;
+
+		//appState.currentCleanupFn = null;
 		putGameLog(data);
 	}
 }
 
 function initializeChat(others, userInfo) {
+
     appState.chat_ws = new WebSocket(`wss://${SERVER_ADDR}/wss/chat/${others}/?token=${appState.token}`);
 
     // 메시지 수신 시 채팅 로그에 추가
@@ -373,6 +390,11 @@ function blockHandler(data, userInfo) {
 	});
 }
 
+function pongHandler(data) {
+	appState.ws.send(JSON.stringify({ type: "invite", target_user_id: data.pk}));
+	alert("invite Success");
+}
+
 function friendHandler(data, userInfo) {
 	fetch('/api/users/current/follow/' + data.pk + '/', {
 		method: 'POST',
@@ -400,6 +422,11 @@ function friendHandler(data, userInfo) {
 			document.querySelector('.s-button-friend').src = "/assets/s-button-unfollow.svg";
 		}
 		profileUserPage(data);
+		appState.ws.send(JSON.stringify({
+            "type": "update_user_info",
+            "field": "nick",
+            "value": appState.nickname,
+        }));
 	})
 	.catch(error => {
 		console.log('Error: ', error);

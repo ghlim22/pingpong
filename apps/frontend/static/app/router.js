@@ -1,17 +1,19 @@
-import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState, loginUser } from '/index.js';
-import config from "../config/config.js";
+
+import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState, loginUser} from '/index.js';
+import config from "/config/config.js";
 
 const { SERVER_ADDR } = config;
+
 
 const routes = {
 	["/" + 'login']:			loginPage,
 	["/"]:						homePage,
-	["/" + '1vs1']:			pong1VS1Page,
-	["/" + 'multi']:			pongMultiPage,
-	["/" + 'tournament']:		tournamentPage,
+	//["/" + '1vs1']:			pong1VS1Page,
+	//["/" + 'multi']:			pongMultiPage,
+	//["/" + 'tournament']:		tournamentPage,
 	//["/" + 'setting']:			settingPage,
 	//["/" + 'profile/:nick']:	profileUserPage,
-	["/" + '404']:				notFoundPage,
+	//["/" + '404']:				notFoundPage,
 	//'/profile/edit-profile':		profileEditPage,
 	//'/profile/:nick':				profileUserPage,
 	//'/setting/:nick':					settingUserPage,
@@ -83,9 +85,8 @@ function parseQueryString(queryString) {
 
 export function navigate(parsed, data = null) {
 	const currentPath = window.location.pathname;
+
 	let page = routes[parsed.route] || notFoundPage;
-	console.log('parsed.path', parsed.path);
-	console.log("window.location.origin + parsed.path", window.location.origin + parsed.path);
 	if (currentPath !== parsed.path) {
 		window.history.pushState(data, parsed.path, window.location.origin + parsed.path);
 	}//test
@@ -93,8 +94,6 @@ export function navigate(parsed, data = null) {
 	setClaslistDefault();
 
 	try {
-			console.log('parsed.route', parsed.route);
-			console.log('parsed.search !== ""', parsed.search !== "");
 		if (parsed.search !== "") {
 			const parsedData = parseQueryString(parsed.search);
 			console.log(parsedData);
@@ -108,6 +107,7 @@ export function navigate(parsed, data = null) {
 		console.error("Error parsing query string:", error.message);
 		page = notFoundPage;
 	}
+
 	//if (data !== null) {
 	//	profileUserPage(data);
 	//}
@@ -119,11 +119,11 @@ export function navigate(parsed, data = null) {
 	//}
 	if (page !== notFoundPage && appState.token !== null)
 	{
-		main_ws(appState.token);
+		setTimeout(() => { main_ws(appState.token) } , 200);
 	}
 }
 
-function notFoundPage() {
+export function notFoundPage() {
 	const above = document.getElementById('above');
 
 	above.innerHTML = `
@@ -137,7 +137,9 @@ function notFoundPage() {
 	});
 }
 
-function setClaslistDefault() {
+
+export function setClaslistDefault() {
+
 	document.getElementById('above').classList.remove('outter_setting');
 	document.getElementById('above').classList.remove('not_found');
 	document.getElementById('above').classList.remove('above-on');
@@ -154,26 +156,23 @@ function setClaslistDefault() {
 	document.getElementById('bottom').classList.remove('multi');
 }
 
-function main_ws(token) {
-	console.log("before", appState.ws)
+
+export function main_ws(token) {
 	if (!appState.ws || !(appState.ws instanceof WebSocket))
 	{
-		console.log("11")
 		appState.ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/main/?token=${token}`);
 	}
 	else
 	{
 		appState.ws.send(JSON.stringify({ type: "updateMine"}));
-		console.log("22")
 	}
-	console.log("after", appState.ws)
 	const connect = document.querySelector('.connect');
 	const friend = document.querySelector('.friend');
+	const invitation = document.querySelector('.receive-invitation');
 	const myprofile = document.querySelector('.p-button-current');
 
 	appState.ws.onmessage = (event) => {
 		const data = JSON.parse(event.data);
-		console.log("app.ws.on", data);
 		
     	if (data.type === 'update') {
 			const userInfoList = data.users;
@@ -235,10 +234,8 @@ function main_ws(token) {
 				});
 			});
 		}
-		else if (data.type === 'invite') {
-			// 게임 초대 메시지를 받았을 때 처리하는 로직
-			// data.nick
-			// data.img
+		else if (data.type === 'game_invitation') {
+			invitation.setInvitation(data.nick, data.img);
 		}
 	}
 		// const info = JSON.parse(event.data);

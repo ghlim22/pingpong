@@ -1,4 +1,5 @@
 import { appState, TUserInfo, TInvite, TFold, navigate, parseUrl, basePath } from '/index.js';
+
 import { game_queue, play_game } from '/app/pages/1vs1Operation.js'
 const matchHTML = `
 <div class="match-multi">
@@ -169,11 +170,13 @@ function gameMultiPage(data) {
       console.log('Received data:', data);
 	  if (data.type === "disconnect_all")
 	  {
-		alert("iii");
+
+		alert("Someone has disconnected");
+
 		navigate(parseUrl(basePath));
 	  }
 	  else
-		gameResultPage(data);
+		gameResultPage(data.data);
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);
@@ -211,3 +214,4 @@ function gameResultPage(data) {
 	nickname2.innerHTML = data.nickname2;
 	setTimeout(handleQuitGame, 2500);
 }
+

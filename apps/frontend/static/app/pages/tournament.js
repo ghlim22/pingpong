@@ -1,4 +1,5 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage } from '/index.js';
+
 const topHTML = `
 <span class="logo-small">PONG</span>
 `;
