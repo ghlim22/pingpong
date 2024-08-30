@@ -119,7 +119,6 @@ export function navigate(parsed, data = null) {
 	//}
 	if (page !== notFoundPage && appState.token !== null)
 	{
-		console.log("navi");
 		setTimeout(() => { main_ws(appState.token) } , 200);
 	}
 }
@@ -161,12 +160,10 @@ export function setClaslistDefault() {
 export function main_ws(token) {
 	if (!appState.ws || !(appState.ws instanceof WebSocket))
 	{
-		console.log("hi	");
 		appState.ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/main/?token=${token}`);
 	}
 	else
 	{
-		console.log("hihi");
 		if (appState.ws.readyState === WebSocket.OPEN) {
 			appState.ws.send(JSON.stringify({ type: "updateMine"}));
 		}

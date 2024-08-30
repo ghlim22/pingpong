@@ -34,7 +34,6 @@ const leftSideHTML = `
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
-	<span>♥♥♥♥♥</span>
 </div>
 <div></div>
 <div class="user-profile-4p">
@@ -42,7 +41,6 @@ const leftSideHTML = `
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
-	<span>♥♥♥♥</span>
 </div>
 `;
 
@@ -52,17 +50,14 @@ const rightSideHTML = `
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
-	<span>♥♥♥</span>
 </div>
 <div>
-	<img src="/assets/g-button-quit.svg">
 </div>
 <div class="user-profile-2p">
 	<div class="image-profile-small">
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
-	<span>♥♥</span>
 </div>
 `;
 
@@ -76,7 +71,9 @@ const topHTML = `
 `;
 
 const bottomHTML = `
-`;
+<span id='leftScore'>0</span>
+<span id='rightScore'>0</span>
+`;;
 
 const resultHTML = `
 <div class="result-multi">

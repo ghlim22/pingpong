@@ -32,7 +32,6 @@ const leftSideHTML = `
 const rightSideHTML = `
 <div></div>
 <div>
-	<img src="/assets/g-button-quit.svg">
 </div>
 <div></div>
 `;
