@@ -161,7 +161,7 @@ body {
 }
 
 #above.outter_setting {
-	width: 100vh;
+	width: 50rem;
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
