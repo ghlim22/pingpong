@@ -1,20 +1,20 @@
-import base64
-import hashlib
-import hmac
-import json
+from knox.auth import TokenAuthentication
+from knox.models import get_token_model
+from knox.settings import CONSTANTS
+from knox.views import LoginView
 
 
-def encode_b64url(code: bytes) -> bytes:
-    return base64.urlsafe_b64encode(code).replace(b"=", b"")
+def create_token(user):
+    token_prefix = LoginView.get_token_prefix()
+    token = get_token_model().objects.create(user=user, expiry=LoginView.get_token_ttl(), prefix=token_prefix)
+    return token
 
 
-def get_token(sub):
-    header = {"typ": "JWT", "alg": "HS256"}
-    payload = {"sub": sub}
-    segments = []
+def logout_all(user):
+    user.auth_token_set.all().delete()
 
-    json_header = json.dumps(header, separators=(",", ":")).encode()
-    json_payload = json.dumps(payload, separators=(",", ":")).encode()
 
-    segments.append(encode_b64url(json_header))
-    segments.append((encode_b64url(json_payload)))
+def authenticate(token: str):
+    authenticator = TokenAuthentication()
+    (user, auth_token) = authenticator.authenticate_credentials(token)
+    return user

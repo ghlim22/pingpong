@@ -11,10 +11,10 @@ from django.http import (
     HttpResponseRedirect,
 )
 from django.shortcuts import redirect
-from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
+from rest_framework.status import HTTP_200_OK
 from users.models import CustomUser
+
+from .token import create_token, logout_all
 
 
 def redirect_with_params(
@@ -82,13 +82,14 @@ def login(email: str):
     Log in a user with given credentials from 42API.
     """
     user = CustomUser.objects.get(email=email)
-    token = Token.objects.get(user=user)
+    logout_all(user)
+    token = create_token(user)
     data = {
         "pk": user.pk,
         "email": user.email,
         "nickname": user.nickname,
         "picture": user.picture.url,
-        "token": token.key,
+        "token": token,
     }
 
     return redirect_params(data)
@@ -111,7 +112,8 @@ def register(email: str, nickname: str, image: str) -> HttpResponse:
         user.picture.save(name=image_name, content=ContentFile(response.content))
     user.save()
 
-    token = Token.objects.get(user=user)
+    token = create_token(user)
+
     data = {
         "pk": user.pk,
         "email": user.email,

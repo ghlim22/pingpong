@@ -5,15 +5,18 @@ from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import AuthenticationFailed
 
+from .token import authenticate
 
 django.setup()
+
+
 @database_sync_to_async  # Retrieving the data from the database asynchronously.
 def get_user(token: str):
     try:
-        user = Token.objects.get(key=token).user
-    except ObjectDoesNotExist:
+        user = authenticate(token)
+    except AuthenticationFailed:
         user = AnonymousUser()
     return user
 
