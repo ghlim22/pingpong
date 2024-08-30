@@ -3,11 +3,9 @@ from urllib.parse import quote, urlencode
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect
-from rest_framework import permissions, status
+from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
-from rest_framework.response import Response
 
 from . import oauth
 
@@ -19,15 +17,14 @@ from . import oauth
 def authenticate(request):
     code = request.GET.get("code")
     if not code:
-        return Response(data={"error": "code is missing."}, status=status.HTTP_401_UNAUTHORIZED)
-        # return redirect_failure()
+        return oauth.redirect_failure()
 
     access_token = oauth.request_token(code)
-    user = oauth.request_user(access_token)
+    user_credentials = oauth.request_user(access_token)
 
-    email = user.get("email")
-    nickname = user.get("login")
-    image = user.get("image")
+    email = user_credentials.get("email")
+    nickname = user_credentials.get("login")
+    image = user_credentials.get("image")
 
     try:
         return oauth.login(email)
