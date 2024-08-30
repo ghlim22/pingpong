@@ -140,6 +140,9 @@ export function pongMultiPage() {
 }
 
 function gameMultiPage(data) {
+	if (appState.inQueue === false){
+		return ;
+	}
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -165,7 +168,11 @@ function gameMultiPage(data) {
 	play_game(data, '4P', appState.token)
     .then((data) => {
       console.log('Received data:', data);
-	  if (data.type === "disconnect_all")
+	  if (data === null)
+	  {
+		return ;
+	  }
+	  else if (data.type === "disconnect_all")
 	  {
 
 		alert("Someone has disconnected");
