@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "rest_framework.authtoken",
+    "knox",
     "drf_api_logger",
     "drf_spectacular",
     "channels",
@@ -176,10 +176,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "knox.auth.TokenAuthentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+REST_KNOX = {
+    "TOKEN_TTL": timedelta(hours=2),
+    "USER_SERIALIZER": None,
+    "TOKEN_LIMIT_PER_USER": None,
+    "AUTO_REFRESH": False,
+    "MIN_REFRESH_INTERVAL": 60,
 }
 
 LOGGING = {
