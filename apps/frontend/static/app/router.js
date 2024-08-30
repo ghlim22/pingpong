@@ -1,5 +1,5 @@
 
-import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState, loginUser} from '/index.js';
+import { loginPage, homePage, pong1VS1Page, pongMultiPage, tournamentPage, settingPage, profileUserPage, basePath, appState, loginUser, logoutUser } from '/index.js';
 import config from "/config/config.js";
 
 const { SERVER_ADDR } = config;
@@ -164,7 +164,9 @@ export function main_ws(token) {
 	}
 	else
 	{
-		appState.ws.send(JSON.stringify({ type: "updateMine"}));
+		if (appState.ws.readyState === WebSocket.OPEN) {
+			appState.ws.send(JSON.stringify({ type: "updateMine"}));
+		}
 	}
 	const connect = document.querySelector('.connect');
 	const friend = document.querySelector('.friend');
@@ -193,10 +195,9 @@ export function main_ws(token) {
 					return response.json().then(data => {
 						return data;
 					});
-				} else if (response.status === 400) {
-					return response.json().then(data => {
-						throw new Error('Bad Request');
-					});
+				} else if (response.status === 401) {
+						logoutUser();
+						throw new Error('401');
 				} else {
 					return response.json().then(data => {
 						console.log('Other status: ', data);
@@ -209,8 +210,10 @@ export function main_ws(token) {
 			})
 			.catch(error => {
 				console.log('Error: ', error);
+				throw error;
 			})
 			.finally(() => {
+				try {
 				userInfoList.forEach(userInfo => {
 					if (userInfo.isLoggedin) {
 						const user = document.createElement('t-user-info');
@@ -232,7 +235,11 @@ export function main_ws(token) {
 						friend.addUserInfo(user);
 					}
 				});
-			});
+				}
+				catch (error) {
+					console.log('finally', error);
+				}
+			})
 		}
 		else if (data.type === 'game_invitation') {
 			invitation.setInvitation(data.nick, data.img);

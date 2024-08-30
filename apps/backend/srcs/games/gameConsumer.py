@@ -27,9 +27,9 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.redis = redis.from_url("redis://redis")
         self.timeout = 3
         if self.type == "tournament" or self.type == "4P":
-            max_players = 4
+            self.max_players = 4
         else:
-            max_players = 2
+            self.max_players = 2
 
         await self.accept()
         await self.channel_layer.group_add(self.game_group, self.channel_name)
@@ -37,7 +37,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.user = self.scope["user"]
         group_size = await self._increment_and_get_group_size(self.game_group)
 
-        if group_size == max_players:
+        if group_size == self.max_players:
             self.position = 'left'
         elif group_size == 1:
             self.position = 'right'
@@ -47,30 +47,15 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.position = 'down'
             
         if self.type == "tournament" or self.type == "4P" or self.type == "2P":
-            asyncio.create_task(self._start_timeout())
+            asyncio.create_task(self._start_timeout(self.max_players))
         else:
             asyncio.create_task(self._start_opposite_check())
-
 
         if self.user.is_authenticated:
             await self.save_user_info(self.user)
         else:
             self.close()
 
-        if self.position == 'left':
-            user_info_dict = await self.redis.hgetall(self.game_id)
-            self.user_info_list = [
-                json.loads(user_info_dict[self.channel_name])
-                for self.channel_name in user_info_dict
-            ]
-            await self.channel_layer.group_send(
-                self.game_group,
-                {
-                    "type": "game_start",
-                    "game_type": self.type,
-                    "user_info": self.user_info_list,
-                },
-            )
         logger.info(self.position)
 
     async def save_user_info(self, user):
@@ -130,16 +115,53 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def _decrement_group_size(self, group_name):
         await self.redis.decr(group_name)
 
-    async def _start_timeout(self):
+    async def _start_timeout(self, max):
         await asyncio.sleep(self.timeout)
 
-        if self.isStart == False:
+        size = await self._get_group_size(self.game_group)
+        if size < max:
             await self.channel_layer.group_send(
                 self.game_group,
                 {
                     'type': 'disconnect_all'
                 }
             )
+            self.close()
+        else:
+            if self.position == 'left':
+                user_info_dict = await self.redis.hgetall(self.game_id)
+                self.user_info_list = [
+                    json.loads(user_info_dict[self.channel_name])
+                    for self.channel_name in user_info_dict
+                ]
+                await self.channel_layer.group_send(
+                    self.game_group,
+                    {
+                        "type": "game_start",
+                        "game_type": self.type,
+                        "user_info": self.user_info_list,
+                    },
+                )
+            while True:
+                await asyncio.sleep(self.timeout)
+
+                size = await self._get_group_size(self.game_group)
+                if size < max:
+                    await self.channel_layer.group_send(
+                        self.game_group,
+                        {
+                            'type': 'disconnect_all'
+                        }
+                    )
+                    self.close()
+            
+    async def _get_group_size(self, group_name):
+        group_size = await self.redis.get(group_name)
+        
+        if group_size is None:
+            return 0
+
+        return int(group_size)
 
     async def _game_start(self, message_data):
         if self.type == "tournament":
@@ -162,7 +184,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self._update_game(match)
             await self._send_state(match)
             await asyncio.sleep(0.05)
-        await self._game_end(match)
+        size = await self._get_group_size(self.game_group)
+        if (size == self.max_players):
+            await self._game_end(match)
         
     async def _accept_key(self, message_data):
         if self.position == "left" or self.position == "right":

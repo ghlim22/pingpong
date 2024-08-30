@@ -57,6 +57,10 @@ export class TUserInfo extends HTMLElement {
         if (this.isLoggedin === 'true') border.classList.add("connected");
 
 		this.addEventListener('click', () => {
+            if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
+                appState.chat_ws.close();
+                appState.chat_ws = null;
+            }
 			if (this.classList.contains('p-button-user')) {
 				profileUserPage({
 					nickname: this.nick,
