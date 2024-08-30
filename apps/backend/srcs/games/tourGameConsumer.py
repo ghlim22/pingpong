@@ -1,11 +1,15 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+import redis.asyncio as redis
 
 class TourConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         # URL에서 room_name 추출
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f'chat_{self.room_name}'
+        self.redis = redis.from_url("redis://redis")
+
+        await self._increment_and_get_group_size(self.room_group_name)
 
         # 그룹에 추가
         await self.channel_layer.group_add(
@@ -28,11 +32,20 @@ class TourConsumer(AsyncWebsocketConsumer):
             # 클라이언트 수 응답
             await self.send(text_data=json.dumps({
                 'type': 'client_count',
-                'count': len(await self.get_group_clients(self.room_group_name))
+                'count': self._get_group_size(self.room_group_name)
             }))
 
-    async def get_group_clients(self, group_name):
-        # 현재 그룹의 클라이언트 수를 반환하는 함수
-        channel_layer = self.channel_layer
-        group = await channel_layer.group_get(group_name)
-        return [member for member in group]
+    async def _increment_and_get_group_size(self, group_name):
+        lua_script = """
+        local size = redis.call('INCR', KEYS[1])
+        return size
+        """
+        group_size = await self.redis.eval(lua_script, 1, group_name)
+        return group_size
+
+    async def _get_group_size(self, group_name):
+        group_size = await self.redis.get(group_name)
+        
+        if group_size is None:
+            return 0
+        return int(group_size)

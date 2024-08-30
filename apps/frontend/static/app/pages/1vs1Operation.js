@@ -5,6 +5,7 @@ export function game_queue(type, token) {
   return new Promise((resolve, reject) => {
     let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
 
+    sleep(3000);
     if (type !== "2P" && type !== "4P" && appState.tour_ws !== false){
       console.log(appState.tour_ws);
       appState.tour_ws.onmessage = (event) => {
@@ -22,9 +23,6 @@ export function game_queue(type, token) {
         }
       }
       logPeriodically();
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close();
-      }
       // navigate(parseUrl(basePath));
     }    
     appState.currentCleanupFn = () => {
@@ -86,7 +84,8 @@ function sleep(ms) {
 }
 
 async function logPeriodically() {
-    while (appState.readyState === WebSocket.OPEN) {
+  while (appState.tour_ws.readyState === WebSocket.OPEN) {
+      console.log("appState.tour_ws.readyState", appState.tour_ws.readyState);
       console.log("appState.tour_ws", appState.tour_ws);
       appState.tour_ws.send(JSON.stringify({ type: "get_client_count"}));
       await sleep(1000); // 1초 대기
