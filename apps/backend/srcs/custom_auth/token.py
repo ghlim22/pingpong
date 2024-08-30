@@ -37,6 +37,8 @@ def create_token(user):
     instance, token = get_token_model().objects.create(
         user=user, expiry=knox_settings.TOKEN_TTL, prefix=knox_settings.TOKEN_PREFIX
     )
+    print(instance)
+    print(token)
     return token
 
 
