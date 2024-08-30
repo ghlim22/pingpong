@@ -13,9 +13,9 @@ services:
       - back-tier
     restart: on-failure
     volumes:
-      - ./apps/frontend/static/django:/usr/src/app/srcs/staticfiles
-      - ./apps/frontend/media/django:/usr/src/app/srcs/mediafiles
-      - ./apps/backend/srcs:/usr/src/app/srcs
+      - ./apps/frontend/static/django:/usr/src/app/srcs/staticfiles:z
+      - ./apps/frontend/media/django:/usr/src/app/srcs/mediafiles:z
+      - ./apps/backend/srcs:/usr/src/app/srcs:z
 
   postgres:
     build: ./apps/postgres
@@ -43,8 +43,8 @@ services:
       - '443:443'
     restart: on-failure
     volumes:
-      - ./apps/frontend/static:/usr/share/nginx/html/static
-      - ./apps/frontend/media:/usr/share/nginx/html/media
+      - ./apps/frontend/static:/usr/share/nginx/html/static:z
+      - ./apps/frontend/media:/usr/share/nginx/html/media:z
 
   redis:
     build: ./apps/redis
