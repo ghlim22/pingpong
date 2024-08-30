@@ -56,6 +56,7 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
             await self._send()
 
 
+
     async def receive(self, text_data):
             data = json.loads(text_data)
             type = data.get("type")
@@ -74,10 +75,12 @@ class GameQueueConsumer(AsyncWebsocketConsumer):
         return size
         """
         group_size = await self.redis.eval(lua_script, 1, group_name)
+
         num = 2
         if self.game_type == 'tournament' or self.game_type == '4P':
             num = 4
 
+        logger.info(f"max: {num}")
         if group_size == num:
             try:
                 await self.create_game()

@@ -1,4 +1,5 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+
 import { game_queue, play_game } from '/app/pages/1vs1Operation.js'
 import { matchOrderPage } from '/app/pages/tournamentRender.js'
 const matchHTML = `
@@ -134,18 +135,22 @@ export function game1vs1Page(info) {
 		console.log("11111111111111111111");
 		navigate(parseUrl(basePath));
 		alert("Someone has disconnected");
+
 		if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
 			appState.tour_ws.close();
 			appState.tour_ws = null;
 		  }
+
 	  }
 	  else if (info.game_id2 === 'false' || appState.nickname !== data.data.nickname)
 	  {
 		console.log("22222222222222222222");
+
 		if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
 			appState.tour_ws.close();
 			appState.tour_ws = null;
 		  }
+
       	gameResultPage(data.data);
 	  }
 	  else
@@ -161,6 +166,7 @@ export function game1vs1Page(info) {
         appState.tour_ws.close();
         appState.tour_ws = null;
       }
+
     });
 	// timerId = setTimeout(gameResultPage, 3000);
 	// jikang2:	임시로 3초 뒤에 gameResultPage() 가 실행되도록 설정해둠.
@@ -207,6 +213,7 @@ export function tournamentLastGame(game_id) {
 	  }
 	  
 	  setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
+
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);

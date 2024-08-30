@@ -1,9 +1,13 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl} from '/index.js';
 import OnlineGame from "/app/pages/game.js";
+import config from "/config/config.js";
+
+const { SERVER_ADDR } = config;
 
 export function game_queue(type, token) {
   return new Promise((resolve, reject) => {
-    let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
+    let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
 
     if (type !== "2P" && type !== "4P" && appState.tour_ws !== null){
       appState.tour_ws.onmessage = (event) => {
@@ -18,12 +22,12 @@ export function game_queue(type, token) {
               appState.tour_ws.close();
               appState.tour_ws = null;
             }
+
           }
         }
       }
       logPeriodically();
       // navigate(parseUrl(basePath));
-    }    
     appState.currentCleanupFn = () => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.close();
@@ -41,7 +45,6 @@ export function game_queue(type, token) {
         console.log('on message', data.data);
         resolve(data.data);
     };
-    
     ws.onerror = (error) => {
         ws.close();
         reject(error);
@@ -51,11 +54,11 @@ export function game_queue(type, token) {
 
 export function play_game(info, type, token) {
   return new Promise((resolve, reject) => {
-    const ws = new WebSocket(`wss://localhost/wss/games/start/${info.game_id}/${type}/?token=${token}`);
+    
+    const ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/start/${info.game_id}/${type}/?token=${token}`);
     if (info.game_id2 !== "false"){
-      appState.tour_ws = new WebSocket(`wss://localhost/wss/games/tour/${info.game_id3}/?token=${token}`);
+      appState.tour_ws = new WebSocket(`wss://${SERVER_ADDR}wss/games/tour/${info.game_id}/?token=${token}`);
     }
-    console.log("play game", info.game_id2);
 
     appState.currentCleanupFn = () => {
       if (ws.readyState === WebSocket.OPEN) {
@@ -84,9 +87,11 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+
 async function logPeriodically() {
   while (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN) {
       appState.tour_ws.send(JSON.stringify({ type: "get_client_count"}));
       await sleep(3000); // 1초 대기
     }
 }
+

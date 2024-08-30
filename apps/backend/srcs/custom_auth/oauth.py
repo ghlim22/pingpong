@@ -1,15 +1,39 @@
 import secrets
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 
 import requests
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
-from django.http import HttpResponse
+from django.http import (
+    HttpResponse,
+    HttpResponsePermanentRedirect,
+    HttpResponseRedirect,
+)
+from django.shortcuts import redirect
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
 from users.models import CustomUser
+
+
+def redirect_with_params(
+    url: str, params: dict, permanent: bool = False
+) -> HttpResponsePermanentRedirect | HttpResponseRedirect:
+    url += urlencode(params)
+    print(url)
+    return redirect(to=url, permanent=permanent)
+
+
+def redirect_params(params):
+    url = "https://" + settings.SERVER_ADDR + "/login?"
+    url += urlencode(params)
+    return redirect(to=url, permanent=True)
+
+
+def redirect_failure():
+    url = "https://" + settings.SERVER_ADDR + "/login"
+    return redirect(to=url, permanent=True)
 
 
 def request_token(code: str) -> str | HttpResponse:
@@ -17,17 +41,18 @@ def request_token(code: str) -> str | HttpResponse:
     Request an access token to 42API.
     """
     url = "https://api.intra.42.fr/oauth/token"
+    callback_url = "https://" + settings.SERVER_ADDR + "/api/auth/redirect"
     params = {
         "grant_type": "authorization_code",
         "client_id": settings.API_UID,
         "client_secret": settings.API_SECRET,
         "code": code,
-        "redirect_uri": settings.API_REDIRECT,
+        "redirect_uri": callback_url,
     }
 
     response = requests.post(url=url, data=params)
     if response.status_code != HTTP_200_OK:
-        return Response(status=response.status_code)
+        return redirect_failure()
     access_token = response.json().get("access_token")
 
     return access_token
@@ -41,7 +66,7 @@ def request_user(access_token: str) -> dict | HttpResponse:
 
     response = requests.get(url=url, headers=headers)
     if response.status_code != HTTP_200_OK:
-        return Response(status=response.status_code)
+        return redirect_failure()
 
     data = {
         "email": response.json().get("email"),
@@ -52,7 +77,7 @@ def request_user(access_token: str) -> dict | HttpResponse:
     return data
 
 
-def login(email: str) -> HttpResponse:
+def login(email: str):
     """
     Log in a user with given credentials from 42API.
     """
@@ -66,7 +91,7 @@ def login(email: str) -> HttpResponse:
         "token": token.key,
     }
 
-    return Response(data, HTTP_200_OK)
+    return redirect_params(data)
 
 
 def register(email: str, nickname: str, image: str) -> HttpResponse:
@@ -95,4 +120,4 @@ def register(email: str, nickname: str, image: str) -> HttpResponse:
         "token": token.key,
     }
 
-    return Response(data, HTTP_201_CREATED)
+    return redirect_params(data)

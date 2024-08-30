@@ -12,6 +12,7 @@ django/
 .env
 *.pem
 *.key
+config.js
 
 mediafiles/
 
