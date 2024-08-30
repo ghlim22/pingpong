@@ -38,8 +38,10 @@ const mainHTML = `
 
 export function settingPage() {
 
-	if (appState.chat_ws !== null)
+	if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
 		appState.chat_ws.close();
+		appState.chat_ws = null;
+	}
 	//appState.currentCleanupFn = null;
 	const above = document.getElementById('above');
 	above.innerHTML = mainHTML;
@@ -101,8 +103,10 @@ export function submitPicture(event) {
             "field": "img",
             "value": data['picture'],
         }));
-		//if (appState.ws !== null)
-		//	appState.ws.close();
+		// if (appState.ws && appState.ws.readyState === WebSocket.OPEN){
+		// 	appState.ws.close();
+		// 	appState.ws = null;
+		// }
 		//appState.ws = null;
 		//navigate(parseUrl(basePath + 'setting'));
 		sessionStorage.setItem('appState', JSON.stringify(appState));
@@ -156,8 +160,10 @@ export function submitNickname(event) {
             "field": "nick",
             "value": nickname,
         }));
-		//if (appState.ws !== null)
-		//	appState.ws.close();
+		// if (appState.ws && appState.ws.readyState === WebSocket.OPEN){
+		// 	appState.ws.close();
+		// 	appState.ws = null;
+		// }
 		//appState.ws = null;
 		//navigate(parseUrl(basePath + 'setting'));
 		sessionStorage.setItem('appState', JSON.stringify(appState));

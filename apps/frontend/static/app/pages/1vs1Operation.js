@@ -28,6 +28,7 @@ export function game_queue(type, token) {
       }
       logPeriodically();
       // navigate(parseUrl(basePath));
+    }
     appState.currentCleanupFn = () => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.close();
@@ -45,10 +46,12 @@ export function game_queue(type, token) {
         console.log('on message', data.data);
         resolve(data.data);
     };
+
     ws.onerror = (error) => {
         ws.close();
         reject(error);
     };
+
   });
 }
 
