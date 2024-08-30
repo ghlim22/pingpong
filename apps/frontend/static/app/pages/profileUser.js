@@ -1,5 +1,5 @@
 
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage} from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage, logoutUser } from '/index.js';
 import config from "/config/config.js";
 
 const { SERVER_ADDR } = config;
@@ -48,6 +48,10 @@ function putGameLog(data) {
 	.then((response) => {
 		if (response.status === 200) {
 			return response.json();
+		}
+		else if (response.status === 401) {
+			logoutUser();
+			throw new Error('401');
 		}
 		else if (response.status === 404) {
 			document.querySelector('.inner_profile_bottom').innerHTML = `
@@ -300,8 +304,8 @@ function initializeChat(others, userInfo) {
 					return response.json();
 				}
 				else if (response.status === 401) {
-					console.log('response 401')
-					throw new Error('Bad Request');
+					logoutUser();
+					throw new Error('401');
 				}
 				else {
 					console.log('Other status: ');
@@ -346,8 +350,8 @@ function checkCanTalk() {
 			return response.json();
 		}
 		else if (response.status === 401) {
-			console.log('response 401')
-			throw new Error('Bad Request');
+			logoutUser();
+			throw new Error('401');
 		}
 		else {
 			console.log('Other status: ');
@@ -372,8 +376,8 @@ function blockHandler(data, userInfo) {
 	.then((response) => {
 		if (response.status === 200) {}
 		else if (response.status === 401) {
-			console.log('response 401')
-			throw new Error('Bad Request');
+			logoutUser();
+			throw new Error('401');
 		}
 		else {
 			console.log('Other status: ');
@@ -410,7 +414,7 @@ function friendHandler(data, userInfo) {
 	.then((response) => {
 		if (response.status === 200) {}
 		else if (response.status === 401) {
-			console.log('response 401')
+			logoutUser();
 			throw new Error('Bad Request');
 		}
 		else {
@@ -456,7 +460,12 @@ async function getMyInfo(data) {
 			let errorMessage = 'Error 400: Bad Request\n';
 			console.log(errorMessage, errorData);
 			throw new Error('Bad Request');
-		} else {
+		}
+		else if (response.status === 401) {
+			logoutUser();
+			throw new Error('401');
+		}
+		else {
 			const errorData = await response.json();
 			console.log('Other status:', errorData);
 			throw new Error('Unexpected status code: ' + response.status);
@@ -485,7 +494,12 @@ async function getUserInfo(data) {
 			let errorMessage = 'Error 400: Bad Request\n';
 			console.log(errorMessage, errorData);
 			throw new Error('Bad Request');
-		} else {
+		}
+		else if (response.status === 401) {
+			logoutUser();
+			throw new Error('401');
+		}
+		else {
 			const errorData = await response.json();
 			console.log('Other status:', errorData);
 			throw new Error('Unexpected status code: ' + response.status);

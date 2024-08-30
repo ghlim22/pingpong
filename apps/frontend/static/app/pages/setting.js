@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, pong1VS1Page } from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, pong1VS1Page, logoutUser } from '/index.js';
 
 
 const mainHTML = `  
@@ -79,13 +79,9 @@ export function submitPicture(event) {
 				return data;
 			});
 		} else if (response.status === 401) {
-			return response.json().then(data => {
-				let errorMessage = 'Error 401: Bad Request\n';
-				for (const [key, value] of Object.entries(data)) {
-					errorMessage +=`${key}: ${value.join(', ')}\n`;
-				}
-				alert(errorMessage);
-				throw new Error('Bad Request');
+			return response.json().then(() => {
+				logoutUser();
+				throw new Error('401');
 			});
 		} else {
 			return response.json().then(data => {
@@ -144,7 +140,12 @@ export function submitNickname(event) {
 				alert(errorMessage + data);
 				throw new Error('Bad Request');
 			});
-		} else {
+		}
+		else if (response.status === 401) {
+			logoutUser();
+			throw new Error('401');
+		}
+		else {
 			return response.json().then(data => {
 				console.log('Other status: ', data);
 				throw new Error('Unexpected status code: ', response.status);

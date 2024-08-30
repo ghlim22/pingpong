@@ -1,6 +1,6 @@
 //Object appState
 
-import { appState, loginUser } from '/app/state.js';
+import { appState, loginUser, logoutUser } from '/app/state.js';
 import { basePath } from '/app/state.js';
 
 //class TUserInfo
@@ -27,6 +27,7 @@ import config from "/config/config.js";
 export {
     appState,
     loginUser,
+    logoutUser,
     basePath,
     TUserInfo,
     TInvite,
