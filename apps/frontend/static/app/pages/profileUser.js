@@ -160,8 +160,10 @@ async function appendField(data) {
 		document.getElementById('above').classList.remove('above-on');
 		document.getElementById('above').classList.remove('outter_setting');
 
-		if (appState.chat_ws !== null)
+		if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
 			appState.chat_ws.close();
+			appState.chat_ws = null;
+		}
 		//appState.currentCleanupFn = null;
     });
 	return true;
@@ -228,16 +230,19 @@ function messageHandler(data, userInfo) {
 		initializeChat(data.pk, userInfo);
 
 		//appState.currentCleanupFn = () => {
-		//	if (appState.chat_ws !== null)
-		//		appState.chat_ws.close();
-		//};
+		//	if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
+		// 	appState.chat_ws.close();
+		// 	appState.chat_ws = null;
+		//   }
 	}
 	else if (message.src == `https://${SERVER_ADDR}/assets/s-button-unmessage.svg`) {
 		message.src = "/assets/s-button-message.svg"
 		document.querySelector('.inner_profile_bottom').innerHTML = "";
 		document.querySelector('.inner_profile_bottom').classList.add('default');
-		if (appState.chat_ws !== null)
+		if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
 			appState.chat_ws.close();
+			appState.chat_ws = null;
+		}
 
 		//appState.currentCleanupFn = null;
 		putGameLog(data);
