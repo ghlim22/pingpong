@@ -7,7 +7,8 @@ const { SERVER_ADDR } = config;
 export function tournament_game_queue(type, token) {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
-    
+    appState.inQueue = true;
+
     const objects = [
       '.tournament-room-in .player1',
       '.tournament-room-in .player2',
@@ -24,7 +25,7 @@ export function tournament_game_queue(type, token) {
         appState.tour_ws.close();
         appState.tour_ws = null;
       }
-
+      appState.inQueue = false;
       appState.inTournament = false;
       // navigate(parseUrl(basePath));
     };
@@ -35,6 +36,7 @@ export function tournament_game_queue(type, token) {
 			ws.close();
 		}
 		appState.inTournament = false;
+    appState.inQueue = false;
 		navigate(parseUrl({
 			pathname: '/',
 			search: ""
@@ -54,6 +56,7 @@ export function tournament_game_queue(type, token) {
         else if (data.type === "close_connection")
         {
           ws.close();
+          appState.inQueue = false;
           resolve(data);
         }
     };

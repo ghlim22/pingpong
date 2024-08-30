@@ -215,8 +215,8 @@ export default function OnlineGame(sock, game_type) {
       ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
       ctx.fillStyle = "#000000";
       ctx.fill();
-	  $leftScore.innerText = left.score;
-	  $rightScore.innerText = right.score;
+      $leftScore.innerText = left.score;
+      $rightScore.innerText = right.score;
     //  ctx.strokeStyle = 'black';
     //  ctx.lineWidth = 5;
     //  ctx.strokeRect(0, 0, canvas.width, canvas.height);
@@ -241,6 +241,9 @@ export default function OnlineGame(sock, game_type) {
       ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
       ctx.fillStyle = "#000000";
       ctx.fill();
+
+      $leftScore.innerText = left.score + up.score;
+      $rightScore.innerText = right.score + down.score;
     //  ctx.strokeStyle = 'black';
     //  ctx.lineWidth = 5;
     //  ctx.strokeRect(0, 0, canvas.width, canvas.height);

@@ -7,22 +7,23 @@ const { SERVER_ADDR } = config;
 
 export function game_queue(type, token) {
   return new Promise((resolve, reject) => {
+
     let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
+    appState.inQueue = true;
 
     if (type !== "2P" && type !== "4P" && appState.tour_ws !== null){
       appState.tour_ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === 'client_count')
         {
-          console.log(data.count);
           if (data.count == 1)
           {
             alert("Someone has disconnected");
             if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
               appState.tour_ws.close();
               appState.tour_ws = null;
+              appState.inQueue = false;
             }
-
           }
         }
       }
@@ -34,6 +35,7 @@ export function game_queue(type, token) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.close();
       }
+      appState.inQueue = false;
       // navigate(parseUrl(basePath));
     };
     
@@ -50,6 +52,7 @@ export function game_queue(type, token) {
 
     ws.onerror = (error) => {
         ws.close();
+        appState.inQueue = false;
         reject(error);
     };
 
@@ -59,7 +62,9 @@ export function game_queue(type, token) {
 export function play_game(info, type, token) {
   return new Promise((resolve, reject) => {
     
+    console.log("appState.inQueue", appState.inQueue)
     const ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/start/${info.game_id}/${type}/?token=${token}`);
+
     if (info.game_id2 !== "false"){
       appState.tour_ws = new WebSocket(`wss://${SERVER_ADDR}wss/games/tour/${info.game_id}/?token=${token}`);
     }
