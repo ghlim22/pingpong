@@ -3,7 +3,7 @@ import OnlineGame from "/app/pages/game.js";
 
 export function tournament_game_queue(type, token) {
   return new Promise((resolve, reject) => {
-    let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
+    const ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/start/${info.game_id}/${type}/?token=${token}`);
     
     const objects = [
       '.tournament-room-in .player1',
@@ -108,4 +108,5 @@ export function tournament_game_queue(type, token) {
         }
     });
   }
+
 

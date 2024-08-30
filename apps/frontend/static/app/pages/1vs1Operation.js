@@ -1,9 +1,14 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
 import OnlineGame from "/app/pages/game.js";
+import config from "../../config/config.js";
+
+const { SERVER_ADDR } = config;
 
 export function game_queue(type, token) {
   return new Promise((resolve, reject) => {
-    let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
+
+
+    let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
 
     sleep(3000);
     if (type !== "2P" && type !== "4P" && appState.tour_ws !== false){
@@ -50,11 +55,13 @@ export function game_queue(type, token) {
 
 export function play_game(info, type, token) {
   return new Promise((resolve, reject) => {
-    const ws = new WebSocket(`wss://localhost/wss/games/start/${info.game_id}/${type}/?token=${token}`);
+
+    const ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/start/${info.game_id}/${type}/?token=${token}`);
     console.log("play game", info.game_id2);
     if (info.game_id2 !== "false"){
       appState.tour_ws = new WebSocket(`wss://localhost/wss/games/tour/${info.game_id}/?token=${token}`);
     }
+
 
     appState.currentCleanupFn = () => {
       if (ws.readyState === WebSocket.OPEN) {

@@ -86,23 +86,22 @@ export function loginPage() {
 	// 	//});
 	// });
 	document.getElementById('start').addEventListener('click', () => {
-		main.innerHTML = startHTML;
-
-		document.getElementById('join').addEventListener('click', () => {
-			main.innerHTML = joinHTML;
-
-			document.getElementById('imgInput').addEventListener('change', (e) => {
-				let file = e.target.files[0];
-
-				document.getElementById('form-join-file-name').textContent = file.name;
-			});
-			//document.getElementById('join-submit').addEventListener('submit', submitJoin);
-		});
-
-		document.getElementById('login').addEventListener('click', () => {
-			main.innerHTML = loginHTML;
-
-			//document.getElementById('login-submit').addEventListener('click', submitLogin);
-		});
+	window.location.href = 'api/auth/signin';
+		//fetch('api/auth/signin', {
+		//	method: 'GET',
+		//})
+		//.then((response) => {
+		//	if (response.status === 200) {
+		//		return response;
+		//	} else {
+		//		return response;
+		//	}
+		//})
+		//.then((data) => {
+		//	console.log('auth signin data: ', data);
+		//})
+		//.catch(error => {
+		//	console.log('Error: ', error);
+		//});
 	});
 }

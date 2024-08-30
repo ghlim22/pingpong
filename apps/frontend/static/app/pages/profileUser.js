@@ -209,7 +209,7 @@ const chatHTML = `
 function messageHandler(data, userInfo) {
 	const message = document.querySelector('.s-button-message');
 
-	if (message.src == "https://localhost/assets/s-button-message.svg") {
+	if (message.src == "https://${SERVER_ADDR}/assets/s-button-message.svg") {
 		message.src = "/assets/s-button-unmessage.svg"
 		document.querySelector('.inner_profile_bottom').classList.remove('default');
 		document.querySelector('.inner_profile_bottom').innerHTML = chatHTML;
@@ -219,7 +219,7 @@ function messageHandler(data, userInfo) {
 				appState.chat_ws.close();
 		};
 	}
-	else if (message.src == "https://localhost/assets/s-button-unmessage.svg") {
+	else if (message.src == "https://${SERVER_ADDR}/assets/s-button-unmessage.svg") {
 		message.src = "/assets/s-button-message.svg"
 		document.querySelector('.inner_profile_bottom').innerHTML = "";
 		document.querySelector('.inner_profile_bottom').classList.add('default');
@@ -231,7 +231,7 @@ function messageHandler(data, userInfo) {
 }
 
 function initializeChat(others, userInfo) {
-    appState.chat_ws = new WebSocket(`wss://localhost/wss/chat/${others}/?token=${appState.token}`);
+    appState.chat_ws = new WebSocket(`wss://${SERVER_ADDR}/wss/chat/${others}/?token=${appState.token}`);
 
     // 메시지 수신 시 채팅 로그에 추가
     appState.chat_ws.onmessage = function(e) {

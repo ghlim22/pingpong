@@ -1,4 +1,7 @@
 import OnlineGame from "./game.js";
+import config from "../../config/config.js";
+
+const { SERVER_ADDR } = config;
 
 function init() {
   let wss = null;
@@ -12,10 +15,10 @@ function init() {
   button2P.addEventListener('click', () => {
     console.log('2P');
     type = '2P';
-    wss = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/`);
+    wss = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/`);
     wss.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      const sock = new WebSocket(`wss://localhost/wss/games/start/${data.game_id}/${type}/`);
+      const sock = new WebSocket(`wss://${SERVER_ADDR}/wss/games/start/${data.game_id}/${type}/`);
       wss.close();
       OnlineGame(sock, type);
       button2P.style.display = 'none';

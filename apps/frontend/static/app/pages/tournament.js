@@ -23,7 +23,10 @@ const rightSideHTML = `
 
 export function tournamentPage() {
 	if (!appState.isLoggedIn) {
-		navigate(parseUrl(basePath + 'login'));
+		navigate(parseUrl({
+			pathname: '/login',
+			search: ""
+		}));
 		return;
 	}
 	document.getElementById('bottom').innerHTML = "";

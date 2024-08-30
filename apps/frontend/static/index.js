@@ -20,6 +20,7 @@ import { tournamentPage } from '/app/pages/tournamentRender.js';
 import { settingPage, submitPicture, submitNickname } from '/app/pages/setting.js';
 import { profileUserPage } from '/app/pages/profileUser.js';
 
+
 export {
     appState,
     loginUser,
@@ -48,15 +49,15 @@ window.onpopstate = (event) => {
 	if (appState.currentCleanupFn !== null) {
         appState.currentCleanupFn();
     }
-	console.log("onpop");
-	navigate(parseUrl(window.location.pathname), event.state);
+	navigate(parseUrl(window.location), event.state);
 };
 
 if (document.readyState !== 'loading') {
-	navigate(parseUrl(window.location.pathname));
+	navigate(parseUrl(window.location));
+	
 } else {
 	document.addEventListener('DOMContentLoaded', () => {
-		navigate(parseUrl(window.location.pathname));
+		navigate(parseUrl(window.location));
 	});
 }
 

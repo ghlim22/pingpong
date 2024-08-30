@@ -25,7 +25,10 @@ const rightSideHTML = `
 
 export function homePage() {
 	if (!appState.isLoggedIn) {
-		navigate(parseUrl(basePath + 'login'));
+		navigate(parseUrl({
+			pathname: '/login',
+			search: ""
+		}));
 		return;
 	}
 	const leftSideHTML = `
@@ -41,13 +44,22 @@ export function homePage() {
 	document.getElementById('right-side').innerHTML = rightSideHTML;
 
 	document.getElementById('1vs1').addEventListener('click', () => {
-		navigate(parseUrl(basePath + '1vs1'));
+		navigate(parseUrl({
+			pathname: '/1vs1',
+			search: ""
+		}));
 	});
 	document.getElementById('multi').addEventListener('click', () => {
-		navigate(parseUrl(basePath + 'multi'));
+		navigate(parseUrl({
+			pathname: '/multi',
+			search: ""
+		}));
 	});
 	document.getElementById('tournament').addEventListener('click', () => {
-		navigate(parseUrl(basePath + 'tournament'));
+		navigate(parseUrl({
+			pathname: '/tournament',
+			search: ""
+		}));
 	});
 	document.querySelector('.p-button-setting').addEventListener('click', () => {
 		settingPage();
