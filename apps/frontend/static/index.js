@@ -19,7 +19,6 @@ import { pongMultiPage } from '/app/pages/multiRender.js';
 import { tournamentPage } from '/app/pages/tournamentRender.js';
 import { settingPage, submitPicture, submitNickname } from '/app/pages/setting.js';
 import { profileUserPage } from '/app/pages/profileUser.js';
-import { profileUserPage } from '/app/pages/profileUser.js';
 
 export {
     appState,
