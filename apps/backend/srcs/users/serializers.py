@@ -1,3 +1,4 @@
+from custom_auth import token
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.utils import timezone
@@ -26,13 +27,14 @@ class UserSignInSerializer(serializers.Serializer):
         user.last_login = timezone.now()
         user.status = CustomUser.Status.CONNECTED
         user.save(update_fields=["last_login", "status"])
+        knox_token = token.create_token(user)  # needs to be deleted
 
         data: dict = {
             "pk": user.pk,
             "email": user.email,
             "nickname": user.nickname,
             "picture": user.picture.url,
-            "token": Token.objects.get(user=user).key,
+            "token": knox_token,
         }
 
         return data
