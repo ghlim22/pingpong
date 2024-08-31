@@ -1,6 +1,5 @@
-import { appState, navigate, parseUrl, basePath, setClaslistDefault, tournamentPage, main_ws } from '/index.js';
+import { appState, navigate, parseUrl, basePath } from '/index.js';
 import { TUserInfo } from '/index.js';
-
 
 'use strict';
 
@@ -46,17 +45,9 @@ export class TInvite extends HTMLElement {
 		border.classList.add("receive-invitation");
 
 		yes.addEventListener('click', () => {
-    		border.classList.remove("receive-invitation");
-    		if (!appState.inTournament) {
-				appState.currentCleanupFn = null;
-				setClaslistDefault();
-				window.history.pushState({}, '/', window.location.origin + '/');
-				tournamentPage();
-				if (appState.token !== null)
-				{
-					setTimeout(() => { main_ws(appState.token) } , 200);
-				}
-			}
+            border.classList.remove("receive-invitation");
+            if (!appState.inTournament)
+			    navigate(parseUrl(basePath + 'tournament'));
 		})
 		no.addEventListener('click', () => {
             border.classList.remove("receive-invitation");

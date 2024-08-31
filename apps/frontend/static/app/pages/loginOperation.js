@@ -1,5 +1,4 @@
 import { appState, loginUser, basePath, navigate, parseUrl, TUserInfo } from '/index.js';
-
 import { loginHTML } from '/app/pages/loginRender.js';
 
 export function submitJoin(event) {

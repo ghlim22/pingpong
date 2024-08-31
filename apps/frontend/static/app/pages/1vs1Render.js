@@ -1,5 +1,4 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
-
 import { game_queue, play_game } from '/app/pages/1vs1Operation.js'
 import { matchOrderPage } from '/app/pages/tournamentRender.js'
 const matchHTML = `
@@ -32,6 +31,7 @@ const leftSideHTML = `
 const rightSideHTML = `
 <div></div>
 <div>
+	<img src="/assets/g-button-quit.svg">
 </div>
 <div></div>
 `;
@@ -107,13 +107,6 @@ export function pong1VS1Page() {
 }
 
 export function game1vs1Page(info) {
-	if (appState.inQueue === false){
-		if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
-			appState.tour_ws.close();
-			appState.tour_ws = null;
-		}
-		return ;
-	}
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -135,30 +128,28 @@ export function game1vs1Page(info) {
 	console.log('Received info:', info);
 	play_game(info, "2P", appState.token)
     .then((data) => {
-      // console.log('Received data:', data.data);
-	  if (data === null){
-		return ;
-	  }
-	  else if (data.type === "disconnect_all"){
+      console.log('Received data:', data.data);
+	  if (data.type === "disconnect_all")
+	  {
 		console.log("11111111111111111111");
-		if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
-			appState.tour_ws.close();
-			appState.tour_ws = null;
-		  }
 		navigate(parseUrl(basePath));
 		alert("Someone has disconnected");
-	  }
-	  else if (info.game_id2 === 'false' || appState.nickname !== data.data.nickname){
-		console.log("22222222222222222222");
-
 		if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
 			appState.tour_ws.close();
 			appState.tour_ws = null;
 		  }
-
+	  }
+	  else if (info.game_id2 === 'false' || appState.nickname !== data.data.nickname)
+	  {
+		console.log("22222222222222222222");
+		if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
+			appState.tour_ws.close();
+			appState.tour_ws = null;
+		  }
       	gameResultPage(data.data);
 	  }
-	  else{
+	  else
+	  {
 		info.game_id2 !== "false";
 		console.log("tournamentLastGame!!!!!!!!!!! im winner");
 		tournamentLastGame(info.game_id3);
@@ -170,7 +161,6 @@ export function game1vs1Page(info) {
         appState.tour_ws.close();
         appState.tour_ws = null;
       }
-
     });
 	// timerId = setTimeout(gameResultPage, 3000);
 	// jikang2:	임시로 3초 뒤에 gameResultPage() 가 실행되도록 설정해둠.
@@ -216,8 +206,7 @@ export function tournamentLastGame(game_id) {
 		}
 	  }
 	  
-	setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
-
+	  setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);

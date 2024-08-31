@@ -1,5 +1,4 @@
 import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage } from '/index.js';
-
 const topHTML = `
 <span class="logo-small">PONG</span>
 `;
@@ -24,10 +23,7 @@ const rightSideHTML = `
 
 export function tournamentPage() {
 	if (!appState.isLoggedIn) {
-		navigate(parseUrl({
-			pathname: '/login',
-			search: ""
-		}));
+		navigate(parseUrl(basePath + 'login'));
 		return;
 	}
 	document.getElementById('bottom').innerHTML = "";

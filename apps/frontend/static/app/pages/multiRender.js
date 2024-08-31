@@ -1,5 +1,4 @@
 import { appState, TUserInfo, TInvite, TFold, navigate, parseUrl, basePath } from '/index.js';
-
 import { game_queue, play_game } from '/app/pages/1vs1Operation.js'
 const matchHTML = `
 <div class="match-multi">
@@ -34,6 +33,7 @@ const leftSideHTML = `
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
+	<span>♥♥♥♥♥</span>
 </div>
 <div></div>
 <div class="user-profile-4p">
@@ -41,6 +41,7 @@ const leftSideHTML = `
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
+	<span>♥♥♥♥</span>
 </div>
 `;
 
@@ -50,14 +51,17 @@ const rightSideHTML = `
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
+	<span>♥♥♥</span>
 </div>
 <div>
+	<img src="/assets/g-button-quit.svg">
 </div>
 <div class="user-profile-2p">
 	<div class="image-profile-small">
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
+	<span>♥♥</span>
 </div>
 `;
 
@@ -71,9 +75,7 @@ const topHTML = `
 `;
 
 const bottomHTML = `
-<span id='leftScore'>0</span>
-<span id='rightScore'>0</span>
-`;;
+`;
 
 const resultHTML = `
 <div class="result-multi">
@@ -140,9 +142,6 @@ export function pongMultiPage() {
 }
 
 function gameMultiPage(data) {
-	if (appState.inQueue === false){
-		return ;
-	}
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -168,15 +167,9 @@ function gameMultiPage(data) {
 	play_game(data, '4P', appState.token)
     .then((data) => {
       console.log('Received data:', data);
-	  if (data === null)
+	  if (data.type === "disconnect_all")
 	  {
-		return ;
-	  }
-	  else if (data.type === "disconnect_all")
-	  {
-
 		alert("Someone has disconnected");
-
 		navigate(parseUrl(basePath));
 	  }
 	  else

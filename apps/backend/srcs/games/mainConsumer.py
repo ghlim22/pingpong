@@ -12,7 +12,6 @@ class mainConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_group_name = "main"
         self.redis = redis.from_url("redis://redis")
-        self.token = self.scope["query_string"].decode("utf-8").split("=")[1]
 
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -35,16 +34,15 @@ class mainConsumer(AsyncWebsocketConsumer):
             "channel_name": self.channel_name,  # 유저 ID와 채널 매핑 저장
             "isLoggedin": status,
         }
-        await self.redis.hset("main", self.token, json.dumps(user_info))
+        await self.redis.hset("main", self.user.id, json.dumps(user_info))
 
-    async def disconnect(self, close_code=False):
+    async def disconnect(self, close_code):
         if self.user and self.user.id:
             await self.redis.hdel("main", self.user.id)
             await self.save_user_info(False)
             await self._send()
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         logger.info(f"[main] 사용자 연결 해제됨: {self.channel_name}")
-        logger.info(f"close: {close_code}")
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -72,8 +70,6 @@ class mainConsumer(AsyncWebsocketConsumer):
             user_info["nick"] = new_value
         elif field == "img":
             user_info["img"] = new_value
-        elif field == "islogin":
-            user_info["isLoggedin"] = True
         # 업데이트된 정보를 Redis에 저장
         await self.redis.hset("main", self.user.id, json.dumps(user_info))
         logger.info(f"User {self.user.id} updated {field} to {new_value}")

@@ -161,7 +161,7 @@ body {
 }
 
 #above.outter_setting {
-	width: 50rem;
+	width: 100vh;
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
@@ -760,7 +760,7 @@ body {
 	justify-content: center;
     align-items: flex-start;
     overflow-y: auto;
-    /*overflow-x: auto; 가로 스크롤바도 필요시 활성화*/
+    overflow-x: auto; /* 가로 스크롤바도 필요시 활성화 */
     font-size: 1.8rem;
     color: #444AFF;
     /*gap: 1rem; div 간 간격 추가*/
@@ -807,7 +807,6 @@ body {
     padding: 0.5rem;
     overflow-x: auto;
     white-space: nowrap;
-	max-width: 100%;
 
 	/*display: inline-block;
 	max-width: 100%;

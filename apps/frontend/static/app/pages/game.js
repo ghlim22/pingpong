@@ -61,10 +61,6 @@ export default function OnlineGame(sock, game_type) {
         up.y = gameData.up.y * canvas.height;
         down.x = gameData.down.x * canvas.width;
         down.y = gameData.down.y * canvas.height;
-        left.score = gameData.left.score;
-        right.score = gameData.right.score;
-        up.score = gameData.up.score;
-        down.score = gameData.down.score;
         ball.x = gameData.ball.x * canvas.width;
         ball.y = gameData.ball.y * canvas.height;
         ball.radius = right.width * (2 / 3);
@@ -219,8 +215,8 @@ export default function OnlineGame(sock, game_type) {
       ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
       ctx.fillStyle = "#000000";
       ctx.fill();
-      $leftScore.innerText = left.score;
-      $rightScore.innerText = right.score;
+	  $leftScore.innerText = left.score;
+	  $rightScore.innerText = right.score;
     //  ctx.strokeStyle = 'black';
     //  ctx.lineWidth = 5;
     //  ctx.strokeRect(0, 0, canvas.width, canvas.height);
@@ -245,10 +241,6 @@ export default function OnlineGame(sock, game_type) {
       ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
       ctx.fillStyle = "#000000";
       ctx.fill();
-	  console.log("left.score + up.score", left.score);
-	  console.log("left.score + up.score", up.score);
-      $leftScore.innerText = left.score + up.score;
-      $rightScore.innerText = right.score + down.score;
     //  ctx.strokeStyle = 'black';
     //  ctx.lineWidth = 5;
     //  ctx.strokeRect(0, 0, canvas.width, canvas.height);

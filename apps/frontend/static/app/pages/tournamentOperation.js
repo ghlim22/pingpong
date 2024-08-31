@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, TBlock} from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, TBlock } from '/index.js';
 import OnlineGame from "/app/pages/game.js";
 import config from "/config/config.js";
 
@@ -6,9 +6,7 @@ const { SERVER_ADDR } = config;
 
 export function tournament_game_queue(type, token) {
   return new Promise((resolve, reject) => {
-    appState.game_ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
-    appState.inQueue = true;
-
+    let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
     const objects = [
       '.tournament-room-in .player1',
       '.tournament-room-in .player2',
@@ -17,65 +15,35 @@ export function tournament_game_queue(type, token) {
     ];
     
     appState.currentCleanupFn = () => {
-      if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
-        appState.game_ws.close();
-        appState.game_ws = null;
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
       }
-
       if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
         appState.tour_ws.close();
         appState.tour_ws = null;
       }
-      appState.inQueue = false;
       appState.inTournament = false;
       // navigate(parseUrl(basePath));
     };
 
-
-	document.querySelector('.logo-small').addEventListener('click', () => {
-		if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
-      appState.game_ws.close();
-      appState.game_ws = null;
-    }
-		appState.inTournament = false;
-    appState.inQueue = false;
-		navigate(parseUrl({
-			pathname: '/',
-			search: ""
-		}));
-	});
-
-
-    appState.game_ws.onmessage = (event) => {
+    ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === "update")
           populateUserInfo(data.users, objects);
         else if (data.type === "create")
         {
-          if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
-            appState.game_ws.close();
-            appState.game_ws = null;
-          }
-          console.log("data.data", data.data);
-          appState.tour_ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/tour/${data.data.game_id2}/?token=${token}`);
+          ws.close();
           resolve(data.data);
         }
         else if (data.type === "close_connection")
         {
-          if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
-            appState.game_ws.close();
-            appState.game_ws = null;
-          }
-          appState.inQueue = false;
+          ws.close();
           resolve(data);
         }
     };
       
-    appState.game_ws.onerror = (error) => {
-        if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
-          appState.game_ws.close();
-          appState.game_ws = null;
-        }
+    ws.onerror = (error) => {
+        ws.close();
         reject(error);
     };
   });
@@ -83,7 +51,7 @@ export function tournament_game_queue(type, token) {
 
 // export function tournament_game_queue(type, token) {
 //   return new Promise((resolve, reject) => {
-//     let ws = new WebSocket(`wss://localhost/wss/games/rankgames/${type}/?token=${token}`);
+//     let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
     
 //   document.querySelector('.logo-small').addEventListener('click', () => {
 //   appState.inTournament = false;
@@ -129,7 +97,7 @@ export function tournament_game_queue(type, token) {
 //     };
 //   });
 // }
-  // const sock = new WebSocket(`ws://localhost:8000/ws/games/start/${data.game_id}/${type}/`);
+  // const sock = new WebSocket(`ws://${SERVER_ADDR}:8000/ws/games/start/${data.game_id}/${type}/`);
   //       OnlineGame(sock, type);
   export function populateUserInfo(user_info_list, select_objects) {
     // 사용자 정보의 수에 따라 선택할 요소의 수를 결정합니다.
@@ -146,3 +114,4 @@ export function tournament_game_queue(type, token) {
         }
     });
   }
+

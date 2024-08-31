@@ -1,9 +1,7 @@
-
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage, logoutUser } from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage } from '/index.js';
 import config from "/config/config.js";
 
 const { SERVER_ADDR } = config;
-
 
 const mainHTML = `
 <div class="inner_setting">
@@ -48,10 +46,6 @@ function putGameLog(data) {
 	.then((response) => {
 		if (response.status === 200) {
 			return response.json();
-		}
-		else if (response.status === 401) {
-			logoutUser();
-			throw new Error('401');
 		}
 		else if (response.status === 404) {
 			document.querySelector('.inner_profile_bottom').innerHTML = `
@@ -163,12 +157,6 @@ async function appendField(data) {
 	document.querySelector('.profile_user_quit').addEventListener('click', () => {
 		document.getElementById('above').classList.remove('above-on');
 		document.getElementById('above').classList.remove('outter_setting');
-
-		if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
-			appState.chat_ws.close();
-			appState.chat_ws = null;
-		}
-		//appState.currentCleanupFn = null;
     });
 	return true;
 }
@@ -224,37 +212,28 @@ const chatHTML = `
 function messageHandler(data, userInfo) {
 	const message = document.querySelector('.s-button-message');
 
-
-	console.log('message.src', message.src);
-	console.log("`https://${SERVER_ADDR}/assets/s-button-message.svg`", `https://${SERVER_ADDR}/assets/s-button-message.svg`);
-	if (message.src == `https://${SERVER_ADDR}/assets/s-button-message.svg`) {
+	if (message.src == "https://${SERVER_ADDR}/assets/s-button-message.svg") {
 		message.src = "/assets/s-button-unmessage.svg"
 		document.querySelector('.inner_profile_bottom').classList.remove('default');
 		document.querySelector('.inner_profile_bottom').innerHTML = chatHTML;
 		initializeChat(data.pk, userInfo);
-
-		//appState.currentCleanupFn = () => {
-		//	if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
-		// 	appState.chat_ws.close();
-		// 	appState.chat_ws = null;
-		//   }
+		appState.currentCleanupFn = () => {
+			if (appState.chat_ws !== null)
+				appState.chat_ws.close();
+		};
 	}
-	else if (message.src == `https://${SERVER_ADDR}/assets/s-button-unmessage.svg`) {
+	else if (message.src == "https://${SERVER_ADDR}/assets/s-button-unmessage.svg") {
 		message.src = "/assets/s-button-message.svg"
 		document.querySelector('.inner_profile_bottom').innerHTML = "";
 		document.querySelector('.inner_profile_bottom').classList.add('default');
-		if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
+		if (appState.chat_ws !== null)
 			appState.chat_ws.close();
-			appState.chat_ws = null;
-		}
-
-		//appState.currentCleanupFn = null;
+		appState.currentCleanupFn = null;
 		putGameLog(data);
 	}
 }
 
 function initializeChat(others, userInfo) {
-
     appState.chat_ws = new WebSocket(`wss://${SERVER_ADDR}/wss/chat/${others}/?token=${appState.token}`);
 
     // 메시지 수신 시 채팅 로그에 추가
@@ -304,8 +283,8 @@ function initializeChat(others, userInfo) {
 					return response.json();
 				}
 				else if (response.status === 401) {
-					logoutUser();
-					throw new Error('401');
+					console.log('response 401')
+					throw new Error('Bad Request');
 				}
 				else {
 					console.log('Other status: ');
@@ -350,8 +329,8 @@ function checkCanTalk() {
 			return response.json();
 		}
 		else if (response.status === 401) {
-			logoutUser();
-			throw new Error('401');
+			console.log('response 401')
+			throw new Error('Bad Request');
 		}
 		else {
 			console.log('Other status: ');
@@ -376,8 +355,8 @@ function blockHandler(data, userInfo) {
 	.then((response) => {
 		if (response.status === 200) {}
 		else if (response.status === 401) {
-			logoutUser();
-			throw new Error('401');
+			console.log('response 401')
+			throw new Error('Bad Request');
 		}
 		else {
 			console.log('Other status: ');
@@ -391,10 +370,6 @@ function blockHandler(data, userInfo) {
 		}
 		else {
 			document.querySelector('.s-button-block').src = "/assets/s-button-unblock.svg";
-		}
-		if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
-			appState.chat_ws.close();
-			appState.chat_ws = null;
 		}
 		profileUserPage(data);
 	})
@@ -418,7 +393,7 @@ function friendHandler(data, userInfo) {
 	.then((response) => {
 		if (response.status === 200) {}
 		else if (response.status === 401) {
-			logoutUser();
+			console.log('response 401')
 			throw new Error('Bad Request');
 		}
 		else {
@@ -433,10 +408,6 @@ function friendHandler(data, userInfo) {
 		}
 		else {
 			document.querySelector('.s-button-friend').src = "/assets/s-button-unfollow.svg";
-		}
-		if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
-			appState.chat_ws.close();
-			appState.chat_ws = null;
 		}
 		profileUserPage(data);
 		appState.ws.send(JSON.stringify({
@@ -468,12 +439,7 @@ async function getMyInfo(data) {
 			let errorMessage = 'Error 400: Bad Request\n';
 			console.log(errorMessage, errorData);
 			throw new Error('Bad Request');
-		}
-		else if (response.status === 401) {
-			logoutUser();
-			throw new Error('401');
-		}
-		else {
+		} else {
 			const errorData = await response.json();
 			console.log('Other status:', errorData);
 			throw new Error('Unexpected status code: ' + response.status);
@@ -502,12 +468,7 @@ async function getUserInfo(data) {
 			let errorMessage = 'Error 400: Bad Request\n';
 			console.log(errorMessage, errorData);
 			throw new Error('Bad Request');
-		}
-		else if (response.status === 401) {
-			logoutUser();
-			throw new Error('401');
-		}
-		else {
+		} else {
 			const errorData = await response.json();
 			console.log('Other status:', errorData);
 			throw new Error('Unexpected status code: ' + response.status);
