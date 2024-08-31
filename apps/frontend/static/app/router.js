@@ -175,74 +175,87 @@ export function main_ws(token) {
 
 	appState.ws.onmessage = (event) => {
 		const data = JSON.parse(event.data);
+		let flag = false;
 		
     	if (data.type === 'update') {
-			const userInfoList = data.users;
-			appState.id = data.my_id;
-			myprofile.setImageNick(appState.picture, appState.nickname);
-			connect.removeAll();
-			friend.removeAll();
-			
-			let followData = [];
-			fetch('/api/users/current/follow/', {
-				method: 'GET',
-				headers: {
-					'Authorization': "Token " + appState.token
-				}
-			})
-			.then((response) => {
-				if (response.status === 200) {
-					return response.json().then(data => {
-						return data;
-					});
-				} else if (response.status === 401) {
-						logoutUser();
-						throw new Error('401');
-				} else {
-					return response.json().then(data => {
-						console.log('Other status: ', data);
-						throw new Error('Unexpected status code: ', response.status);
-					});
-				}
-			})
-			.then((data) => {
-				followData = data; // followData 배열에 데이터를 저장
-			})
-			.catch(error => {
-				console.log('Error: ', error);
-				throw error;
-			})
-			.finally(() => {
-				try {
-				userInfoList.forEach(userInfo => {
-					if (userInfo.isLoggedin) {
-						const user = document.createElement('t-user-info');
-						user.classList.add("p-button-user");
-						user.setAttribute('data-nick', userInfo.nick || 'Unknown');
-						user.setAttribute('data-img', userInfo.img || '/assets/default.png');
-						user.setAttribute('data-id', userInfo.id || '0000');
-						user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
-						connect.addUserInfo(user);
-					}
-					const followingsIds = followData.followings.map(user => user.pk);
-					if (followingsIds.includes(userInfo.id))	{
-						const user = document.createElement('t-user-info');
-						user.classList.add("p-button-user");
-						user.setAttribute('data-nick', userInfo.nick || 'Unknown');
-						user.setAttribute('data-img', userInfo.img || '/assets/default.png');
-						user.setAttribute('data-id', userInfo.id || '0000');
-						user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
-						friend.addUserInfo(user);
-					}
-				});
-				}
-				catch (error) {
-					console.log('finally', error);
-				}
-			})
-		}
+            const userInfoList = data.users;
+            appState.id = data.my_id;
+            myprofile.setImageNick(appState.picture, appState.nickname);
+            connect.removeAll();
+            friend.removeAll();
+            let followData = [];
+            fetch('/api/users/current/follow/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': "Token " + appState.token
+                }
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json().then(data => {
+                        return data;
+                    });
+                } else if (response.status === 401) {
+                        logoutUser();
+                        throw new Error('401');
+                } else {
+                    return response.json().then(data => {
+                        console.log('Other status: ', data);
+                        throw new Error('Unexpected status code: ', response.status);
+                    });
+                }
+            })
+            .then((data) => {
+                followData = data; // followData 배열에 데이터를 저장
+            })
+            .catch(error => {
+                console.log('Error: ', error);
+                throw error;
+            })
+            .finally(() => {
+                try {
+                    userInfoList.forEach(userInfo => {
+                    if (userInfo.id == appState.id && !userInfo.isLoggedin){
+                        flag = true;
+                    }
+                    if (userInfo.isLoggedin) {
+                        const user = document.createElement('t-user-info');
+                        user.classList.add("p-button-user");
+                        user.setAttribute('data-nick', userInfo.nick || 'Unknown');
+                        user.setAttribute('data-img', userInfo.img || '/assets/default.png');
+                        user.setAttribute('data-id', userInfo.id || '0000');
+                        user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
+                        connect.addUserInfo(user);
+                    }
+                    const followingsIds = followData.followings.map(user => user.pk);
+                    if (followingsIds.includes(userInfo.id))    {
+                        const user = document.createElement('t-user-info');
+                        user.classList.add("p-button-user");
+                        user.setAttribute('data-nick', userInfo.nick || 'Unknown');
+                        user.setAttribute('data-img', userInfo.img || '/assets/default.png');
+                        user.setAttribute('data-id', userInfo.id || '0000');
+                        user.setAttribute('data-isLoggedin', userInfo.isLoggedin ? 'true' : 'false');
+                        friend.addUserInfo(user);
+                    }
+                }
+                );
+                }
+                catch (error) {
+                    console.log('finally', error);
+                }
+            })
+        }
 		else if (data.type === 'game_invitation') {
 			invitation.setInvitation(data.nick, data.img);
+		}
+		sleep(1000);
+		if (flag){
+			appState.ws.send(JSON.stringify({
+				"type": "update_user_info",
+				"field": "islogin",
+				"value": true,
+			}));
+			flag = false;
 		}
 	}
 		// const info = JSON.parse(event.data);
@@ -291,3 +304,7 @@ export function main_ws(token) {
 		appState.ws = null;
 	}
 }
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+  }

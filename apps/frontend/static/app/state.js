@@ -44,20 +44,20 @@ export function loginUser(_token, _email, _nickname, _picture) {
 
 export function logoutUser() {
 	if (appState.ws && appState.ws.readyState === WebSocket.OPEN) {
-		appState.ws.close();
+		appState.ws.close(1000);
 		appState.ws = null;
 	}
 	if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN) {
 		appState.chat_ws.close();
-		appState.ws = null;
+		appState.chat_ws = null;
 	}
 	if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN) {
 		appState.tour_ws.close();
-		appState.ws = null;
+		appState.tour_ws = null;
 	}
 	if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
 		appState.game_ws.close();
-		appState.ws = null;
+		appState.game_ws = null;
 	}
 	
 	appState.isLoggedIn = false;
@@ -70,6 +70,7 @@ export function logoutUser() {
 	appState.ws = null;
 	appState.chat_ws = null;
 	appState.tour_ws = null;
+	appState.game_ws = null;
 	appState.inTournament = false;
 	appState.inQueue = false;
 	sessionStorage.setItem('appState', JSON.stringify(appState));
