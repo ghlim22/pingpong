@@ -12,6 +12,7 @@ class mainConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_group_name = "main"
         self.redis = redis.from_url("redis://redis")
+        self.token = self.scope["query_string"].decode("utf-8").split("=")[1]
 
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -34,7 +35,7 @@ class mainConsumer(AsyncWebsocketConsumer):
             "channel_name": self.channel_name,  # 유저 ID와 채널 매핑 저장
             "isLoggedin": status,
         }
-        await self.redis.hset("main", self.user.id, json.dumps(user_info))
+        await self.redis.hset("main", self.token, json.dumps(user_info))
 
     async def disconnect(self, close_code=False):
         if self.user and self.user.id:
