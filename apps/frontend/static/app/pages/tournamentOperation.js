@@ -6,7 +6,7 @@ const { SERVER_ADDR } = config;
 
 export function tournament_game_queue(type, token) {
   return new Promise((resolve, reject) => {
-    const ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
+    appState.game_ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
     appState.inQueue = true;
 
     const objects = [
@@ -17,8 +17,9 @@ export function tournament_game_queue(type, token) {
     ];
     
     appState.currentCleanupFn = () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close();
+      if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
+        appState.game_ws.close();
+        appState.game_ws = null;
       }
 
       if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
@@ -32,9 +33,10 @@ export function tournament_game_queue(type, token) {
 
 
 	document.querySelector('.logo-small').addEventListener('click', () => {
-		if (ws.readyState === WebSocket.OPEN) {
-			ws.close();
-		}
+		if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
+      appState.game_ws.close();
+      appState.game_ws = null;
+    }
 		appState.inTournament = false;
     appState.inQueue = false;
 		navigate(parseUrl({
@@ -44,27 +46,36 @@ export function tournament_game_queue(type, token) {
 	});
 
 
-    ws.onmessage = (event) => {
+    appState.game_ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === "update")
           populateUserInfo(data.users, objects);
         else if (data.type === "create")
         {
-          ws.close();
+          if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
+            appState.game_ws.close();
+            appState.game_ws = null;
+          }
           console.log("data.data", data.data);
           appState.tour_ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/tour/${data.data.game_id2}/?token=${token}`);
           resolve(data.data);
         }
         else if (data.type === "close_connection")
         {
-          ws.close();
+          if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
+            appState.game_ws.close();
+            appState.game_ws = null;
+          }
           appState.inQueue = false;
           resolve(data);
         }
     };
       
-    ws.onerror = (error) => {
-        ws.close();
+    appState.game_ws.onerror = (error) => {
+        if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
+          appState.game_ws.close();
+          appState.game_ws = null;
+        }
         reject(error);
     };
   });

@@ -61,6 +61,10 @@ export default function OnlineGame(sock, game_type) {
         up.y = gameData.up.y * canvas.height;
         down.x = gameData.down.x * canvas.width;
         down.y = gameData.down.y * canvas.height;
+        left.score = gameData.left.score;
+        right.score = gameData.right.score;
+        up.score = gameData.up.score;
+        down.score = gameData.down.score;
         ball.x = gameData.ball.x * canvas.width;
         ball.y = gameData.ball.y * canvas.height;
         ball.radius = right.width * (2 / 3);

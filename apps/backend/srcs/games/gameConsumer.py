@@ -1,17 +1,20 @@
 import asyncio
 import json
 import logging
+
 import django
 
 django.setup()
 import redis.asyncio as redis
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
+from users.models import CustomUser
 
 from .game import PingPongGame
-from users.models import CustomUser
 from .models import GameLog
+
 logger = logging.getLogger("django")
+
 
 class GameConsumer(AsyncWebsocketConsumer):
     class Games:
@@ -38,14 +41,14 @@ class GameConsumer(AsyncWebsocketConsumer):
         group_size = await self._increment_and_get_group_size(self.game_group)
 
         if group_size == self.max_players:
-            self.position = 'left'
+            self.position = "left"
         elif group_size == 1:
-            self.position = 'right'
+            self.position = "right"
         elif group_size == 2:
-            self.position = 'up'
+            self.position = "up"
         elif group_size == 3:
-            self.position = 'down'
-            
+            self.position = "down"
+
         if self.type == "tournament" or self.type == "4P" or self.type == "2P":
             asyncio.create_task(self._start_timeout(self.max_players))
         else:
@@ -59,12 +62,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         logger.info(self.position)
 
     async def save_user_info(self, user):
-        user_info = {
-            "id": user.id,
-            "nickname": user.nickname,
-            "picture": user.picture.url,
-            "position": self.position
-        }
+        user_info = {"id": user.id, "nickname": user.nickname, "picture": user.picture.url, "position": self.position}
         await self.redis.hset(self.game_id, self.channel_name, json.dumps(user_info))
 
     async def receive(self, text_data):
@@ -72,7 +70,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         type = data.get("type")
         if type == "start":
             self.isStart = True
-            if self.position == 'left':
+            if self.position == "left":
                 asyncio.create_task(self._game_start(data.get("data", {})))
         elif type == "keyboard":
             asyncio.create_task(self._accept_key(data.get("data", {})))
@@ -81,7 +79,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         logger.info("User disconnected")
         if self.user and self.user.id:
             if isinstance(self.channel_name, bytes):
-                self.channel_name = self.channel_name.decode('utf-8')
+                self.channel_name = self.channel_name.decode("utf-8")
             else:
                 self.channel_name = self.channel_name
             await self._decrement_group_size(self.game_group)
@@ -107,11 +105,11 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def _get_group_size(self, group_name):
         group_size = await self.redis.get(group_name)
-        
+
         if group_size is None:
             return 0
         return int(group_size)
-    
+
     async def _decrement_group_size(self, group_name):
         await self.redis.decr(group_name)
 
@@ -120,19 +118,13 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         size = await self._get_group_size(self.game_group)
         if size < max:
-            await self.channel_layer.group_send(
-                self.game_group,
-                {
-                    'type': 'disconnect_all'
-                }
-            )
+            await self.channel_layer.group_send(self.game_group, {"type": "disconnect_all"})
             self.close()
         else:
-            if self.position == 'left':
+            if self.position == "left":
                 user_info_dict = await self.redis.hgetall(self.game_id)
                 self.user_info_list = [
-                    json.loads(user_info_dict[self.channel_name])
-                    for self.channel_name in user_info_dict
+                    json.loads(user_info_dict[self.channel_name]) for self.channel_name in user_info_dict
                 ]
                 await self.channel_layer.group_send(
                     self.game_group,
@@ -146,18 +138,14 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await asyncio.sleep(self.timeout)
 
                 size = await self._get_group_size(self.game_group)
+                logger.info(self.position, size)
                 if size < max:
-                    await self.channel_layer.group_send(
-                        self.game_group,
-                        {
-                            'type': 'disconnect_all'
-                        }
-                    )
+                    await self.channel_layer.group_send(self.game_group, {"type": "disconnect_all"})
                     self.close()
-            
+
     async def _get_group_size(self, group_name):
         group_size = await self.redis.get(group_name)
-        
+
         if group_size is None:
             return 0
 
@@ -185,9 +173,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self._send_state(match)
             await asyncio.sleep(0.05)
         size = await self._get_group_size(self.game_group)
-        if (size == self.max_players):
+        if size == self.max_players:
             await self._game_end(match)
-        
+
     async def _accept_key(self, message_data):
         if self.position == "left" or self.position == "right":
             await self._move_bar_row(message_data, self.position)
@@ -253,7 +241,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             picture = match.left.picture
             winner_id = [user["id"] for user in self.user_info_list if user["position"] == "left"]
             loser_id = [user["id"] for user in self.user_info_list if user["position"] == "right"]
-            if self.type == '4P':
+            if self.type == "4P":
                 winner2_id = [user["id"] for user in self.user_info_list if user["position"] == "up"]
                 loser2_id = [user["id"] for user in self.user_info_list if user["position"] == "down"]
                 nickname2 = match.up.nickname
@@ -263,7 +251,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             picture = match.right.picture
             winner_id = [user["id"] for user in self.user_info_list if user["position"] == "right"]
             loser_id = [user["id"] for user in self.user_info_list if user["position"] == "left"]
-            if self.type == '4P':
+            if self.type == "4P":
                 winner2_id = [user["id"] for user in self.user_info_list if user["position"] == "down"]
                 loser2_id = [user["id"] for user in self.user_info_list if user["position"] == "up"]
                 nickname2 = match.down.nickname
@@ -277,7 +265,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await sync_to_async(game_log.winners.add)(*winner_id)
         await sync_to_async(game_log.losers.add)(*loser_id)
 
-        winner = await sync_to_async(CustomUser.objects.get)(id=winner_id[0])#[0]
+        winner = await sync_to_async(CustomUser.objects.get)(id=winner_id[0])  # [0]
         winner.win += 1
         await sync_to_async(winner.save)()
 
@@ -285,7 +273,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         loser.lose += 1
         await sync_to_async(loser.save)()
 
-        if self.type == '4P':
+        if self.type == "4P":
             await sync_to_async(game_log.players.add)(*winner2_id)
             await sync_to_async(game_log.players.add)(*loser2_id)
             await sync_to_async(game_log.winners.add)(*winner2_id)
@@ -316,7 +304,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self._send_state_four(match)
             await asyncio.sleep(0.04)
         size = await self._get_group_size(self.game_group)
-        if (size == self.max_players):
+        if size == self.max_players:
             await self._game_end(match)
 
     async def _update_game_four(self, match):
@@ -373,7 +361,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self._send_state(match)
             await asyncio.sleep(0.05)
         size = await self._get_group_size(self.game_group)
-        if (size == self.max_players):
+        if size == self.max_players:
             await self._game_end(match)
 
     async def _init_object(self, message_data):

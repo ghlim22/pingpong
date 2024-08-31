@@ -10,6 +10,7 @@ export let appState = {
 	ws:					null,
 	chat_ws:			null,
 	tour_ws:			null,
+	game_ws:			null,
 	inTournament:		false,
 	inQueue:			false,
 };
@@ -52,6 +53,10 @@ export function logoutUser() {
 	}
 	if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN) {
 		appState.tour_ws.close();
+		appState.ws = null;
+	}
+	if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
+		appState.game_ws.close();
 		appState.ws = null;
 	}
 	

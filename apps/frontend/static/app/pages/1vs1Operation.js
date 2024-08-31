@@ -69,11 +69,12 @@ export function play_game(info, type, token) {
   return new Promise((resolve, reject) => {
     
     console.log("appState.inQueue", appState.inQueue)
-    const ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/start/${info.game_id}/${type}/?token=${token}`);
+    appState.game_ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/start/${info.game_id}/${type}/?token=${token}`);
 
     appState.currentCleanupFn = () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close();
+      if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
+        appState.game_ws.close();
+        appState.game_ws = null;
       }
       if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
         appState.tour_ws.close();
@@ -83,7 +84,7 @@ export function play_game(info, type, token) {
       // navigate(parseUrl(basePath));
     };
 
-    OnlineGame(ws, type)
+    OnlineGame(appState.game_ws, type)
     .then((data) => {
       console.log('Received data:', data.data);
       resolve(data);
