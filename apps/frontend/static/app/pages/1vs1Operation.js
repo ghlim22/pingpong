@@ -11,7 +11,7 @@ export function game_queue(type, token) {
     let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
     appState.inQueue = true;
     console.log("appState.tour_ws", appState.tour_ws);
-    if (type !== "2P" && type !== "4P" && appState.tour_ws !== null){
+    if (type !== "2P" && type !== "4P" && appState.tour_ws){
       appState.tour_ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         console.log("data.count", data.count);
@@ -25,6 +25,7 @@ export function game_queue(type, token) {
               appState.tour_ws = null;
             }
             appState.inQueue = false;
+            navigate(parseUrl(basePath));
           }
         }
       }
@@ -78,13 +79,14 @@ export function play_game(info, type, token) {
         appState.tour_ws.close();
         appState.tour_ws = null;
       }
+      resolve(null);
       // navigate(parseUrl(basePath));
     };
 
     OnlineGame(ws, type)
     .then((data) => {
       console.log('Received data:', data.data);
-      resolve(data)
+      resolve(data);
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);

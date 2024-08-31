@@ -108,6 +108,10 @@ export function pong1VS1Page() {
 
 export function game1vs1Page(info) {
 	if (appState.inQueue === false){
+		if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
+			appState.tour_ws.close();
+			appState.tour_ws = null;
+		}
 		return ;
 	}
 	const above = document.getElementById('above');
@@ -131,25 +135,20 @@ export function game1vs1Page(info) {
 	console.log('Received info:', info);
 	play_game(info, "2P", appState.token)
     .then((data) => {
-      console.log('Received data:', data.data);
-	  if (data === null)
-	  {
+      // console.log('Received data:', data.data);
+	  if (data === null){
 		return ;
 	  }
-	  else if (data.type === "disconnect_all")
-	  {
+	  else if (data.type === "disconnect_all"){
 		console.log("11111111111111111111");
-		navigate(parseUrl(basePath));
-		alert("Someone has disconnected");
-
 		if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
 			appState.tour_ws.close();
 			appState.tour_ws = null;
 		  }
-
+		navigate(parseUrl(basePath));
+		alert("Someone has disconnected");
 	  }
-	  else if (info.game_id2 === 'false' || appState.nickname !== data.data.nickname)
-	  {
+	  else if (info.game_id2 === 'false' || appState.nickname !== data.data.nickname){
 		console.log("22222222222222222222");
 
 		if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
@@ -159,8 +158,7 @@ export function game1vs1Page(info) {
 
       	gameResultPage(data.data);
 	  }
-	  else
-	  {
+	  else{
 		info.game_id2 !== "false";
 		console.log("tournamentLastGame!!!!!!!!!!! im winner");
 		tournamentLastGame(info.game_id3);
@@ -218,7 +216,7 @@ export function tournamentLastGame(game_id) {
 		}
 	  }
 	  
-	  setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
+	setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
 
     })
     .catch((error) => {

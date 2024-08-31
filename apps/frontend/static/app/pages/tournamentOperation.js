@@ -51,10 +51,8 @@ export function tournament_game_queue(type, token) {
         else if (data.type === "create")
         {
           ws.close();
-          if (data.data.game_id2 !== "false"){
-              console.log("hi");
-              appState.tour_ws = new WebSocket(`wss://${SERVER_ADDR}wss/games/tour/${data.data.game_id}/?token=${token}`);
-          }
+          console.log("data.data", data.data);
+          appState.tour_ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/tour/${data.data.game_id2}/?token=${token}`);
           resolve(data.data);
         }
         else if (data.type === "close_connection")
