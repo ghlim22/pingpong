@@ -7,7 +7,7 @@ EXPOSE 443
 
 WORKDIR /usr/src/app
 
-#COPY ./srcs ./srcs
+COPY ./srcs ./srcs
 COPY ./tools ./tools
 
 ENV DJANGO_SETTINGS_MODULE config.settings.deployment

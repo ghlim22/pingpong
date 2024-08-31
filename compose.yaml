@@ -15,7 +15,6 @@ services:
     volumes:
       - ./apps/frontend/static/django:/usr/src/app/srcs/staticfiles:z
       - ./apps/frontend/media/django:/usr/src/app/srcs/mediafiles:z
-      - ./apps/backend/srcs:/usr/src/app/srcs:z
 
   postgres:
     build: ./apps/postgres
