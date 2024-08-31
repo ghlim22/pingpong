@@ -42,6 +42,8 @@ export function game_queue(type, token) {
         appState.tour_ws = null;
       }
       appState.inQueue = false;
+      console.log("back!!!");
+      return ;
       // navigate(parseUrl(basePath));
     };
     
@@ -86,6 +88,10 @@ export function play_game(info, type, token) {
 
     OnlineGame(appState.game_ws, type)
     .then((data) => {
+      if (appState.game_ws && appState.game_ws.readyState === WebSocket.OPEN) {
+        appState.game_ws.close();
+        appState.game_ws = null;
+      }
       console.log('Received data:', data.data);
       resolve(data);
     })

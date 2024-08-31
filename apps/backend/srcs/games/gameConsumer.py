@@ -85,6 +85,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self._decrement_group_size(self.game_group)
             await self.redis.hdel(self.game_id, self.channel_name)
             await self.channel_layer.group_discard(self.game_group, self.channel_name)
+            self.isStart = False
 
     async def _get_group_size(self, group_name):
         size = await self.redis.get(group_name)
@@ -118,30 +119,29 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         size = await self._get_group_size(self.game_group)
         if size < max:
-            await self.channel_layer.group_send(self.game_group, {"type": "disconnect_all"})
-            self.close()
+            await self.channel_layer.send(self.channel_name, {"type": "disconnect_all"})
         else:
-            if self.position == "left":
-                user_info_dict = await self.redis.hgetall(self.game_id)
-                self.user_info_list = [
-                    json.loads(user_info_dict[self.channel_name]) for self.channel_name in user_info_dict
-                ]
-                await self.channel_layer.group_send(
-                    self.game_group,
-                    {
-                        "type": "game_start",
-                        "game_type": self.type,
-                        "user_info": self.user_info_list,
-                    },
-                )
-            while True:
-                await asyncio.sleep(self.timeout)
+            self.isStart = False
+        if self.position == "left":
+            user_info_dict = await self.redis.hgetall(self.game_id)
+            self.user_info_list = [
+                json.loads(user_info_dict[self.channel_name]) for self.channel_name in user_info_dict
+            ]
+            await self.channel_layer.group_send(
+                self.game_group,
+                {
+                    "type": "game_start",
+                    "game_type": self.type,
+                    "user_info": self.user_info_list,
+                },
+            )
+        while self.isStart:
+            await asyncio.sleep(self.timeout)
 
-                size = await self._get_group_size(self.game_group)
-                logger.info(self.position, size)
-                if size < max:
-                    await self.channel_layer.group_send(self.game_group, {"type": "disconnect_all"})
-                    self.close()
+            size = await self._get_group_size(self.game_group)
+            if size < max:
+                logger.info(f"hihi")
+                await self.channel_layer.send(self.channel_name, {"type": "disconnect_all"})
 
     async def _get_group_size(self, group_name):
         group_size = await self.redis.get(group_name)
@@ -229,7 +229,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 "score": match.right.score,
             },
         }
-        logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "two_player", "data": data})
 
     async def _game_end(self, match):
@@ -295,7 +294,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         }
         await sync_to_async(game_log.save)()
 
-        logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "game_end", "data": data})
 
     async def _play_game_four(self, match):
@@ -351,7 +349,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 "score": match.down.score,
             },
         }
-        logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "four_player", "data": data})
 
     async def _play_game_tournament(self, message_data):
