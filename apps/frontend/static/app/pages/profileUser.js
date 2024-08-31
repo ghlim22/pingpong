@@ -392,6 +392,10 @@ function blockHandler(data, userInfo) {
 		else {
 			document.querySelector('.s-button-block').src = "/assets/s-button-unblock.svg";
 		}
+		if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
+			appState.chat_ws.close();
+			appState.chat_ws = null;
+		}
 		profileUserPage(data);
 	})
 	.catch(error => {
@@ -429,6 +433,10 @@ function friendHandler(data, userInfo) {
 		}
 		else {
 			document.querySelector('.s-button-friend').src = "/assets/s-button-unfollow.svg";
+		}
+		if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
+			appState.chat_ws.close();
+			appState.chat_ws = null;
 		}
 		profileUserPage(data);
 		appState.ws.send(JSON.stringify({
