@@ -1,3 +1,4 @@
+import { navigate, parseUrl } from '/index.js';
 export let appState = {
 	isLoggedIn:			false,
 	token:				null,
@@ -50,4 +51,38 @@ export function disconnect_ws(ws) {
 		ws.close();
 		ws = null;
 	}
+}
+
+export function logoutUser() {
+	if (appState.ws && appState.ws.readyState === WebSocket.OPEN) {
+		appState.ws.close();
+	}
+	if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN) {
+		appState.chat_ws.close();
+	}
+	if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN) {
+		appState.tour_ws.close();
+	}
+	
+	appState.isLoggedIn = false;
+	appState.token = null;
+	appState.email = null;
+	appState.nickname = null;
+	appState.picture = null;
+	appState.id = null;
+	appState.invitation = 0;
+	appState.connect = 8;
+	appState.friend = 4;
+	appState.currentCleanupFn = null;
+	appState.ws = null;
+	appState.in_game_id = null;
+	appState.chat_ws = null;
+	appState.tour_ws = null;
+	appState.inTournament = false;
+	sessionStorage.setItem('appState', JSON.stringify(appState));
+	navigate(parseUrl({
+		pathname: '/login',
+		search: ""
+	}));
+	alert('Logged out');
 }

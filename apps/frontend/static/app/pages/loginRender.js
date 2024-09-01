@@ -65,6 +65,10 @@ export function loginPage() {
 		return;
 	}
 	main.innerHTML = pageHTML;
+	document.getElementById('top').innerHTML = "";
+	document.getElementById('bottom').innerHTML = "";
+	document.getElementById('left-side').innerHTML = "";
+	document.getElementById('right-side').innerHTML = "";
 
 	// document.getElementById('start').addEventListener('click', () => {
 	// // window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-1a77f4bb835ced96471b037724388e48dca50409405393deeac24248b3fe0aab&redirect_uri=https%3A%2F%2F${SERVER_ADDR}%2Fapi%2Fauth%2Fredirect&response_type=code';
