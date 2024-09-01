@@ -50,11 +50,17 @@ export function parseUrl(url) {
 export function navigate(parsed, data = null) {
 	const currentPath = window.location.pathname;
 	const page = routes[parsed.route] || notFoundPage;
-	//if (currentPath !== parsed.path) {
+	if (currentPath !== parsed.path) {
+	console.log('window.history', window.history);
+	console.log('window.location.origin + parsed.path', window.location.origin + parsed.path);
 		window.history.pushState(data, parsed.path, window.location.origin + parsed.path);
-	//}
+	}
 	appState.currentCleanupFn = null;
 	setClaslistDefault();
+	//if (appState.isMain === false) {
+	//	page = homePage;
+	//}
+
 	//if (data !== null) {
 	//	profileUserPage(data);
 	//}
@@ -64,6 +70,7 @@ export function navigate(parsed, data = null) {
 	//else {
 		page();
 	//}
+	
 	if (page !== notFoundPage && appState.token !== null)
 	{
 		setTimeout(() => { main_ws(appState.token) } , 200);
@@ -102,12 +109,15 @@ function setClaslistDefault() {
 }
 
 function main_ws(token) {
+	console.log("appState.ws", appState.ws);
 	if (!appState.ws || !(appState.ws instanceof WebSocket))
 	{
 		appState.ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/main/?token=${token}`);
 	}
 	else
 	{
+		while (appState.ws.readyState === 0)
+			return ;
 		appState.ws.send(JSON.stringify({ type: "updateMine"}));
 	}
 	const connect = document.querySelector('.connect');
@@ -228,3 +238,8 @@ function main_ws(token) {
 		appState.ws = null;
 	}
 }
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  

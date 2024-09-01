@@ -44,6 +44,10 @@ const matchOrderHTML = `
 `;
 
 export function tournamentPage() {
+	if (appState.isMain === undefined) {
+		navigate(parseUrl(basePath));
+	}
+	else {
 	if (!appState.isLoggedIn) {
 		navigate(parseUrl(basePath + 'login'));
 		return;
@@ -73,6 +77,7 @@ export function tournamentPage() {
     .catch((error) => {
       console.error('Error fetching game queue:', error);
     });
+}
 	//setTimeout(() => { tournamentGame(data) } , 5000); //시간 설정이 안됨
 }
 

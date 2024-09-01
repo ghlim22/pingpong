@@ -68,31 +68,37 @@ const resultHTML = `
 let timerId;
 
 export function pong1VS1Page() {
-	const above = document.getElementById('above');
-	above.innerHTML = matchHTML;
+	if (appState.isMain === undefined) {
+		navigate(parseUrl(basePath));
+	} else {
 
-	const img = document.querySelector('.match-1vs1 #mine img');
-	const nickname = document.querySelector('.match-1vs1 #mySpan');
-	const img_opponent = document.querySelector('.match-1vs1 #opponent img');
-	const nickname_opponent = document.querySelector('.match-1vs1 #opponentSpan');
-
-	above.classList.add('above-on');
-	if (appState.picture !== null)
-		img.src = appState.picture;
-	nickname.innerHTML = appState.nickname;
+		appState.isMain = false;
+		const above = document.getElementById('above');
+		above.innerHTML = matchHTML;
 	
-	game_queue("2P", appState.token)
-    .then((data) => {
-		for (const element of data.user_info)
-		if (element.nickname != appState.nickname){
-			img_opponent.src = element.picture;
-			nickname_opponent.innerHTML = element.nickname;
-		}
-		setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
-    })
-    .catch((error) => {
-      console.error('Error fetching game queue:', error);
-    });
+		const img = document.querySelector('.match-1vs1 #mine img');
+		const nickname = document.querySelector('.match-1vs1 #mySpan');
+		const img_opponent = document.querySelector('.match-1vs1 #opponent img');
+		const nickname_opponent = document.querySelector('.match-1vs1 #opponentSpan');
+	
+		above.classList.add('above-on');
+		if (appState.picture !== null)
+			img.src = appState.picture;
+		nickname.innerHTML = appState.nickname;
+		
+		game_queue("2P", appState.token)
+		.then((data) => {
+			for (const element of data.user_info)
+			if (element.nickname != appState.nickname){
+				img_opponent.src = element.picture;
+				nickname_opponent.innerHTML = element.nickname;
+			}
+			setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
+		})
+		.catch((error) => {
+		  console.error('Error fetching game queue:', error);
+		});
+	}
 }
 
 export function game1vs1Page(info) {
