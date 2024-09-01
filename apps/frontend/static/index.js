@@ -1,7 +1,7 @@
 //Object appState
 
 import { appState, loginUser } from '/app/state.js';
-import { basePath } from '/app/state.js';
+import { basePath, disconnect_ws } from '/app/state.js';
 
 //class TUserInfo
 import { TUserInfo } from '/components/tUserInfo.js';
@@ -41,6 +41,7 @@ export {
 	submitPicture,
 	submitNickname,
 	profileUserPage,
+	disconnect_ws,
 };
 
 

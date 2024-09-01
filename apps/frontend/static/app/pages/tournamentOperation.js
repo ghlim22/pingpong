@@ -6,7 +6,7 @@ const { SERVER_ADDR } = config;
 
 export function tournament_game_queue(type, token) {
   return new Promise((resolve, reject) => {
-    let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
+    let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/queue/${type}/?token=${token}`);
     const objects = [
       '.tournament-room-in .player1',
       '.tournament-room-in .player2',
@@ -51,7 +51,7 @@ export function tournament_game_queue(type, token) {
 
 // export function tournament_game_queue(type, token) {
 //   return new Promise((resolve, reject) => {
-//     let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
+//     let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/queue/${type}/?token=${token}`);
     
 //   document.querySelector('.logo-small').addEventListener('click', () => {
 //   appState.inTournament = false;

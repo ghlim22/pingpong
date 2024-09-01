@@ -49,9 +49,7 @@ class mainConsumer(AsyncWebsocketConsumer):
         if data.get("type") == "updateMine":
             user_info_dict = await self.redis.hgetall("main")
             user_info_list = [json.loads(user_info_dict[channel_name]) for channel_name in user_info_dict]
-            await self.channel_layer.send(
-                self.channel_name, {"type": "update", "users": user_info_list, "my_id": self.user.id}
-            )
+            await self.channel_layer.send( self.channel_name, {"type": "update", "users": user_info_list, "my_id": self.user.id} )
         elif data.get("type") == "invite":
             await self.invite_user(data)
         elif data.get("type") == "update_user_info":

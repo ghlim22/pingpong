@@ -38,3 +38,10 @@ export function loginUser(_token, _email, _nickname, _picture) {
 		picture: _picture
 	});
 }
+
+export function disconnect_ws(ws) {
+	if (ws && ws.readyState === WebSocket.OPEN){
+		ws.close();
+		ws = null;
+	}
+}
