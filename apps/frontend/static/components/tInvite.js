@@ -47,7 +47,10 @@ export class TInvite extends HTMLElement {
 		yes.addEventListener('click', () => {
             border.classList.remove("receive-invitation");
             if (!appState.inTournament)
-			    navigate(parseUrl(basePath + 'tournament'));
+			    navigate(parseUrl({
+					pathname: '/tournament',
+					search: ""
+				}));
 		})
 		no.addEventListener('click', () => {
             border.classList.remove("receive-invitation");

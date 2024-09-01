@@ -50,14 +50,14 @@ window.onpopstate = (event) => {
         appState.currentCleanupFn();
     }
 	console.log("onpop");
-	navigate(parseUrl(window.location.pathname), event.state);
+	navigate(parseUrl(window.location), event.state);
 };
 
 if (document.readyState !== 'loading') {
-	navigate(parseUrl(window.location.pathname));
+	navigate(parseUrl(window.location));
 } else {
 	document.addEventListener('DOMContentLoaded', () => {
-		navigate(parseUrl(window.location.pathname));
+		navigate(parseUrl(window.location));
 	});
 }
 

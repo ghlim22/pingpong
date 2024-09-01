@@ -45,7 +45,10 @@ const matchOrderHTML = `
 
 export function tournamentPage() {
 	if (!appState.isLoggedIn) {
-		navigate(parseUrl(basePath + 'login'));
+		navigate(parseUrl({
+			pathname: '/login',
+			search: ""
+		}));
 		return;
 	}
 	const leftSideHTML = `

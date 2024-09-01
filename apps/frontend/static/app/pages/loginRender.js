@@ -85,24 +85,27 @@ export function loginPage() {
 	// 	//	console.log('Error: ', error);
 	// 	//});
 	// });
-	document.getElementById('start').addEventListener('click', () => {
-		main.innerHTML = startHTML;
 
-		document.getElementById('join').addEventListener('click', () => {
-			main.innerHTML = joinHTML;
+//	document.getElementById('start').addEventListener('click', () => {
+//		main.innerHTML = startHTML;
+//
+//		document.getElementById('join').addEventListener('click', () => {
+//			main.innerHTML = joinHTML;
+//
+//			document.getElementById('imgInput').addEventListener('change', (e) => {
+//				let file = e.target.files[0];
+//
+//				document.getElementById('form-join-file-name').textContent = file.name;
+//			});
+//		});
+//
+//		document.getElementById('login').addEventListener('click', () => {
+//			main.innerHTML = loginHTML;
+//
+//		});
+//	});
 
-			document.getElementById('imgInput').addEventListener('change', (e) => {
-				let file = e.target.files[0];
-
-				document.getElementById('form-join-file-name').textContent = file.name;
-			});
-			//document.getElementById('join-submit').addEventListener('submit', submitJoin);
-		});
-
-		document.getElementById('login').addEventListener('click', () => {
-			main.innerHTML = loginHTML;
-
-			//document.getElementById('login-submit').addEventListener('click', submitLogin);
-		});
-	});
+document.getElementById('start').addEventListener('click', () => {
+	window.location.href = 'api/auth/signin';
+});
 }
