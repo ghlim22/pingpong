@@ -1,7 +1,7 @@
 //Object appState
 
 import { appState, loginUser } from '/app/state.js';
-import { basePath } from '/app/state.js';
+import { basePath, disconnect_ws } from '/app/state.js';
 
 //class TUserInfo
 import { TUserInfo } from '/components/tUserInfo.js';
@@ -41,6 +41,7 @@ export {
 	submitPicture,
 	submitNickname,
 	profileUserPage,
+	disconnect_ws,
 };
 
 
@@ -49,14 +50,14 @@ window.onpopstate = (event) => {
         appState.currentCleanupFn();
     }
 	console.log("onpop");
-	navigate(parseUrl(window.location.pathname), event.state);
+	navigate(parseUrl(window.location), event.state);
 };
 
 if (document.readyState !== 'loading') {
-	navigate(parseUrl(window.location.pathname));
+	navigate(parseUrl(window.location));
 } else {
 	document.addEventListener('DOMContentLoaded', () => {
-		navigate(parseUrl(window.location.pathname));
+		navigate(parseUrl(window.location));
 	});
 }
 

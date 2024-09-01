@@ -6,7 +6,7 @@ const { SERVER_ADDR } = config;
 
 export function tournament_game_queue(type, token) {
   return new Promise((resolve, reject) => {
-    let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
+    let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/queue/${type}/?token=${token}`);
     const objects = [
       '.tournament-room-in .player1',
       '.tournament-room-in .player2',
@@ -25,7 +25,11 @@ export function tournament_game_queue(type, token) {
       appState.inTournament = false;
       // navigate(parseUrl(basePath));
     };
-
+	document.querySelector('.logo-small').addEventListener('click', () => {
+		appState.inTournament = false;
+		navigate(parseUrl(basePath));
+		ws.close();
+	});
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === "update")
@@ -51,7 +55,7 @@ export function tournament_game_queue(type, token) {
 
 // export function tournament_game_queue(type, token) {
 //   return new Promise((resolve, reject) => {
-//     let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/rankgames/${type}/?token=${token}`);
+//     let ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/queue/${type}/?token=${token}`);
     
 //   document.querySelector('.logo-small').addEventListener('click', () => {
 //   appState.inTournament = false;

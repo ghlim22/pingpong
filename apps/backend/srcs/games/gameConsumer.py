@@ -29,15 +29,17 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.my_match = 1
         self.redis = redis.from_url("redis://redis")
         self.timeout = 3
+        self.user = self.scope["user"]
+
         if self.type == "tournament" or self.type == "4P":
             max_players = 4
         else:
             max_players = 2
 
         await self.accept()
+
         await self.channel_layer.group_add(self.game_group, self.channel_name)
 
-        self.user = self.scope["user"]
         group_size = await self._increment_and_get_group_size(self.game_group)
 
         if group_size == max_players:
@@ -49,29 +51,10 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif group_size == 3:
             self.position = "down"
 
-        if self.type == "tournament" or self.type == "4P" or self.type == "2P":
-            asyncio.create_task(self._start_timeout())
-        else:
-            asyncio.create_task(self._start_opposite_check())
+        await self.save_user_info(self.user)
 
-        if self.user.is_authenticated:
-            await self.save_user_info(self.user)
-        else:
-            self.close()
+        await self._start_or_end(max_players)
 
-        if self.position == "left":
-            user_info_dict = await self.redis.hgetall(self.game_id)
-            self.user_info_list = [
-                json.loads(user_info_dict[self.channel_name]) for self.channel_name in user_info_dict
-            ]
-            await self.channel_layer.group_send(
-                self.game_group,
-                {
-                    "type": "game_start",
-                    "game_type": self.type,
-                    "user_info": self.user_info_list,
-                },
-            )
         logger.info(self.position)
 
     async def save_user_info(self, user):
@@ -116,21 +99,30 @@ class GameConsumer(AsyncWebsocketConsumer):
         group_size = await self.redis.eval(lua_script, 1, group_name)
         return group_size
 
-    async def _get_group_size(self, group_name):
-        group_size = await self.redis.get(group_name)
-
-        if group_size is None:
-            return 0
-        return int(group_size)
-
     async def _decrement_group_size(self, group_name):
         await self.redis.decr(group_name)
 
-    async def _start_timeout(self):
+    async def _start_or_end(self, max_players):
         await asyncio.sleep(self.timeout)
 
-        if self.isStart == False:
-            await self.channel_layer.group_send(self.game_group, {"type": "disconnect_all"})
+        size = await self._get_group_size(self.game_group)
+
+        if size != max_players:
+            await self.channel_layer.send(self.channel_name, {"type": "disconnect_me"})
+        else:
+            if self.position == "left":
+                user_info_dict = await self.redis.hgetall(self.game_id)
+                self.user_info_list = [
+                    json.loads(user_info_dict[self.channel_name]) for self.channel_name in user_info_dict
+                ]
+                await self.channel_layer.group_send(
+                    self.game_group,
+                    {
+                        "type": "game_start",
+                        "game_type": self.type,
+                        "user_info": self.user_info_list,
+                    },
+                )
 
     async def _game_start(self, message_data):
         if self.type == "tournament":
@@ -208,7 +200,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 "score": match.right.score,
             },
         }
-        logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "two_player", "data": data})
 
     async def _game_end(self, match):
@@ -274,7 +265,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         }
         await sync_to_async(game_log.save)()
 
-        logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "game_end", "data": data})
 
     async def _play_game_four(self, match):
@@ -328,7 +318,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 "score": match.down.score,
             },
         }
-        logger.info(f"Sending in-game message: {data}")
         await self.channel_layer.group_send(self.game_group, {"type": "four_player", "data": data})
 
     async def _play_game_tournament(self, message_data):
@@ -368,5 +357,5 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def game_start(self, event):
         await self.send(text_data=json.dumps(event))
 
-    async def disconnect_all(self, event):
+    async def disconnect_me(self, event):
         await self.send(text_data=json.dumps(event))
