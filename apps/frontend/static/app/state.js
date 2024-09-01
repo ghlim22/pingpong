@@ -10,6 +10,7 @@ export let appState = {
 	friend:				4,
 	currentCleanupFn:	null,
 	ws:					null,
+	in_game_id:			null,
 	chat_ws:			null,
 	tour_ws:			null,
 	inTournament:		false,

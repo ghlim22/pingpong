@@ -32,10 +32,6 @@ export default function OnlineGame(sock, game_type, info_data) {
     };
   
   const init = async () => {
-    console.log($container);
-    console.log('this is game');
-    console.log(ws);
-    
     document.addEventListener("keydown", keyDownHandler);
     document.addEventListener("keyup", keyUpHandler);
     

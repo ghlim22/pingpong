@@ -31,7 +31,6 @@ const leftSideHTML = `
 const rightSideHTML = `
 <div></div>
 <div>
-	<img src="/assets/g-button-quit.svg">
 </div>
 <div></div>
 `;
@@ -73,8 +72,8 @@ export function pong1VS1Page() {
 	above.innerHTML = matchHTML;
 
 	const img = document.querySelector('.match-1vs1 #mine img');
-	const img_opponent = document.querySelector('.match-1vs1 #opponent img');
 	const nickname = document.querySelector('.match-1vs1 #mySpan');
+	const img_opponent = document.querySelector('.match-1vs1 #opponent img');
 	const nickname_opponent = document.querySelector('.match-1vs1 #opponentSpan');
 
 	above.classList.add('above-on');
@@ -97,6 +96,12 @@ export function pong1VS1Page() {
 }
 
 export function game1vs1Page(info) {
+	console.log("appState.in_game_id : ", appState.in_game_id);
+    console.log("info.game_id : ", info.game_id);
+    if (appState.in_game_id != info.game_id){
+      return ;
+    }
+	
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');

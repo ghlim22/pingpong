@@ -28,11 +28,13 @@ export function game_queue(type, token) {
     appState.currentCleanupFn = () => {
       disconnect_ws(ws);
       disconnect_ws(appState.tour_ws);
+      appState.in_game_id = null;
       navigate(parseUrl(basePath));
     };
     
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      appState.in_game_id = data.data.game_id;
       ws.close();
       disconnect_ws(appState.tour_ws);
       resolve(data.data);
@@ -70,7 +72,6 @@ export function play_game(info, type, token) {
       } else if (data.type === "game_start") {
         OnlineGame(ws, type, data)
         .then((data) => {
-          console.log('Received data:', data.data);
           resolve(data);
         })
         .catch((error) => {
@@ -83,7 +84,7 @@ export function play_game(info, type, token) {
     ws.onclose = (event) => {
       console.log("play_game_ws closed: ", event);
     }
-
+    
     ws.onerror = (error) => {
       console.error('play_game_ws error:', error);
       disconnect_ws(appState.tour_ws);
