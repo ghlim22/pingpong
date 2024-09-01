@@ -25,8 +25,7 @@ class UserSignInSerializer(serializers.Serializer):
             raise serializers.ValidationError({"error": "Sign in with superuser account is disabled."})
 
         user.last_login = timezone.now()
-        user.status = CustomUser.Status.CONNECTED
-        user.save(update_fields=["last_login", "status"])
+        user.save(update_fields=["last_login"])
 
         token.logout_all(user)
         user_token = token.create_token(user)
@@ -49,13 +48,11 @@ class UserSimpleSerializer(serializers.ModelSerializer):
             "pk",
             "picture",
             "nickname",
-            "status",
         ]
         read_only_fields = [
             "pk",
             "picture",
             "nickname",
-            "status",
         ]
 
 
@@ -136,13 +133,11 @@ class UserSerializer(serializers.ModelSerializer):
             "blocked",
             "win",
             "lose",
-            "status",
         ]
         read_only_fields = [
             "pk",
             "win",
             "lose",
-            "status",
         ]
 
     def validate(self, data: dict) -> dict:
