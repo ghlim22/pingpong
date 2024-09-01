@@ -96,6 +96,11 @@ const resultHTML = `
 let timerId;
 
 export function pongMultiPage() {
+	if (appState.isMain === undefined) {
+		navigate(parseUrl(basePath));
+	}
+	else {
+	appState.isMain = false;
 	const above = document.getElementById('above');
 	above.innerHTML = matchHTML;
 
@@ -141,6 +146,7 @@ export function pongMultiPage() {
 	//				match 되면 data {현재유저 포지션, 팀원 nick, 팀원 img, 적1 nick, 적1 img, 적2 nick, 적2 img} 반환
 
 	//gameMultiPage(*MATCH*());
+}
 }
 
 function gameMultiPage(data) {

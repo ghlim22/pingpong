@@ -25,7 +25,11 @@ export function tournament_game_queue(type, token) {
       appState.inTournament = false;
       // navigate(parseUrl(basePath));
     };
-
+	document.querySelector('.logo-small').addEventListener('click', () => {
+		appState.inTournament = false;
+		navigate(parseUrl(basePath));
+		ws.close();
+	});
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === "update")

@@ -68,19 +68,24 @@ const resultHTML = `
 let timerId;
 
 export function pong1VS1Page() {
-	const above = document.getElementById('above');
-	above.innerHTML = matchHTML;
+	if (appState.isMain === undefined) {
+		navigate(parseUrl(basePath));
+	} else {
 
-	const img = document.querySelector('.match-1vs1 #mine img');
-	const nickname = document.querySelector('.match-1vs1 #mySpan');
-	const img_opponent = document.querySelector('.match-1vs1 #opponent img');
-	const nickname_opponent = document.querySelector('.match-1vs1 #opponentSpan');
-
-	above.classList.add('above-on');
-	if (appState.picture !== null)
-		img.src = appState.picture;
-	nickname.innerHTML = appState.nickname;
+		appState.isMain = false;
+		const above = document.getElementById('above');
+		above.innerHTML = matchHTML;
 	
+		const img = document.querySelector('.match-1vs1 #mine img');
+		const nickname = document.querySelector('.match-1vs1 #mySpan');
+		const img_opponent = document.querySelector('.match-1vs1 #opponent img');
+		const nickname_opponent = document.querySelector('.match-1vs1 #opponentSpan');
+	
+		above.classList.add('above-on');
+		if (appState.picture !== null)
+			img.src = appState.picture;
+		nickname.innerHTML = appState.nickname;
+		
 	game_queue("2P", appState.token)
     .then((data) => {
 		if (data == null) {

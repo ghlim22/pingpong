@@ -1,4 +1,5 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, pong1VS1Page } from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, pong1VS1Page, /*//logoutUser*/ } from '/index.js';
+
 
 const mainHTML = `  
 <div class="outter_setting">
@@ -36,6 +37,12 @@ const mainHTML = `
 `;
 
 export function settingPage() {
+
+	if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
+		appState.chat_ws.close();
+		appState.chat_ws = null;
+	}
+	//appState.currentCleanupFn = null;
 	const above = document.getElementById('above');
 	above.innerHTML = mainHTML;
 
@@ -72,13 +79,9 @@ export function submitPicture(event) {
 				return data;
 			});
 		} else if (response.status === 401) {
-			return response.json().then(data => {
-				let errorMessage = 'Error 401: Bad Request\n';
-				for (const [key, value] of Object.entries(data)) {
-					errorMessage +=`${key}: ${value.join(', ')}\n`;
-				}
-				alert(errorMessage);
-				throw new Error('Bad Request');
+			return response.json().then(() => {
+				//logoutUser();
+				throw new Error('401');
 			});
 		} else {
 			return response.json().then(data => {
@@ -96,8 +99,10 @@ export function submitPicture(event) {
             "field": "img",
             "value": data['picture'],
         }));
-		//if (appState.ws !== null)
-		//	appState.ws.close();
+		// if (appState.ws && appState.ws.readyState === WebSocket.OPEN){
+		// 	appState.ws.close();
+		// 	appState.ws = null;
+		// }
 		//appState.ws = null;
 		//navigate(parseUrl(basePath + 'setting'));
 		sessionStorage.setItem('appState', JSON.stringify(appState));
@@ -135,7 +140,12 @@ export function submitNickname(event) {
 				alert(errorMessage + data);
 				throw new Error('Bad Request');
 			});
-		} else {
+		}
+		else if (response.status === 401) {
+			//logoutUser();
+			throw new Error('401');
+		}
+		else {
 			return response.json().then(data => {
 				console.log('Other status: ', data);
 				throw new Error('Unexpected status code: ', response.status);
@@ -151,8 +161,10 @@ export function submitNickname(event) {
             "field": "nick",
             "value": nickname,
         }));
-		//if (appState.ws !== null)
-		//	appState.ws.close();
+		// if (appState.ws && appState.ws.readyState === WebSocket.OPEN){
+		// 	appState.ws.close();
+		// 	appState.ws = null;
+		// }
 		//appState.ws = null;
 		//navigate(parseUrl(basePath + 'setting'));
 		sessionStorage.setItem('appState', JSON.stringify(appState));

@@ -24,6 +24,7 @@ const rightSideHTML = `
 `;
 
 export function homePage() {
+	appState.isMain = true;
 	if (!appState.isLoggedIn) {
 		navigate(parseUrl(basePath + 'login'));
 		return;
