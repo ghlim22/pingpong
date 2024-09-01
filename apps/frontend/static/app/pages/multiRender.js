@@ -75,6 +75,8 @@ const topHTML = `
 `;
 
 const bottomHTML = `
+<span id='leftScore'>0</span>
+<span id='rightScore'>0</span>
 `;
 
 const resultHTML = `
@@ -142,6 +144,10 @@ export function pongMultiPage() {
 }
 
 function gameMultiPage(data) {
+	if (appState.in_game_id != info.game_id){
+		return ;
+	}
+
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -166,14 +172,11 @@ function gameMultiPage(data) {
 	document.querySelector('#right-side.ingame div img').addEventListener('click', handleQuitGame);
 	play_game(data, '4P', appState.token)
     .then((data) => {
-      console.log('Received data:', data);
-	  if (data.type === "disconnect_all")
-	  {
-		alert("Someone has disconnected");
+	  if (data.type === "disconnect_all") {
 		navigate(parseUrl(basePath));
-	  }
-	  else
+	  } else {
 		gameResultPage(data.data);
+	  }
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);

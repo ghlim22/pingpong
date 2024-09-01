@@ -83,12 +83,17 @@ export function pong1VS1Page() {
 	
 	game_queue("2P", appState.token)
     .then((data) => {
-		for (const element of data.user_info)
-		if (element.nickname != appState.nickname){
-			img_opponent.src = element.picture;
-			nickname_opponent.innerHTML = element.nickname;
+		if (data == null) {
+			console.log("data is null");
+			return ;
+		} else {
+			for (const element of data.user_info)
+				if (element.nickname != appState.nickname) {
+				img_opponent.src = element.picture;
+				nickname_opponent.innerHTML = element.nickname;
+				}
+			setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
 		}
-		setTimeout(() => { game1vs1Page(data) } , 5000); //시간 설정이 안됨
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);
@@ -96,12 +101,10 @@ export function pong1VS1Page() {
 }
 
 export function game1vs1Page(info) {
-	console.log("appState.in_game_id : ", appState.in_game_id);
-    console.log("info.game_id : ", info.game_id);
     if (appState.in_game_id != info.game_id){
       return ;
     }
-	
+
 	const above = document.getElementById('above');
 	const left = document.getElementById('left-side');
 	const right = document.getElementById('right-side');
@@ -123,9 +126,7 @@ export function game1vs1Page(info) {
 
 	play_game(info, "2P", appState.token)
     .then((data) => {
-	  if (!data){
-		return ;
-	  } else if (data.type === "disconnect_me") {
+	  if (data.type === "disconnect_me") {
 		navigate(parseUrl(basePath));
 	  } else if (info.game_id2 === 'false' || appState.nickname !== data.data.nickname) {
 		disconnect_ws(appState.tour_ws);
