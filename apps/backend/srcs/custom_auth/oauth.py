@@ -61,7 +61,7 @@ def request_user(access_token: str) -> dict | HttpResponse:
 
     data = {
         "email": response.json().get("email"),
-        "login": response.json().get("login"),
+        "nickname": response.json().get("login"),
         "image": response.json().get("image").get("link"),
     }
 
