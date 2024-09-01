@@ -27,14 +27,16 @@ class UserSignInSerializer(serializers.Serializer):
         user.last_login = timezone.now()
         user.status = CustomUser.Status.CONNECTED
         user.save(update_fields=["last_login", "status"])
-        knox_token = token.create_token(user)  # needs to be deleted
+
+        token.logout_all(user)
+        user_token = token.create_token(user)
 
         data: dict = {
             "pk": user.pk,
             "email": user.email,
             "nickname": user.nickname,
             "picture": user.picture.url,
-            "token": knox_token,
+            "token": user_token,
         }
 
         return data
