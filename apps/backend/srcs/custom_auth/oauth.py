@@ -5,11 +5,7 @@ import requests
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
-from django.http import (
-    HttpResponse,
-    HttpResponsePermanentRedirect,
-    HttpResponseRedirect,
-)
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from rest_framework.status import HTTP_200_OK
 from users.models import CustomUser
@@ -17,22 +13,14 @@ from users.models import CustomUser
 from .token import create_token, logout_all
 
 
-def redirect_with_params(
-    url: str, params: dict, permanent: bool = False
-) -> HttpResponsePermanentRedirect | HttpResponseRedirect:
-    url += urlencode(params)
-    print(url)
-    return redirect(to=url, permanent=permanent)
-
-
-def redirect_params(params):
+def redirect_home(params: dict = None) -> HttpResponse:
+    """
+    Redirect to home.
+    """
     url = "https://" + settings.SERVER_ADDR + "/login?"
-    url += urlencode(params)
-    return redirect(to=url, permanent=True)
+    if params is not None:
+        url += urlencode(params)
 
-
-def redirect_failure():
-    url = "https://" + settings.SERVER_ADDR + "/login"
     return redirect(to=url, permanent=True)
 
 
@@ -52,13 +40,16 @@ def request_token(code: str) -> str | HttpResponse:
 
     response = requests.post(url=url, data=params)
     if response.status_code != HTTP_200_OK:
-        return redirect_failure()
+        return redirect_home()
     access_token = response.json().get("access_token")
 
     return access_token
 
 
 def request_user(access_token: str) -> dict | HttpResponse:
+    """
+    Request the resource owner's data to 42API.
+    """
     url = "https://api.intra.42.fr/v2/me"
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -66,7 +57,7 @@ def request_user(access_token: str) -> dict | HttpResponse:
 
     response = requests.get(url=url, headers=headers)
     if response.status_code != HTTP_200_OK:
-        return redirect_failure()
+        return redirect_home()
 
     data = {
         "email": response.json().get("email"),
@@ -77,28 +68,14 @@ def request_user(access_token: str) -> dict | HttpResponse:
     return data
 
 
-def login(email: str):
-    """
-    Log in a user with given credentials from 42API.
-    """
-    user = CustomUser.objects.get(email=email)
-    logout_all(user)
-    token = create_token(user)
-    data = {
-        "pk": user.pk,
-        "email": user.email,
-        "nickname": user.nickname,
-        "picture": user.picture.url,
-        "token": token,
-    }
-
-    return redirect_params(data)
-
-
-def register(email: str, nickname: str, image: str) -> HttpResponse:
+def register(**kwargs) -> CustomUser:
     """
     Create a user with given credentials from 42API.
     """
+    email = kwargs.get("email")
+    nickname = kwargs.get("nickname")
+    image = kwargs.get("image")
+
     try:
         CustomUser.objects.get(nickname=nickname)
         nickname = secrets.token_hex(6)
@@ -112,8 +89,19 @@ def register(email: str, nickname: str, image: str) -> HttpResponse:
         user.picture.save(name=image_name, content=ContentFile(response.content))
     user.save()
 
-    token = create_token(user)
+    return user
 
+
+def login(**kwargs) -> dict:
+    """
+    Login a user with given credentials from 42API.
+    """
+    try:
+        user = CustomUser.objects.get(email=kwargs.get("email"))
+    except ObjectDoesNotExist:
+        user = register(kwargs)
+    logout_all(user)
+    token = create_token(user)
     data = {
         "pk": user.pk,
         "email": user.email,
@@ -122,4 +110,4 @@ def register(email: str, nickname: str, image: str) -> HttpResponse:
         "token": token,
     }
 
-    return redirect_params(data)
+    return data

@@ -1,7 +1,6 @@
 from urllib.parse import quote, urlencode
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes
@@ -21,15 +20,9 @@ def authenticate(request):
 
     access_token = oauth.request_token(code)
     user_credentials = oauth.request_user(access_token)
+    data = oauth.login(**user_credentials)
 
-    email = user_credentials.get("email")
-    nickname = user_credentials.get("login")
-    image = user_credentials.get("image")
-
-    try:
-        return oauth.login(email)
-    except ObjectDoesNotExist:
-        return oauth.register(email, nickname, image)
+    return oauth.redirect_home(data)
 
 
 @permission_classes([permissions.AllowAny])
@@ -46,4 +39,5 @@ def redirect_to_oauth(request: Request) -> HttpResponse:
         "response_type": "code",
     }
     url = "https://api.intra.42.fr/oauth/authorize?" + urlencode(params)
+
     return HttpResponseRedirect(url)
