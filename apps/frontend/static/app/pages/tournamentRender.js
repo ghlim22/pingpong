@@ -1,8 +1,16 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl } from '/index.js';
+import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, settingPage } from '/index.js';
 import { tournament_game_queue, populateUserInfo } from '/app/pages/tournamentOperation.js'
 import { game1vs1Page } from '/app/pages/1vs1Render.js'
 const topHTML = `
 <span class="logo-small">PONG</span>
+`;
+
+const rightSideHTML = `
+<div class="p-button-setting">
+	<img src="/assets/s-button-cog.svg">
+	<span>setting</span>
+</div>
+<t-fold class="friend"></t-fold>
 `;
 
 const tournamentRoomHTML = `
@@ -40,13 +48,22 @@ export function tournamentPage() {
 		navigate(parseUrl(basePath + 'login'));
 		return;
 	}
+	const leftSideHTML = `
+	<t-user-info class="p-button-current" data-nick="${appState.nickname}" data-img="${appState.picture}" data-id="${appState.token}" data-isloggedin="true"></t-user-info>
+	<t-invite class="receive-invitation"></t-invite>
+	<t-fold class="connect"></t-fold>
+	`;
 	appState.inTournament = true;
 	document.getElementById('bottom').innerHTML = "";
 	document.getElementById('top').innerHTML = topHTML;
 	document.getElementById('main').innerHTML = tournamentRoomHTML;
-	//document.querySelector('.logo-small').addEventListener('click', () => {
-	//	navigate(parseUrl(basePath));
-	//});
+	document.getElementById('left-side').innerHTML = leftSideHTML;
+	document.getElementById('right-side').innerHTML = rightSideHTML;
+
+	document.querySelector('.p-button-setting').addEventListener('click', () => {
+		settingPage();
+	});
+
 	tournament_game_queue('tournament', appState.token)
     .then((data) => {
 	  if (data.type === "close_connection")

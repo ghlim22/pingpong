@@ -29,7 +29,7 @@ export function game_queue(type, token) {
       disconnect_ws(ws);
       disconnect_ws(appState.tour_ws);
       appState.in_game_id = null;
-      navigate(parseUrl(basePath));
+    //  navigate(parseUrl(basePath));
     };
     
     ws.onmessage = (event) => {

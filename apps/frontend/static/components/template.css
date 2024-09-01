@@ -48,6 +48,12 @@
 	justify-content: center;
 	width: 17.5rem;
 	height: 5rem;
+	margin-top: 0.5rem;
+	margin-bottom: 0.25rem;
+}
+
+.t-invite__container div.image-profile-small {
+	width: 5rem;
 }
 
 .t-invite__container div button{
