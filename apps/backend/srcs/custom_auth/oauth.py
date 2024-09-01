@@ -99,7 +99,7 @@ def login(**kwargs) -> dict:
     try:
         user = CustomUser.objects.get(email=kwargs.get("email"))
     except ObjectDoesNotExist:
-        user = register(kwargs)
+        user = register(**kwargs)
     logout_all(user)
     token = create_token(user)
     data = {
