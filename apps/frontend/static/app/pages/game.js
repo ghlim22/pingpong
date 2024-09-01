@@ -1,3 +1,4 @@
+import { appState, disconnect_ws } from '/index.js';
 /**
  * @param {WebSocket} sock
  * @param {string} game_type
@@ -28,6 +29,11 @@ export default function OnlineGame(sock, game_type, info_data) {
         _4P(data.data);
       } else if (data.type === "game_end") {
         endGame(data, ws);
+      } else if (data.type === "disconnect_me") {
+        alert("Someone has disconnected");
+        disconnect_ws(ws);
+        disconnect_ws(appState.tour_ws);
+        resolve(data);
       }
     };
   
@@ -183,6 +189,10 @@ export default function OnlineGame(sock, game_type, info_data) {
     up.y = gameData.up.y * canvas.height;
     down.x = gameData.down.x * canvas.width;
     down.y = gameData.down.y * canvas.height;
+    left.score = gameData.left.score;
+    right.score = gameData.right.score;
+    up.score = gameData.up.score;
+    down.score = gameData.down.score;
     ball.x = gameData.ball.x * canvas.width;
     ball.y = gameData.ball.y * canvas.height;
     ball.radius = right.width * (2 / 3);
@@ -228,6 +238,8 @@ export default function OnlineGame(sock, game_type, info_data) {
     ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
     ctx.fillStyle = "#000000";
     ctx.fill();
+    $leftScore.innerText = left.score + up.score;
+    $rightScore.innerText = right.score + down.score;
     //  ctx.strokeStyle = 'black';
     //  ctx.lineWidth = 5;
     //  ctx.strokeRect(0, 0, canvas.width, canvas.height);
