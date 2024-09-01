@@ -7,6 +7,7 @@ from knox.crypto import hash_token
 from knox.models import get_token_model
 from knox.settings import CONSTANTS, knox_settings
 from rest_framework import exceptions
+from users.models import CustomUser
 
 
 class CustomTokenAuthentication(TokenAuthentication):
@@ -33,20 +34,18 @@ class CustomTokenAuthentication(TokenAuthentication):
         raise exceptions.AuthenticationFailed(msg)
 
 
-def create_token(user):
+def create_token(user: CustomUser) -> str:
     instance, token = get_token_model().objects.create(
         user=user, expiry=knox_settings.TOKEN_TTL, prefix=knox_settings.TOKEN_PREFIX
     )
-    print(instance)
-    print(token)
     return token
 
 
-def logout_all(user):
+def logout_all(user: CustomUser) -> None:
     user.auth_token_set.all().delete()
 
 
-def authenticate(token: str):
+def authenticate(token: str) -> CustomUser:
     authenticator = CustomTokenAuthentication()
     (user, auth_token) = authenticator.authenticate_credentials(token)
     return user

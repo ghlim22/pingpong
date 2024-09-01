@@ -1,15 +1,7 @@
-from urllib.parse import quote
-
-import requests
-from django.http import JsonResponse
-from django.middleware.csrf import get_token
-from django.shortcuts import redirect
-from django.utils.http import urlencode
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import generics, permissions, serializers, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
-from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
 from rest_framework.response import Response
 

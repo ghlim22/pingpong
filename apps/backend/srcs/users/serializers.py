@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.utils import timezone
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
 
 # Create your tests here.
@@ -25,16 +24,17 @@ class UserSignInSerializer(serializers.Serializer):
             raise serializers.ValidationError({"error": "Sign in with superuser account is disabled."})
 
         user.last_login = timezone.now()
-        user.status = CustomUser.Status.CONNECTED
-        user.save(update_fields=["last_login", "status"])
-        knox_token = token.create_token(user)  # needs to be deleted
+        user.save(update_fields=["last_login"])
+
+        token.logout_all(user)
+        user_token = token.create_token(user)
 
         data: dict = {
             "pk": user.pk,
             "email": user.email,
             "nickname": user.nickname,
             "picture": user.picture.url,
-            "token": knox_token,
+            "token": user_token,
         }
 
         return data
@@ -47,13 +47,11 @@ class UserSimpleSerializer(serializers.ModelSerializer):
             "pk",
             "picture",
             "nickname",
-            "status",
         ]
         read_only_fields = [
             "pk",
             "picture",
             "nickname",
-            "status",
         ]
 
 
@@ -134,13 +132,11 @@ class UserSerializer(serializers.ModelSerializer):
             "blocked",
             "win",
             "lose",
-            "status",
         ]
         read_only_fields = [
             "pk",
             "win",
             "lose",
-            "status",
         ]
 
     def validate(self, data: dict) -> dict:
