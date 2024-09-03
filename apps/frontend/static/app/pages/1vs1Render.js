@@ -68,11 +68,13 @@ const resultHTML = `
 let timerId;
 
 export function pong1VS1Page() {
+	console.log("appState.isMain : ", appState.isMain)
 	if (appState.isMain === undefined) {
 		navigate(parseUrl(basePath));
 	} else {
 
 		appState.isMain = false;
+		console.log("appState.isMain : ", appState.isMain)
 		const above = document.getElementById('above');
 		above.innerHTML = matchHTML;
 	
@@ -103,6 +105,7 @@ export function pong1VS1Page() {
     .catch((error) => {
       console.error('Error fetching game queue:', error);
     });
+	}
 }
 
 export function game1vs1Page(info) {

@@ -63,7 +63,7 @@ export function play_game(info, type, token) {
       const data = JSON.parse(event.data);
       console.log(data);
       if (data.type === "disconnect_me") {
-        alert("Someone has disconnected");
+        alert("Someone has disconnected44");
         disconnect_ws(ws);
         disconnect_ws(appState.tour_ws);
         resolve(data);

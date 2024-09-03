@@ -23,7 +23,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.position = None
-        self.flag = False
+        self.isStop = False
         self.game_id = self.scope["url_route"]["kwargs"]["game_id"]
         self.type = self.scope["url_route"]["kwargs"]["type"]
         self.game_group = f"game_{self.game_id}"
@@ -54,7 +54,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         await self._start_or_end(max_players)
 
-
     async def save_user_info(self, user):
         user_info = {"id": user.id, "nickname": user.nickname, "picture": user.picture.url, "position": self.position}
         await self.redis.hset(self.game_id, self.channel_name, json.dumps(user_info))
@@ -69,6 +68,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self._accept_key(data.get("data", {})))
 
     async def disconnect(self, close_code):
+        self.isStop = True
         if isinstance(self.channel_name, bytes):
             self.channel_name = self.channel_name.decode("utf-8")
         if self.user and self.user.id:
@@ -117,13 +117,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                         "user_info": self.user_info_list,
                     },
                 )
-            await asyncio.sleep(self.timeout)
-            size = await self._get_group_size(self.game_group)
-            if size != max_players:
-                self.flag = True
-                if isinstance(self.channel_name, bytes):
-                    self.channel_name = self.channel_name.decode("utf-8")
-                await self.channel_layer.send(self.channel_name, {"type": "disconnect_me"})
 
     async def _game_start(self, message_data):
         if self.type == "tournament":
@@ -142,11 +135,11 @@ class GameConsumer(AsyncWebsocketConsumer):
         return match
 
     async def _play_game(self, match):
-        while not match.finished and not self.flag:
+        while not match.finished and not self.isStop:
             await self._update_game(match)
             await self._send_state(match)
             await asyncio.sleep(0.05)
-        if not self.flag:
+        if not self.isStop:
             await self._game_end(match)
 
     async def _accept_key(self, message_data):

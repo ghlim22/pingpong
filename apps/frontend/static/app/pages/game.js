@@ -21,21 +21,44 @@ export default function OnlineGame(sock, game_type, info_data) {
   
   // Promise를 반환하여 비동기 동작을 처리
   return new Promise((resolve, reject) => {
+    let timeoutHandle;
+
+    // 서버로부터 메시지를 받았을 때의 처리
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "two_player") {
-        _2P(data.data);
-      } else if (data.type === "four_player") {
-        _4P(data.data);
-      } else if (data.type === "game_end") {
-        endGame(data, ws);
-      } else if (data.type === "disconnect_me") {
+        // 메시지 수신 시 타이머를 초기화
+        clearTimeout(timeoutHandle);
+
+        const data = JSON.parse(event.data);
+
+        if (data.type === "two_player") {
+            _2P(data.data);
+        } else if (data.type === "four_player") {
+            _4P(data.data);
+        } else if (data.type === "game_end") {
+            endGame(data, ws);
+            resolve(data);
+        } else if (data.type === "disconnect_me") {
+            alert("Someone has disconnected");
+            disconnect_ws(ws);
+            disconnect_ws(appState.tour_ws);
+            resolve(data);
+        }
+
+        timeoutHandle = setTimeout(() => {
+          alert("Someone has disconnected33");
+          disconnect_ws(ws);
+          disconnect_ws(appState.tour_ws);
+          resolve({ type: "disconnect_me" });
+        }, 3000);
+    };
+
+    // 타이머 설정 (처음 연결 시)
+    timeoutHandle = setTimeout(() => {
         alert("Someone has disconnected");
         disconnect_ws(ws);
         disconnect_ws(appState.tour_ws);
-        resolve(data);
-      }
-    };
+        resolve({ type: "disconnect_me" });
+    }, 10000);
   
   const init = async () => {
     document.addEventListener("keydown", keyDownHandler);
