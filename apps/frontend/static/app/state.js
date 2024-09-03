@@ -23,7 +23,11 @@ export const basePath = '/';
 
 const savedState = sessionStorage.getItem('appState');
 if (savedState) {
-	appState = JSON.parse(savedState);
+	let tempA = JSON.parse(savedState);
+	let tempB = tempA.isMain;
+
+	appState = tempA;
+	appState.isMain = tempB;
 }
 
 function updateAppState(newState) {

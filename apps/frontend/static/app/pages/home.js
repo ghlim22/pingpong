@@ -25,6 +25,7 @@ const rightSideHTML = `
 
 export function homePage() {
 	appState.isMain = true;
+	sessionStorage.setItem('appState', JSON.stringify(appState));
 	if (!appState.isLoggedIn) {
 		navigate(parseUrl(basePath + 'login'));
 		return;

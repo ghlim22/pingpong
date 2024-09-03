@@ -44,10 +44,12 @@ const matchOrderHTML = `
 `;
 
 export function tournamentPage() {
-	if (appState.isMain === undefined) {
+	if (appState.isMain === false) {
 		navigate(parseUrl(basePath));
 	}
 	else {
+	appState.isMain = false;
+	sessionStorage.setItem('appState', JSON.stringify(appState));
 	if (!appState.isLoggedIn) {
 		navigate(parseUrl(basePath + 'login'));
 		return;
