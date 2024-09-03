@@ -25,6 +25,7 @@ const rightSideHTML = `
 
 export function homePage() {
 	appState.isMain = true;
+	appState.in_game_id = null;
 	if (!appState.isLoggedIn) {
 		navigate(parseUrl(basePath + 'login'));
 		return;

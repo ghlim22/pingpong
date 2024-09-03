@@ -59,11 +59,16 @@ export function play_game(info, type, token) {
       appState.in_game_id = null;
     };
 
+    timeoutHandle = setTimeout(() => {
+      disconnect_ws(ws);
+      disconnect_ws(appState.tour_ws);
+      resolve({ type: "disconnect_me" });
+    }, 10000);
+
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log(data);
       if (data.type === "disconnect_me") {
-        alert("Someone has disconnected44");
         disconnect_ws(ws);
         disconnect_ws(appState.tour_ws);
         resolve(data);
