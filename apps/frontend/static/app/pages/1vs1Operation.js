@@ -12,7 +12,6 @@ export function game_queue(type, token) {
       appState.tour_ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === 'client_count') {
-          console.log("data.count : ", data.count);
           if (data.count == 1) {
             alert("Someone has disconnected");
             disconnect_ws(ws);
@@ -34,13 +33,13 @@ export function game_queue(type, token) {
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       appState.in_game_id = data.data.game_id;
-      ws.close();
+      disconnect_ws(ws);
       disconnect_ws(appState.tour_ws);
       resolve(data.data);
     };
     
     ws.onerror = (error) => {
-      ws.close();
+      disconnect_ws(ws);
       reject(error);
     };
   });
@@ -53,6 +52,8 @@ export function play_game(info, type, token) {
       appState.tour_ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/tour/${info.game_id3}/?token=${token}`);
     }
 
+    let timeoutHandle;
+    
     appState.currentCleanupFn = () => {
       disconnect_ws(ws);
       disconnect_ws(appState.tour_ws);
@@ -62,6 +63,7 @@ export function play_game(info, type, token) {
     timeoutHandle = setTimeout(() => {
       disconnect_ws(ws);
       disconnect_ws(appState.tour_ws);
+      console.log("hgihi");
       resolve({ type: "disconnect_me" });
     }, 10000);
 
@@ -69,10 +71,12 @@ export function play_game(info, type, token) {
       const data = JSON.parse(event.data);
       console.log(data);
       if (data.type === "disconnect_me") {
+        console.log("44")
         disconnect_ws(ws);
         disconnect_ws(appState.tour_ws);
         resolve(data);
       } else if (data.type === "game_start") {
+        clearTimeout(timeoutHandle);
         OnlineGame(ws, type, data)
         .then((data) => {
           resolve(data);
@@ -102,8 +106,10 @@ function sleep(ms) {
 }
 
 async function logPeriodically() {
-  while (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN) {
+  while (1) {
+    if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
       appState.tour_ws.send(JSON.stringify({ type: "get_client_count"}));
+    }
       await sleep(3000);
   }
 }

@@ -11,7 +11,8 @@ export default function OnlineGame(sock, game_type, info_data) {
   const ws = sock;
   let keyState = { up: false, down: false, left: false, right: false };
   let left, right, up, down, ball, canvas, ctx, isFinish = false;
-  
+  let timeoutHandle;
+
   let keyRepeatTimers = {
     up: null,
     down: null,
@@ -21,7 +22,6 @@ export default function OnlineGame(sock, game_type, info_data) {
   
   // Promise를 반환하여 비동기 동작을 처리
   return new Promise((resolve, reject) => {
-    let timeoutHandle;
 
     // 서버로부터 메시지를 받았을 때의 처리
     ws.onmessage = (event) => {
@@ -37,6 +37,8 @@ export default function OnlineGame(sock, game_type, info_data) {
         } else if (data.type === "game_end") {
             endGame(data, ws);
             resolve(data);
+            clearTimeout(timeoutHandle);
+            isFinish = true;
         } else if (data.type === "disconnect_me") {
             disconnect_ws(ws);
             disconnect_ws(appState.tour_ws);
@@ -45,9 +47,13 @@ export default function OnlineGame(sock, game_type, info_data) {
         if (ws)
         {
           timeoutHandle = setTimeout(() => {
-            disconnect_ws(ws);
-            disconnect_ws(appState.tour_ws);
-            resolve({ type: "disconnect_me" });
+            if (!isFinish)
+            {
+              disconnect_ws(ws);
+              disconnect_ws(appState.tour_ws);
+              resolve({ type: "disconnect_me" });
+
+            }
           }, 3000);
         }
     };
@@ -318,7 +324,7 @@ export default function OnlineGame(sock, game_type, info_data) {
   
   function endGame(data, ws) {
     if (ws) {
-      ws.close();
+      disconnect_ws(ws);
       resolve(data); // 게임 종료 후 Promise를 완료 상태로 설정
     }
   }
