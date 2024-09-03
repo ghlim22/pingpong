@@ -68,10 +68,14 @@ const resultHTML = `
 let timerId;
 
 export function pong1VS1Page() {
-	if (appState.isMain === undefined) {
+
+	if (appState.isMain === false) {
 		navigate(parseUrl(basePath));
-	} else {
+	}
+	else {
 		appState.isMain = false;
+		sessionStorage.setItem('appState', JSON.stringify(appState));
+
 		const above = document.getElementById('above');
 		above.innerHTML = matchHTML;
 	
