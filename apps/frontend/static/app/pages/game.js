@@ -10,7 +10,7 @@ export default function OnlineGame(sock, game_type, info_data) {
   const $rightScore = document.querySelector('#rightScore');
   const ws = sock;
   let keyState = { up: false, down: false, left: false, right: false };
-  let left, right, up, down, ball, canvas, ctx;
+  let left, right, up, down, ball, canvas, ctx, isFinish = false;
   
   let keyRepeatTimers = {
     up: null,
@@ -38,27 +38,30 @@ export default function OnlineGame(sock, game_type, info_data) {
             endGame(data, ws);
             resolve(data);
         } else if (data.type === "disconnect_me") {
-            alert("Someone has disconnected");
             disconnect_ws(ws);
             disconnect_ws(appState.tour_ws);
             resolve(data);
         }
-
-        timeoutHandle = setTimeout(() => {
-          alert("Someone has disconnected33");
-          disconnect_ws(ws);
-          disconnect_ws(appState.tour_ws);
-          resolve({ type: "disconnect_me" });
-        }, 3000);
+        if (ws)
+        {
+          timeoutHandle = setTimeout(() => {
+            disconnect_ws(ws);
+            disconnect_ws(appState.tour_ws);
+            resolve({ type: "disconnect_me" });
+          }, 3000);
+        }
     };
 
     // 타이머 설정 (처음 연결 시)
-    timeoutHandle = setTimeout(() => {
-        alert("Someone has disconnected");
-        disconnect_ws(ws);
-        disconnect_ws(appState.tour_ws);
-        resolve({ type: "disconnect_me" });
-    }, 10000);
+    if (ws)
+      {
+        timeoutHandle = setTimeout(() => {
+            disconnect_ws(ws);
+            disconnect_ws(appState.tour_ws);
+            resolve({ type: "disconnect_me" });
+        }, 5000);
+
+      }
   
   const init = async () => {
     document.addEventListener("keydown", keyDownHandler);

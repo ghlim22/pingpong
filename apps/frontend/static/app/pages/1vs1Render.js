@@ -68,12 +68,14 @@ const resultHTML = `
 let timerId;
 
 export function pong1VS1Page() {
+
 	if (appState.isMain === false) {
 		navigate(parseUrl(basePath));
 	}
 	else {
 		appState.isMain = false;
 		sessionStorage.setItem('appState', JSON.stringify(appState));
+
 		const above = document.getElementById('above');
 		above.innerHTML = matchHTML;
 	
@@ -133,7 +135,10 @@ export function game1vs1Page(info) {
 
 	play_game(info, "2P", appState.token)
     .then((data) => {
-	  if (data.type === "disconnect_me") {
+	  if (appState.in_game_id != undefined && appState.in_game_id) {
+		if (appState.in_game_id) {
+			alert("Someone has disconnected");
+		}
 		navigate(parseUrl(basePath));
 	  } else if (info.game_id2 === 'false' || appState.nickname !== data.data.nickname) {
 		disconnect_ws(appState.tour_ws);

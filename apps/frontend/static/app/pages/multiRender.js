@@ -151,7 +151,7 @@ export function pongMultiPage() {
 }
 
 function gameMultiPage(data) {
-	if (appState.in_game_id != info.game_id){
+	if (appState.in_game_id != data.game_id){
 		return ;
 	}
 
@@ -179,11 +179,14 @@ function gameMultiPage(data) {
 	document.querySelector('#right-side.ingame div img').addEventListener('click', handleQuitGame);
 	play_game(data, '4P', appState.token)
     .then((data) => {
-	  if (data.type === "disconnect_all") {
-		navigate(parseUrl(basePath));
-	  } else {
-		gameResultPage(data.data);
-	  }
+		if (data.type === "disconnect_me") {
+			if (appState.in_game_id != undefined && appState.in_game_id) {
+				alert("Someone has disconnected");
+			}
+			navigate(parseUrl(basePath));
+		  } else {
+			gameResultPage(data.data);
+		  }
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);
