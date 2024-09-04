@@ -51,6 +51,7 @@ export default function OnlineGame(sock, game_type, info_data) {
             {
               disconnect_ws(ws);
               disconnect_ws(appState.tour_ws);
+              console.log("2");
               resolve({ type: "disconnect_me" });
 
             }
@@ -64,6 +65,7 @@ export default function OnlineGame(sock, game_type, info_data) {
         timeoutHandle = setTimeout(() => {
             disconnect_ws(ws);
             disconnect_ws(appState.tour_ws);
+            console.log("4");
             resolve({ type: "disconnect_me" });
         }, 5000);
 

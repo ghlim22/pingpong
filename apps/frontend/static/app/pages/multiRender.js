@@ -181,7 +181,7 @@ function gameMultiPage(data) {
     .then((data) => {
 		if (data.type === "disconnect_me") {
 			if (appState.in_game_id != undefined && appState.in_game_id) {
-				alert("Someone has disconnected");
+				alert("Someone has disconnected44");
 			}
 			navigate(parseUrl(basePath));
 		  } else {

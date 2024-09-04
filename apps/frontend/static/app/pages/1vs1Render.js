@@ -137,7 +137,7 @@ export function game1vs1Page(info) {
 	  if (data.type === "disconnect_me") {
 		if (appState.in_game_id != undefined && appState.in_game_id) {
 			if (appState.in_game_id) {
-				alert("Someone has disconnected");
+				alert("Someone has disconnected33");
 				navigate(parseUrl(basePath));
 			}
 	  	}

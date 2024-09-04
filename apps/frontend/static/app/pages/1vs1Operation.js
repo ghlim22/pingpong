@@ -13,7 +13,7 @@ export function game_queue(type, token) {
         const data = JSON.parse(event.data);
         if (data.type === 'client_count') {
           if (data.count == 1) {
-            alert("Someone has disconnected");
+            alert("Someone has disconnected22");
             disconnect_ws(ws);
             disconnect_ws(appState.tour_ws);
             navigate(parseUrl(basePath));
@@ -63,7 +63,7 @@ export function play_game(info, type, token) {
     timeoutHandle = setTimeout(() => {
       disconnect_ws(ws);
       disconnect_ws(appState.tour_ws);
-      console.log("hgihi");
+      console.log("1");
       resolve({ type: "disconnect_me" });
     }, 10000);
 
