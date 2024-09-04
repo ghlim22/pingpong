@@ -1,9 +1,6 @@
-import enum
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext as _
-from rest_framework.exceptions import ValidationError
 
 from .managers import CustomUserManager
 
@@ -16,35 +13,25 @@ class CustomUser(AbstractUser):
     Email, password, and nickname are required. Other fields are optional.
     """
 
-    class Status(models.IntegerChoices):
-        DISCONNECTED = 0
-        CONNECTED = 1
-        PLAYING = 2
-
+    # Unused fields
     username = None
     first_name = None
     last_name = None
+
+    # Profile
     email = models.EmailField(_("Email Address"), unique=True, help_text=_("Required."))
     nickname = models.CharField(_("Nickname"), unique=True, max_length=8, help_text=_("Required."))
-    picture = models.ImageField(_("Picture"), upload_to="users/profile/", default="users/profile-default.png", help_text=_("Required."))
-    followings = models.ManyToManyField(to="self", related_name="followers", blank=True, symmetrical=False)
+    picture = models.ImageField(
+        _("Picture"), upload_to="users/profile/", default="users/profile-default.png", help_text=_("Required.")
+    )
 
+    # Relationships
+    followings = models.ManyToManyField(to="self", related_name="followers", blank=True, symmetrical=False)
     blocks = models.ManyToManyField(to="self", related_name="blocked", blank=True, symmetrical=False)
+
+    # Game
     win = models.IntegerField(default=0)
     lose = models.IntegerField(default=0)
-    status = models.IntegerField(choices=Status, default=Status.DISCONNECTED)
-
-    # 2FA Fields
-    # otp_auth_url = models.CharField(_("OTP Auth URL"), max_length=255, blank=True, default="", help_text=_("Optional."))
-    # otp_base_32 = models.CharField(_("OTP Base 32"), max_length=255, blank=True, default="", help_text=_("Optional."))
-    # otp_qrcode = models.ImageField(
-    #     _("OTP QR Code"), upload_to="users/otp/", blank=True, null=True, help_text=_("Optional.")
-    # )
-    # otp_login = models.CharField(_("OTP Login"), max_length=255, blank=True, default="", help_text=_("Optional."))
-    # otp_login_used = models.CharField(
-    #     _("OTP Login Used"), max_length=255, blank=True, default="", help_text=_("Optional.")
-    # )
-    # otp_created_at = models.DateTimeField(_("OTP Created At"), blank=True, null=True, help_text=_("Optional."))
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: list[str] = [

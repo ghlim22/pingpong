@@ -51,7 +51,10 @@ export function tournamentPage() {
 	appState.isMain = false;
 	sessionStorage.setItem('appState', JSON.stringify(appState));
 	if (!appState.isLoggedIn) {
-		navigate(parseUrl(basePath + 'login'));
+		navigate(parseUrl({
+			pathname: '/login',
+			search: ""
+		}));
 		return;
 	}
 	const leftSideHTML = `

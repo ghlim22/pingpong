@@ -65,6 +65,10 @@ export function loginPage() {
 		return;
 	}
 	main.innerHTML = pageHTML;
+	document.getElementById('top').innerHTML = "";
+	document.getElementById('bottom').innerHTML = "";
+	document.getElementById('left-side').innerHTML = "";
+	document.getElementById('right-side').innerHTML = "";
 
 	// document.getElementById('start').addEventListener('click', () => {
 	// // window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-1a77f4bb835ced96471b037724388e48dca50409405393deeac24248b3fe0aab&redirect_uri=https%3A%2F%2F${SERVER_ADDR}%2Fapi%2Fauth%2Fredirect&response_type=code';
@@ -85,24 +89,27 @@ export function loginPage() {
 	// 	//	console.log('Error: ', error);
 	// 	//});
 	// });
-	document.getElementById('start').addEventListener('click', () => {
-		main.innerHTML = startHTML;
 
-		document.getElementById('join').addEventListener('click', () => {
-			main.innerHTML = joinHTML;
+//	document.getElementById('start').addEventListener('click', () => {
+//		main.innerHTML = startHTML;
+//
+//		document.getElementById('join').addEventListener('click', () => {
+//			main.innerHTML = joinHTML;
+//
+//			document.getElementById('imgInput').addEventListener('change', (e) => {
+//				let file = e.target.files[0];
+//
+//				document.getElementById('form-join-file-name').textContent = file.name;
+//			});
+//		});
+//
+//		document.getElementById('login').addEventListener('click', () => {
+//			main.innerHTML = loginHTML;
+//
+//		});
+//	});
 
-			document.getElementById('imgInput').addEventListener('change', (e) => {
-				let file = e.target.files[0];
-
-				document.getElementById('form-join-file-name').textContent = file.name;
-			});
-			//document.getElementById('join-submit').addEventListener('submit', submitJoin);
-		});
-
-		document.getElementById('login').addEventListener('click', () => {
-			main.innerHTML = loginHTML;
-
-			//document.getElementById('login-submit').addEventListener('click', submitLogin);
-		});
-	});
+document.getElementById('start').addEventListener('click', () => {
+	window.location.href = 'api/auth/signin';
+});
 }
