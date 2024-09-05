@@ -37,9 +37,9 @@ router = routers.SimpleRouter()
 router.register("", UserAPIViewSet)
 
 urlpatterns = [
-    path("active/", get_active_user_list),
-    path("signup/", UserCreateAPIView.as_view()),
-    path("signin/", UserSignInAPIView.as_view()),
+    # path("active/", get_active_user_list),
+    # path("signup/", UserCreateAPIView.as_view()),
+    # path("signin/", UserSignInAPIView.as_view()),
     path("current/follow/<int:pk>/", follow),
     path("current/follow/", getFollowList),
     path("current/block/<int:pk>/", block),

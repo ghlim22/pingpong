@@ -35,14 +35,14 @@ class UserAPIViewSet(viewsets.ModelViewSet):
     """
 
     permission_classes = [
-        permissions.AllowAny,
+        permissions.IsAuthenticated,
     ]
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
 
 @extend_schema(responses=UserSimpleSerializer)
-@permission_classes([permissions.AllowAny])
+@permission_classes([permissions.IsAuthenticated])
 @api_view(["GET"])
 def get_active_user_list(request):
     queryset = CustomUser.objects.all().filter(status__gte=1)
