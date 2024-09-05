@@ -1,4 +1,6 @@
+import random
 import secrets
+import string
 from urllib.parse import urlencode, urlparse
 
 import requests
@@ -78,7 +80,12 @@ def register(**kwargs) -> CustomUser:
 
     try:
         CustomUser.objects.get(nickname=nickname)
-        nickname = secrets.token_hex(6)
+        n = 6
+        rand_str = ""
+        alphanumeric = string.ascii_letters + string.digits
+        for i in range(n):
+            rand_str += str(random.choice(alphanumeric))
+        nickname = rand_str
     except ObjectDoesNotExist:
         pass
 
