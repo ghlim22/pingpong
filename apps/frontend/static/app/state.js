@@ -15,6 +15,7 @@ export let appState = {
 	chat_ws:			null,
 	tour_ws:			null,
 	inTournament:		false,
+	isMain:				true,
 };
 // 나중에는 export 지우기
 
@@ -28,7 +29,11 @@ export const basePath = {
 
 const savedState = sessionStorage.getItem('appState');
 if (savedState) {
-	appState = JSON.parse(savedState);
+	let tempA = JSON.parse(savedState);
+	let tempB = tempA.isMain;
+
+	appState = tempA;
+	appState.isMain = tempB;
 }
 
 function updateAppState(newState) {

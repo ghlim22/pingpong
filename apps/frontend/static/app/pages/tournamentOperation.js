@@ -1,4 +1,4 @@
-import { appState, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, TBlock } from '/index.js';
+import { appState, disconnect_ws, basePath, TUserInfo, TInvite, TFold, navigate, parseUrl, TBlock } from '/index.js';
 import OnlineGame from "/app/pages/game.js";
 import config from "/config/config.js";
 
@@ -15,40 +15,35 @@ export function tournament_game_queue(type, token) {
     ];
     
     appState.currentCleanupFn = () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close();
-      }
-      if (appState.tour_ws && appState.tour_ws.readyState === WebSocket.OPEN){
-        appState.tour_ws.close();
-        appState.tour_ws = null;
-      }
+      disconnect_ws(ws);
+      disconnect_ws(appState.tour_ws);
       appState.inTournament = false;
+      appState.in_game_id = null;
       // navigate(parseUrl(basePath));
     };
-	document.querySelector('.logo-small').addEventListener('click', () => {
-		appState.inTournament = false;
-		navigate(parseUrl(basePath));
-		ws.close();
-	});
+
+    document.querySelector('.logo-small').addEventListener('click', () => {
+      appState.inTournament = false;
+      disconnect_ws(ws);
+      disconnect_ws(appState.tour_ws);
+      navigate(parseUrl(basePath));
+    });
+
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === "update")
           populateUserInfo(data.users, objects);
         else if (data.type === "create")
         {
-          ws.close();
+          appState.in_game_id = data.data.game_id;
+          disconnect_ws(ws);
           resolve(data.data);
-        }
-        else if (data.type === "close_connection")
-        {
-          ws.close();
-          resolve(data);
         }
     };
       
     ws.onerror = (error) => {
-        ws.close();
-        reject(error);
+      disconnect_ws(ws);
+      reject(error);
     };
   });
 }

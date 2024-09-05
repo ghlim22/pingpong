@@ -85,12 +85,15 @@ function parseQueryString(queryString) {
 
 export function navigate(parsed, data = null) {
 	const currentPath = window.location.pathname;
+
 	let page = routes[parsed.route] || notFoundPage;
 	if (currentPath !== parsed.path) {
+
 		window.history.pushState(data, parsed.path, window.location.origin + parsed.path);
 	}
 	appState.currentCleanupFn = null;
 	setClaslistDefault();
+
 	try {
 		if (parsed.search !== "") {
 			const parsedData = parseQueryString(parsed.search);
@@ -115,6 +118,7 @@ export function navigate(parsed, data = null) {
 	//else {
 		page();
 	//}
+	
 	if (page !== notFoundPage && appState.token !== null)
 	{
 		setTimeout(() => { main_ws(appState.token) } , 200);
@@ -153,12 +157,15 @@ function setClaslistDefault() {
 }
 
 function main_ws(token) {
+	console.log("appState.ws", appState.ws);
 	if (!appState.ws || !(appState.ws instanceof WebSocket))
 	{
 		appState.ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/main/?token=${token}`);
 	}
 	else
 	{
+		while (appState.ws.readyState === 0)
+			return ;
 		appState.ws.send(JSON.stringify({ type: "updateMine"}));
 	}
 	const connect = document.querySelector('.connect');
@@ -283,3 +290,8 @@ function main_ws(token) {
 		appState.ws = null;
 	}
 }
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  

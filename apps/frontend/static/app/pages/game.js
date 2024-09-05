@@ -1,3 +1,4 @@
+import { appState, disconnect_ws } from '/index.js';
 /**
  * @param {WebSocket} sock
  * @param {string} game_type
@@ -9,8 +10,9 @@ export default function OnlineGame(sock, game_type, info_data) {
   const $rightScore = document.querySelector('#rightScore');
   const ws = sock;
   let keyState = { up: false, down: false, left: false, right: false };
-  let left, right, up, down, ball, canvas, ctx;
-  
+  let left, right, up, down, ball, canvas, ctx, isFinish = false;
+  let timeoutHandle;
+
   let keyRepeatTimers = {
     up: null,
     down: null,
@@ -20,16 +22,54 @@ export default function OnlineGame(sock, game_type, info_data) {
   
   // Promise를 반환하여 비동기 동작을 처리
   return new Promise((resolve, reject) => {
+
+    // 서버로부터 메시지를 받았을 때의 처리
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "two_player") {
-        _2P(data.data);
-      } else if (data.type === "four_player") {
-        _4P(data.data);
-      } else if (data.type === "game_end") {
-        endGame(data, ws);
-      }
+        // 메시지 수신 시 타이머를 초기화
+        clearTimeout(timeoutHandle);
+
+        const data = JSON.parse(event.data);
+
+        if (data.type === "two_player") {
+            _2P(data.data);
+        } else if (data.type === "four_player") {
+            _4P(data.data);
+        } else if (data.type === "game_end") {
+            endGame(data, ws);
+            resolve(data);
+            clearTimeout(timeoutHandle);
+            isFinish = true;
+        } else if (data.type === "disconnect_me") {
+            disconnect_ws(ws);
+            disconnect_ws(appState.tour_ws);
+            resolve(data);
+        }
+        if (ws)
+        {
+          timeoutHandle = setTimeout(() => {
+            if (!isFinish)
+            {
+              disconnect_ws(ws);
+              disconnect_ws(appState.tour_ws);
+              console.log("2");
+              resolve({ type: "disconnect_me" });
+
+            }
+          }, 3000);
+        }
     };
+
+    // 타이머 설정 (처음 연결 시)
+    if (ws)
+      {
+        timeoutHandle = setTimeout(() => {
+            disconnect_ws(ws);
+            disconnect_ws(appState.tour_ws);
+            console.log("4");
+            resolve({ type: "disconnect_me" });
+        }, 5000);
+
+      }
   
   const init = async () => {
     document.addEventListener("keydown", keyDownHandler);
@@ -183,6 +223,10 @@ export default function OnlineGame(sock, game_type, info_data) {
     up.y = gameData.up.y * canvas.height;
     down.x = gameData.down.x * canvas.width;
     down.y = gameData.down.y * canvas.height;
+    left.score = gameData.left.score;
+    right.score = gameData.right.score;
+    up.score = gameData.up.score;
+    down.score = gameData.down.score;
     ball.x = gameData.ball.x * canvas.width;
     ball.y = gameData.ball.y * canvas.height;
     ball.radius = right.width * (2 / 3);
@@ -228,6 +272,8 @@ export default function OnlineGame(sock, game_type, info_data) {
     ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
     ctx.fillStyle = "#000000";
     ctx.fill();
+    $leftScore.innerText = left.score + up.score;
+    $rightScore.innerText = right.score + down.score;
     //  ctx.strokeStyle = 'black';
     //  ctx.lineWidth = 5;
     //  ctx.strokeRect(0, 0, canvas.width, canvas.height);
@@ -280,7 +326,7 @@ export default function OnlineGame(sock, game_type, info_data) {
   
   function endGame(data, ws) {
     if (ws) {
-      ws.close();
+      disconnect_ws(ws);
       resolve(data); // 게임 종료 후 Promise를 완료 상태로 설정
     }
   }

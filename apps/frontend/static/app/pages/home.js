@@ -24,6 +24,10 @@ const rightSideHTML = `
 `;
 
 export function homePage() {
+	appState.isMain = true;
+	sessionStorage.setItem('appState', JSON.stringify(appState));
+	appState.inTournament = false;
+	appState.in_game_id = null;
 	if (!appState.isLoggedIn) {
 		navigate(parseUrl({
 			pathname: '/login',

@@ -44,6 +44,12 @@ const matchOrderHTML = `
 `;
 
 export function tournamentPage() {
+	if (appState.isMain === false) {
+		navigate(parseUrl(basePath));
+	}
+	else {
+	appState.isMain = false;
+	sessionStorage.setItem('appState', JSON.stringify(appState));
 	if (!appState.isLoggedIn) {
 		navigate(parseUrl({
 			pathname: '/login',
@@ -69,13 +75,12 @@ export function tournamentPage() {
 
 	tournament_game_queue('tournament', appState.token)
     .then((data) => {
-	  if (data.type === "close_connection")
-		return;
 	  tournamentGame(data);
     })
     .catch((error) => {
       console.error('Error fetching game queue:', error);
     });
+}
 	//setTimeout(() => { tournamentGame(data) } , 5000); //시간 설정이 안됨
 }
 
