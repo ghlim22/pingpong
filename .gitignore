@@ -14,7 +14,7 @@ staticfiles/
 .env
 *.pem
 *.key
-config.js
+# config.js
 
 frontend/media/
 frontend/static/django
