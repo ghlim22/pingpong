@@ -51,7 +51,6 @@ export default function OnlineGame(sock, game_type, info_data) {
             {
               disconnect_ws(ws);
               disconnect_ws(appState.tour_ws);
-              console.log("2");
               resolve({ type: "disconnect_me" });
 
             }
@@ -65,7 +64,6 @@ export default function OnlineGame(sock, game_type, info_data) {
         timeoutHandle = setTimeout(() => {
             disconnect_ws(ws);
             disconnect_ws(appState.tour_ws);
-            console.log("4");
             resolve({ type: "disconnect_me" });
         }, 5000);
 
@@ -201,7 +199,7 @@ export default function OnlineGame(sock, game_type, info_data) {
     right.score = gameData.right.score;
     ball.x = gameData.ball.x * canvas.width;
     ball.y = gameData.ball.y * canvas.height;
-    ball.radius = right.width * (2 / 3);
+    ball.radius = left.width * (2 / 3);
     draw(left, right, ball);
   }
   
@@ -229,7 +227,7 @@ export default function OnlineGame(sock, game_type, info_data) {
     down.score = gameData.down.score;
     ball.x = gameData.ball.x * canvas.width;
     ball.y = gameData.ball.y * canvas.height;
-    ball.radius = right.width * (2 / 3);
+    ball.radius = left.width * (2 / 3);
     draw_four(left, right, up, down, ball);
   }
   

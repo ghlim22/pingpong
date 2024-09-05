@@ -85,6 +85,8 @@ export function tournamentPage() {
 }
 
 function tournamentGame(info) {
+	document.getElementById('above').innerHTML = "";
+	document.getElementById('above').classList.remove('outter_setting');
 	matchOrderPage(info.user_info);
 
 	info.user_info.forEach((user_info, index) => {

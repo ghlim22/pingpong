@@ -28,6 +28,10 @@ const mainHTML = `
 `;
 
 export function profileUserPage(data) {
+	if (appState.chat_ws && appState.chat_ws.readyState === WebSocket.OPEN){
+		appState.chat_ws.close();
+		appState.chat_ws = null;
+	}
 	const above = document.getElementById('above');
 	above.innerHTML = mainHTML;
 
@@ -68,7 +72,6 @@ function putGameLog(data) {
 	})
 	.then((data) => {
 		renderGameLog(data);
-		console.log('Logs: ', data);
 	})
 	.catch(error => {
 		console.log('Logs Error: ', error);
@@ -225,8 +228,6 @@ function messageHandler(data, userInfo) {
 	const message = document.querySelector('.s-button-message');
 
 
-	console.log('message.src', message.src);
-	console.log("`https://${SERVER_ADDR}/assets/s-button-message.svg`", `https://${SERVER_ADDR}/assets/s-button-message.svg`);
 	if (message.src == `https://${SERVER_ADDR}/assets/s-button-message.svg`) {
 		message.src = "/assets/s-button-unmessage.svg"
 		document.querySelector('.inner_profile_bottom').classList.remove('default');
@@ -262,13 +263,11 @@ function initializeChat(others, userInfo) {
         const data = JSON.parse(e.data);
 		if (data.type === "chat_message")
 		{
-			console.log(data);
         	document.querySelector('#chat-log').value += `${data.user_name}: ${data.message}\n`;
 			
 		}
 		else if (data.type === "update")
 		{
-			console.log(data);
 			document.querySelector('#chat-log').value += data.messages_text;
 			if (data.messages_text !== "")
 				document.querySelector('#chat-log').value += '\n';
@@ -280,7 +279,6 @@ function initializeChat(others, userInfo) {
 		if (e.wasClean) {
 			// 연결이 정상적으로 종료된 경우
 			appState.chat_ws = null;
-			console.log(`Chat socket closed cleanly, code=${e.code}, reason=${e.reason}`);
 		} else {
 			// 연결이 비정상적으로 종료된 경우
 			appState.chat_ws = null;
@@ -358,8 +356,7 @@ function checkCanTalk() {
 			throw new Error('Unexpected status code: ', response.status);
 		}
 	})
-	.then((responseData) => {
-		console.log('responseData', responseData);
+	.then(() => {
 	})
 	.catch(error => {
 		console.log('Error: ', error);
@@ -385,7 +382,6 @@ function blockHandler(data, userInfo) {
 		}
 	})
 	.then(() => {
-		console.log('userInfo.blocked', userInfo.blocked);
 		if (userInfo.blocked) {
 			document.querySelector('.s-button-block').src = "/assets/s-button-block.svg";
 		}
@@ -427,7 +423,6 @@ function friendHandler(data, userInfo) {
 		}
 	})
 	.then(() => {
-		console.log('userInfo.blocked', userInfo.following);
 		if (userInfo.following) {
 			document.querySelector('.s-button-friend').src = "/assets/s-button-follow.svg";
 		}
@@ -461,7 +456,6 @@ async function getMyInfo(data) {
 
 		if (response.status === 200) {
 			const responseData = await response.json();
-			console.log('Success data:', responseData);
 			return responseData;
 		} else if (response.status === 400) {
 			const errorData = await response.json();
@@ -495,7 +489,6 @@ async function getUserInfo(data) {
 
 		if (response.status === 200) {
 			const responseData = await response.json();
-			console.log('Success data:', responseData);
 			return responseData;
 		} else if (response.status === 400) {
 			const errorData = await response.json();

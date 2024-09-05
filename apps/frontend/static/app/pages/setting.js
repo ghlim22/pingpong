@@ -78,6 +78,12 @@ export function submitPicture(event) {
 			return response.json().then(data => {
 				return data;
 			});
+		} else if (response.status === 400) {
+			return response.json().then(data => {
+				let errorMessage = 'Error 400: Bad Request\n';
+				alert(data.picture);
+				throw new Error('Bad Request');
+			});
 		} else if (response.status === 401) {
 			return response.json().then(() => {
 				//logoutUser();
@@ -91,7 +97,6 @@ export function submitPicture(event) {
 		}
 	})
 	.then((data) => {
-		console.log('edit success');
 		alert('edit success');
 		appState.picture = data['picture'];
 		appState.ws.send(JSON.stringify({
@@ -137,7 +142,7 @@ export function submitNickname(event) {
 		} else if (response.status === 400) {
 			return response.json().then(data => {
 				let errorMessage = 'Error 400: Bad Request\n';
-				alert(errorMessage + data);
+				alert(data.nickname);
 				throw new Error('Bad Request');
 			});
 		}
@@ -153,7 +158,6 @@ export function submitNickname(event) {
 		}
 	})
 	.then(() => {
-		console.log('edit success');
 		alert('edit success');
 		appState.nickname = nickname;
 		appState.ws.send(JSON.stringify({

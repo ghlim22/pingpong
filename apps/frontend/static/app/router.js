@@ -20,7 +20,6 @@ const routes = {
 };
 
 export function parseUrl(location) {
-	console.log('location', location);
 	const params = {};
 	const url = location.pathname;
 	const pathParts = url.split('/');
@@ -97,10 +96,8 @@ export function navigate(parsed, data = null) {
 	try {
 		if (parsed.search !== "") {
 			const parsedData = parseQueryString(parsed.search);
-			console.log(parsedData);
 			appState.id = parsedData.pk;
 			loginUser(parsedData['token'], parsedData['email'], parsedData['nickname'], parsedData['picture'])
-			console.log(appState);
 			page = routes[parsed.route] || notFoundPage;
 		}
 		page = routes[parsed.route] || notFoundPage;
@@ -157,7 +154,6 @@ function setClaslistDefault() {
 }
 
 function main_ws(token) {
-	console.log("appState.ws", appState.ws);
 	if (!appState.ws || !(appState.ws instanceof WebSocket))
 	{
 		appState.ws = new WebSocket(`wss://${SERVER_ADDR}/wss/games/main/?token=${token}`);

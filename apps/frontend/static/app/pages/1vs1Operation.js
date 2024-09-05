@@ -13,7 +13,7 @@ export function game_queue(type, token) {
         const data = JSON.parse(event.data);
         if (data.type === 'client_count') {
           if (data.count == 1) {
-            alert("Someone has disconnected22");
+            alert("Someone has disconnected");
             disconnect_ws(ws);
             disconnect_ws(appState.tour_ws);
             navigate(parseUrl(basePath));
@@ -63,15 +63,12 @@ export function play_game(info, type, token) {
     timeoutHandle = setTimeout(() => {
       disconnect_ws(ws);
       disconnect_ws(appState.tour_ws);
-      console.log("1");
       resolve({ type: "disconnect_me" });
     }, 10000);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log(data);
       if (data.type === "disconnect_me") {
-        console.log("44")
         disconnect_ws(ws);
         disconnect_ws(appState.tour_ws);
         resolve(data);
@@ -87,10 +84,6 @@ export function play_game(info, type, token) {
         });
       }
     };
-
-    ws.onclose = (event) => {
-      console.log("play_game_ws closed: ", event);
-    }
     
     ws.onerror = (error) => {
       console.error('play_game_ws error:', error);

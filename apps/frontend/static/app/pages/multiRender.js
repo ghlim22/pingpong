@@ -33,7 +33,6 @@ const leftSideHTML = `
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
-	<span>♥♥♥♥♥</span>
 </div>
 <div></div>
 <div class="user-profile-4p">
@@ -41,7 +40,6 @@ const leftSideHTML = `
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
-	<span>♥♥♥♥</span>
 </div>
 `;
 
@@ -51,17 +49,14 @@ const rightSideHTML = `
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
-	<span>♥♥♥</span>
 </div>
 <div>
-	<img src="/assets/g-button-quit.svg">
 </div>
 <div class="user-profile-2p">
 	<div class="image-profile-small">
 		<img src="/assets/default-picture.png">
 	</div>
 	<span>nickname</span>
-	<span>♥♥</span>
 </div>
 `;
 
@@ -124,7 +119,6 @@ export function pongMultiPage() {
 	
 	game_queue('4P', appState.token)
 	.then((data) => {
-	console.log('Received data:', data);
 	  let index = 0;
 	  for (const element of data.user_info) {
 		if (element.nickname != appState.nickname) {
@@ -181,7 +175,7 @@ function gameMultiPage(data) {
     .then((data) => {
 		if (data.type === "disconnect_me") {
 			if (appState.in_game_id != undefined && appState.in_game_id) {
-				alert("Someone has disconnected44");
+				alert("Someone has disconnected");
 			}
 			navigate(parseUrl(basePath));
 		  } else {
