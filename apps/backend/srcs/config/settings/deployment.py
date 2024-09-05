@@ -28,7 +28,7 @@ SERVER_ADDR = os.environ.get("SERVER_ADDR")
 API_REDIRECT = os.environ.get("API_REDIRECT")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "backend",
